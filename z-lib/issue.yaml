@@ -1,0 +1,9 @@
+---
+# Issue Level Customizations
+volume: "1"
+issue: "1"
+year: "2018"
+#issuetitle: # placeholder
+#issuedescription: # placeholder
+issuedisplay: "Vol. 1 (2018)" # how you are going to show in PDF & HTML the issue reference
+---

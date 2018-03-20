@@ -1,0 +1,75 @@
+---
+# Please, fill every field carefully. Mandatory fields cannot be left unattended; unused fields must be excluded by removing the corresponding line or commenting it (adding # before the variable)
+title: "Article title. A demo article full of gibberish word meant to test the Pandoc solution"
+shorttitle: "Article title" # if the title is composed by two sentences (separated by a period or colons), the first sentence could be considered a shorter form
+
+dates: # please follow the example: YYYY-MM-DD;
+  submitted: 2017-02-05 # just an example, very important
+  #revised:
+  accepted: 2017-06-18 # just an example, very important
+  published: 2018-03-01 # very important
+
+# be respectful of spacings, the dash identify each authors block
+author:
+  - name: "Name Surname" # mandatory
+    given-name: Name # including second name
+    surname: Surname
+    affiliation: "Affiliation (country)" # mandatory, country in rounded brackets; multiple affiliations should be listed, see the example below; do not put text outside the upper brackets
+    email: "example@email.org"
+    corresp: true
+    orcid: https://orcid.org/0000-0002-1825-0097 # express it as a full URI, starting with https://
+    bio: "This is a short bio, _italics_ and **bold**. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam auctor blandit egestas. Maecenas faucibus eros velit, vitae posuere metus tincidunt et. In vel justo sed ante iaculis facilisis a quis sapien. Nulla lacinia eu massa pharetra sollicitudin. Pellentesque tempor elit sit amet libero fermentum commodo. In hac habitasse platea dictumst. Suspendisse ornare cursus enim in condimentum. Mauris blandit leo metus, quis pretium turpis porta ac. Maecenas placerat metus ac massa condimentum, vitae tristique nunc sagittis. Nullam dapibus in tortor sit amet bibendum. Proin sem libero, porta a pharetra auctor, iaculis at elit." # optional short bio, no more than 100 words; markdown ok, not paragraphs
+
+  # the following is a 2nd author block; please add as many copies of this block as the number of authors. Note the absence of "corresp" parameter
+  - name: "Name Surname" # mandatory
+    given-name: Name
+    surname: Surname
+    affiliation: # this author has two affiliations, listed properly
+      - "Affiliation 1 (country 1)"
+      - "Affiliation 2 (country 2)"
+    email: "example@email.org"
+
+# respect indentation when compiling the abstract; the example below supports italics and multiple paragraphs
+abstract: |
+  Lorem ipsum dolor sit amet, *consectetur adipiscing elit*. Curabitur in ante lobortis, euismod ligula varius, pellentesque ante. Curabitur suscipit lacus nibh, ut finibus purus -- scelerisque eget. Vestibulum nec enim odio. Sed feugiat metus iaculis, efficitur massa in, pulvinar neque. Donec tellus dui, luctus eu efficitur et, tristique a odio.
+
+  Integer faucibus porttitor eros at finibus.
+
+# same rules as abstract
+acknowledgements: |
+  Lorem ipsum dolor sit amet, *consectetur adipiscing elit*. Curabitur in ante lobortis, euismod ligula varius, pellentesque ante.
+
+keywords: [Lorem, ipsum, dolor, sit, amet] # keep square brackets and comma separated values
+
+article:
+  #doi: 10.6092/issn.1234-567X/NNNN # mandatory, replace NNNN with submission ID
+  id: NNNN # mandatory, replace with submission ID
+  section: "Essays" # or "Articles"
+  type: "article" # possible options are: `article`, `editorial`, `review`, `book-review`
+  peer-review: true
+
+copyright:
+  holder: "Name Surname, Name Surname" # mandatory
+  year: 2018 # mandatory
+  type: open-access # journal based, do not edit
+  text: "This work is licensed under the Creative Commons BY License."
+  link: https://creativecommons.org/licenses/by/4.0/ # journal based, do not edit
+
+# language
+lang: en-US # mandatory: en-US, en-GB or it-IT
+
+# page numbering
+page:
+  prefix: draft # uncomment and fill if you need a prefix for the page sequence (eg: reviews could use a "p. R 12")
+  #roman: true # uncomment if you need the page numbers in Roman numbers, eg: for Editorial; change to "romanup" for UPPERCASE roman numbers
+  start: 1 # edit to determine the starting page for this article
+
+# set to true to avoid the page break after title / abstract / author info
+notitlepage: false
+
+# set to true to avoid author blocks, affiliation will appear in footnote
+affiliationonly: false
+
+# Table of Contents: set to "false" if there should be no Table of Contents in HTML (eg: few and short sections)
+toc: true
+---
