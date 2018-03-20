@@ -1,0 +1,69 @@
+/* Custom CSS based on https://github.com/piero-g/almadl-journals-layout */
+/* applies only if not embedded in OJS */
+article { overflow: hidden; padding: 2em; }
+article #journal-header { text-align: right; border-bottom: 1px solid #E2E2E2; }
+article footer { border-top: 1px solid #E2E2E2; margin-top: 2em; padding-top: 1em; }
+
+/* dates */
+header > .date, header > .dates { text-align: left !important; }
+
+/* footnotes */
+a.footnote-ref sup { vertical-align: baseline; padding-left: 1px; padding-right: 1px; }
+
+a.footnote-ref sup:before { content: "["; }
+
+a.footnote-ref sup:after { content: "]"; }
+
+/* margin to return link in notes */
+a.footnote-back { margin-left: 6px; }
+
+h1.title { font-size: 2em; }
+
+#articleBody { border-top: 1px solid #E2E2E2; margin-top: 3em; padding-top: 2em; }
+#articleBody h1 { font-size: 2em; }
+#articleBody section { margin-top: 3em; }
+#articleBody ul, #articleBody ol { padding: 0 0 0 1.1em; }
+#articleBody li { margin: 0.5em 0; }
+#articleBody .footnotes ol { margin-left: 1em; }
+#articleBody nav { background-color: #E2E2E2; border-radius: 5px; padding: 9px; font-size: 0.8em; margin: 0 0 2em 0; }
+#articleBody nav li { list-style-type: none; padding-top: 7px; }
+#articleBody nav h1 { text-align: center; }
+#articleBody nav ul { padding-left: 2em; }
+#articleBody figure { text-align: center; }
+#articleBody figure img { max-width: 100%; width: auto !important; }
+#articleBody figure figcaption { font-size: 0.9em; }
+#articleBody table { border: 2px solid #ffffff; border-collapse: collapse; margin: auto; text-align: left; }
+#articleBody table td, #articleBody table th { border-left: 1px solid #888888; border-right: 1px solid #888888; padding: 5px 8px; }
+#articleBody table tr.even { background: #E2E2E2; }
+#articleBody table thead { background: #ffffff; border-bottom: 1px solid #888888; }
+#articleBody table thead th { font-weight: bold; }
+#articleBody table tfoot { font-weight: bold; border-top: 1px solid #888888; }
+#articleBody blockquote { border-left: 3px solid #E2E2E2; margin-left: 0; margin-right: 0; padding: 0 3em; }
+
+@media (min-width: 48em) { #articleBody nav { float: right; margin: 0 0 2em 2em; width: 35%; } }
+@media (min-width: 64em) { #articleBody nav { font-size: 1em; }
+  #articleBody ul, #articleBody ol { padding: 0 0 0 2.5em; }
+  #articleBody li { margin: 0; } }
+/* author blocks */
+div.author-block { margin-bottom: 2em; }
+div.author-block .author-bio { font-size: 0.9em; }
+div.author-block .author-name { font-weight: bold; }
+div.author-block p.author { margin-bottom: 0; }
+
+/* meta block */
+.meta { padding: 0 3em; border-left: 5px solid #E2E2E2; font-size: 0.9em; margin-top: 3em; }
+.meta .keywords-head { font-weight: bold; font-variant: small-caps; }
+.meta h1 { font-size: 1.5em; }
+
+.front-meta { font-size: 0.9em; }
+.front-meta p { margin: 0; }
+.front-meta .journal-meta { float: right; text-align: right; width: 45%; }
+.front-meta .article-meta { width: 45%; }
+.front-meta .article-meta .article-reviewed { font-style: italic; }
+
+.header-section-number, .toc-section-number { margin-right: 0.5em; }
+/* indentation rules */
+.author-block p, .meta p, #articleBody p { margin: 0; text-indent: 2em; }
+.author-block p:first-of-type, .meta p:first-of-type, #articleBody p:first-of-type { text-indent: 0; }
+
+#articleBody section#references p, #articleBody section.list p { margin: 1em; text-indent: -1em; }
