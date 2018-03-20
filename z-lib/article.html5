@@ -4,9 +4,11 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-$for(author-meta)$
+$if(author-meta)$$-- custom: author --$
   <meta name="author" content="$author-meta$" />
-$endfor$
+$else$
+  <meta name="author" content="$for(author)$$author.name$$sep$, $endfor$" />
+$endif$
 $if(date-meta)$
   <meta name="dcterms.date" content="$date-meta$" />
 $endif$
@@ -42,31 +44,120 @@ $for(header-includes)$
 $endfor$
 </head>
 <body>
+<article vocab="http://schema.org/" resource="#" typeof="ScholarlyArticle" lang="$lang$" xml:lang="$lang$">
 $for(include-before)$
 $include-before$
 $endfor$
 $if(title)$
 <header>
-<h1 class="title">$title$</h1>
+<div class="front-meta">
+<div class="journal-meta" property="isPartOf" typeof="PublicationIssue">
+<meta property="issueNumber" content="$issue$" />
+<div property="isPartOf" typeof="PublicationVolume">
+<meta property="volumeNumber" content="$volume$" />
+<meta property="datePublished" content="$year$" />
+<p property="isPartOf" typeof="Periodical"><span property="name" resource="$journal.url$" content="$journal.title$">$journal.title$</span>$if(issuedisplay)$. $issuedisplay$$endif$
+$if(journal.eissn)$<br />ISSN <span property="issn">$journal.eissn$</span>$endif$
+</p>
+</div>
+</div>
+<div class="article-meta">
+$if(article.section)$
+<p property="articleSection"><span class="article-section">$article.section$</span>$if(article.peer-review)$ &ndash; <span class="article-reviewed">$localization.peer-reviewed$</span>$endif$</p>
+$endif$
+$if(article.doi)$
+<p property="identifier" typeof="PropertyValue">
+<meta property="propertyID" content="doi" />
+<a href="https://doi.org/$article.doi$" property="value">https://doi.org/$article.doi$</a></p>
+$endif$
+$if(article.id)$
+<p property="identifier" typeof="PropertyValue">
+<meta property="propertyID" content="publisher-id" />
+Art. <span property="value">#$article.id$</span></p>
+$endif$
+$if(pagination)$
+<meta property="pageStart" content="$if(page.prefix)$$page.prefix$ $endif$$page.start$" />
+$endif$
+</div>
+</div>
+<h1 class="title" property="headline name">$title$</h1>
 $if(subtitle)$
-<p class="subtitle">$subtitle$</p>
+<p class="subtitle" property="alternateName">$subtitle$</p>
 $endif$
 $for(author)$
-<p class="author">$author$</p>
+  <!-- author block -->
+  <div class="author-block" property="author" typeof="Person"$if(author.orcid)$ resource="$author.orcid$"$endif$>
+    <p class="author">$if(author.given-names)$<meta property="givenName" content="$author.given-names$" />$endif$$if(author.surname)$<meta property="familyName" content="$author.surname$" />$endif$<span class="author-name" property="name">$author.name$</span>
+    $if(author.affiliation)$ &mdash; $for(author.affiliation)$<span class="affiliation" property="affiliation">$author.affiliation$</span>$sep$; $endfor$$endif$
+    $if(author.corresp)$ &mdash; <span class="email">$localization.corresp$: <span property="email">$author.email$</span></span>$endif$
+    $if(author.orcid)$<br> <span class="orcid" property="identifier" typeof="PropertyValue"><span property="propertyID">ORCID</span> <a href="$author.orcid$" property="value">$author.orcid$</a></span>$endif$
+    </p>
+    $if(author.bio)$
+    <div class="author-bio" property="description">
+      $author.bio$
+    </div>
+    $endif$
+  </div>
 $endfor$
 $if(date)$
-<p class="date">$date$</p>
+<p class="date" property="datePublished">$date$</p>
+$else$
+$if(dates)$
+<p class="dates">$if(dates.submitted)$$localization.submitted$: <span type="dateCreated" content="$dates.submitted$">$dates.submitted$</span>$if(dates.accepted)$ &ndash; $else$$if(dates.published)$ &ndash; $endif$$endif$$endif$$if(dates.revised)$$localization.revised$: $for(dates.revised)$$dates.revised$$sep$; $endfor$ &ndash; $endif$$if(dates.accepted)$$localization.accepted$: $dates.accepted$$if(dates.published)$ &ndash; $endif$$endif$$if(dates.published)$$localization.published$: <span property="datePublished" content="$dates.published$">$dates.published$</span>$endif$</p>
 $endif$
+$endif$
+<div class="meta">
+$if(abstract)$
+<!-- Abstract -->
+<section id="abstract">
+<h1 class="abstract">$localization.abstract$</h1>
+<div property="description">
+$abstract$
+</div>
+</section>
+$endif$
+$if(keywords)$
+<!-- Keywords -->
+<p class="keywords"><span class="keywords-head">$localization.keywords$:</span>
+$for(keywords)$<span property="about">$keywords$</span>$sep$; $endfor$<p>
+$endif$
+$if(acknowledgements)$
+<!-- Acknowledgements -->
+<section id="acknowledgements">
+<h1 class="acknowledgements">$localization.acknowledgements$</h1>
+$acknowledgements$
+</section>
+$endif$
+$if(thanks)$
+<!-- Thanks -->
+<p class="thanks">$thanks$</p>
+$endif$
+</div>
 </header>
 $endif$
+<div id="articleBody" property="articleBody">
 $if(toc)$
 <nav id="$idprefix$TOC">
+<h1 class="TOC">$localization.tableofcontent$</h1>
 $table-of-contents$
 </nav>
 $endif$
 $body$
+</div>
+<footer>
 $for(include-after)$
 $include-after$
 $endfor$
+$if(copyright)$
+<!-- Copyright block -->
+<div id="copyright">
+Copyright © $if(copyright.year)$<span property="copyrightYear">$copyright.year$</span>$endif$
+$if(copyright.holder)$<span class="copyright-holder" property="copyrightHolder">$copyright.holder$</span>$endif$
+$if(copyright.text)$<br /><span class="copyright-text">$copyright.text$</span>$endif$
+$if(copyright.link)$<br /><a href="$copyright.link$" property="license">$copyright.link$</a>$endif$
+</div>
+$endif$
+</footer>
+</article>
 </body>
 </html>

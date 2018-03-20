@@ -44,6 +44,10 @@ $endif$
 <article-meta>
 $if(article.publisher-id)$
 <article-id pub-id-type="publisher-id">$article.publisher-id$</article-id>
+$else$$-- custom --$
+  $if(article.id)$
+<article-id pub-id-type="publisher-id">$article.id$</article-id>
+  $endif$
 $endif$
 $if(article.doi)$
 <article-id pub-id-type="doi">$article.doi$</article-id>
@@ -87,12 +91,21 @@ $endif$
 $if(author.surname)$
 <surname>$author.surname$</surname>
 <given-names>$author.given-names$</given-names>
-$else$
+$else$$-- custom --$
+  $if(author.name)$
+<string-name>$author.name$</string-name>
+  $else$
 <string-name>$author$</string-name>
+$endif$
 $endif$
 </name>
 $if(author.email)$
 <email>$author.email$</email>
+$endif$
+$if(author.affiliation)$$-- custom affiliation --$
+  $for(author.affiliation)$
+<aff>$author.affiliation$</aff>
+  $endfor$
 $endif$
 $if(author.aff-id)$
 <xref ref-type="aff" rid="aff-$contrib.aff-id$"/>
@@ -137,6 +150,21 @@ $else$
 <string-date>$date$</string-date>
 $endif$
 </pub-date>
+$else$$-- custom dates --$
+$if(dates.published)$
+<pub-date pub-type="epub" iso-8601-date="$dates.published$" />
+$endif$
+$if(dates.submitted)$
+<history>
+<date date-type="received" iso-8601-date="$dates.submitted$" />
+$for(dates.revised)$
+<date date-type="revision" iso-8601-date="$dates.revised$" />
+$endfor$
+$if(dates.accepted)$
+<date date-type="accepted" iso-8601-date="$dates.accepted$" />
+$endif$
+</history>
+$endif$
 $endif$
 $if(article.volume)$
 <volume>$article.volume$</volume>

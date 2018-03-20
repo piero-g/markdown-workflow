@@ -1,9 +1,9 @@
 \PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
 \PassOptionsToPackage{hyphens}{url}
 $if(colorlinks)$
-\PassOptionsToPackage{dvipsnames,svgnames*,x11names*}{xcolor}
+% custom: no * to svgnames, causes some colors not to be recognized
+\PassOptionsToPackage{dvipsnames,svgnames,x11names*}{xcolor}
 $endif$
-%
 \documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$babel-lang$,$endif$$if(papersize)$$papersize$paper,$endif$$if(beamer)$ignorenonframetext,$if(handout)$handout,$endif$$if(aspectratio)$aspectratio=$aspectratio$,$endif$$endif$$for(classoption)$$classoption$$sep$,$endfor$]{$documentclass$}
 $if(beamer)$
 \setbeamertemplate{caption}[numbered]
@@ -52,6 +52,9 @@ $if(sansfont)$
 $endif$
 $if(monofont)$
     \setmonofont[Mapping=tex-ansi$if(monofontoptions)$,$for(monofontoptions)$$monofontoptions$$sep$,$endfor$$endif$]{$monofont$}
+$endif$
+$if(titlefont)$ % custom: specific font for titles
+    \newfontfamily{\titlefont}[$for(titlefontoptions)$$titlefontoptions$$sep$,$endfor$]{$titlefont$}
 $endif$
 $if(mathfont)$
 $if(mathspec)$
@@ -118,19 +121,32 @@ $else$
 \setlength{\parskip}{6pt plus 2pt minus 1pt}
 }
 $endif$
+% custom: footnotes
+\usepackage[bottom,hang,multiple]{footmisc}
+\setlength{\footnotesep}{4mm}
 $if(verbatim-in-note)$
 \usepackage{fancyvrb}
 $endif$
 $if(colorlinks)$
 \usepackage{xcolor}
+% custom: url color
 $endif$
+$-- custom: issuecolor if colorlinks --$
 \usepackage{hyperref}
 \hypersetup{
 $if(title-meta)$
             pdftitle={$title-meta$},
+$else$ % custom
+  $if(title)$
+            pdftitle={$title$},
+  $endif$
 $endif$
 $if(author-meta)$
             pdfauthor={$author-meta$},
+$else$ % custom
+  $if(author)$
+            pdfauthor={$for(author)$$author.name$$sep$, $endfor$},
+  $endif$
 $endif$
 $if(keywords)$
             pdfkeywords={$for(keywords)$$keywords$$sep$, $endfor$},
@@ -150,6 +166,27 @@ $if(verbatim-in-note)$
 $endif$
 $if(geometry)$
 \usepackage[$for(geometry)$$geometry$$sep$,$endfor$]{geometry}
+$endif$
+% custom: to improve separations
+\widowpenalty=1000
+\clubpenalty=1000
+% custom: Title Font for headings and titles (\titlefont is set above)
+$if(titlefont)$
+  % custom: title font for headings
+  \usepackage{sectsty}
+    \allsectionsfont{\titlefont\bfseries\raggedright}
+  % custom: for titles
+  \usepackage{titling}
+  \renewcommand{\maketitlehooka}{\titlefont}
+$else$
+$if(sansfont)$
+ % custom: sans font for headings
+\usepackage{sectsty}
+	\allsectionsfont{\sffamily\bfseries\raggedright}
+ % custom: for titles
+\usepackage{titling}
+\renewcommand{\maketitlehooka}{\sffamily}
+$endif$
 $endif$
 $if(beamer)$
 \newif\ifbibliography
@@ -256,9 +293,68 @@ $else$
 $endif$
 $endif$
 
+$-- Various customizations --$
+% custom: suppress figure numbering, caption centered and small
+\usepackage[font=small,justification=centering]{caption}
+\captionsetup[figure]{labelformat=empty}
+
+% custom: dates
+\usepackage[useregional]{datetime2}
+
+% custom: page number
+$if(page.roman)$
+\pagenumbering{roman}
+$else$
+  $if(page.romanup)$
+\pagenumbering{Roman}
+  $endif$
+$endif$
+$if(page.start)$
+\setcounter{page}{$page.start$}
+$endif$
+
+% custom: footer and header (except first page)
+\usepackage[breakwords]{truncate}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} % clear all default
+% left header
+$if(shorttitle)$
+\lhead{\small\sffamily $shorttitle$}
+$else$
+\lhead{\small\sffamily \truncate{9cm}{$title$}}
+$endif$
+% right reader
+$if(journal.abbrev-title)$
+\rhead{\small\sffamily $journal.abbrev-title$$if(issuedisplay)$. $issuedisplay$$endif$}
+$else$
+\rhead{\small\sffamily $journal.title$$if(issuedisplay)$. $issuedisplay$$endif$}
+$endif$
+% left footer (DOI)
+$if(article.doi)$
+\lfoot{\small\sffamily \url{https://doi.org/$article.doi$}}
+$else$
+\lfoot{\small\sffamily \url{$journal.url$}}
+$endif$
+% right footer (ID + page (with optional prefix))
+$if(article.id)$
+\rfoot{\small\sffamily Art. \#$article.id$ \\ p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
+$else$
+\rfoot{\small\sffamily p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
+$endif$
+% custom: TEST for fixing footnotes in first page
+\usepackage{etoolbox}
+$if(issuecolor)$
+\definecolor{issuecolor}{HTML}{$issuecolor$}
+$endif$
+
 % set default figure placement to htbp
 \makeatletter
 \def\fps@figure{htbp}
+% custom: TEST for fixing footnotes in first page
+\patchcmd\maketitle{\renewcommand\thefootnote{\@fnsymbol\c@footnote}}{\AdaptNote\thanks\multthanks}{}{}
+\patchcmd\maketitle{%
+  \def\@makefnmark{\rlap{\@textsuperscript{\normalfont\@thefnmark}}}}{}{}{}
 \makeatother
 
 $for(header-includes)$
@@ -304,14 +400,39 @@ $if(subtitle)$
 \providecommand{\subtitle}[1]{}
 \subtitle{$subtitle$}
 $endif$
-$if(author)$
-\author{$for(author)$$author$$sep$ \and $endfor$}
+$if(author)$ % custom: affiliation only if "affiliationonly" is true, else boxed version below abstract
+\author{$for(author)$$author.name$$if(affiliationonly)$$if(author.affiliation)$\thanks{$for(author.affiliation)$$author.affiliation$$sep$; $endfor$$if(author.corresp)$; $localization.corresp$: $author.email$$endif$}$endif$$endif$ $sep$ \and $endfor$}
 $endif$
-$if(institute)$
+$if(institute)$ % custom: TODO prova institute e sistema data revised con "for"
 \providecommand{\institute}[1]{}
 \institute{$for(institute)$$institute$$sep$ \and $endfor$}
 $endif$
-\date{$date$}
+% custom: dates
+$if(date)$ % normal publication date (simple text)
+\date{\normalsize $date$}
+$else$
+$if(dates)$ % submitted, revised, accepted, published dates, in YYYY-MM-DD
+\date{\small $if(dates.submitted)$$localization.submitted$: \DTMdate{$dates.submitted$}$if(dates.accepted)$ -- $else$$if(dates.published)$ -- $endif$$endif$$endif$$if(dates.revised)$$localization.revised$: $for(dates.revised)$\DTMdate{$dates.revised$}$sep$; $endfor$ \\ $endif$$if(dates.accepted)$$localization.accepted$: \DTMdate{$dates.accepted$}$if(dates.published)$ -- $endif$$endif$$if(dates.published)$$localization.published$: \DTMdate{$dates.published$}$endif$}
+$endif$
+$endif$ % end custom dates
+
+$-- custom: spacing for thanks (firstpage) --$
+\setlength{\thanksmarkwidth}{1.8em}
+\thanksfootextra{}{\hspace{5pt}}
+
+$-- custom: hyphenation rules --$
+$if(hyphenation)$
+\newcommand{\sethyphenation}[2]{%
+  \AtBeginDocument{%
+    \begin{otherlanguage*}{#1}\hyphenation{#2}\end{otherlanguage*}%
+  }%
+}
+$for(hyphenation)$
+\sethyphenation{$hyphenation.lang$}{$hyphenation.word$}$sep$
+
+$endfor$
+$endif$
+
 $if(beamer)$
 $if(titlegraphic)$
 \titlegraphic{\includegraphics{$titlegraphic$}}
@@ -327,18 +448,73 @@ $if(beamer)$
 \frame{\titlepage}
 $else$
 \maketitle
+$-- custom: first page header and footer --$
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  % right header: journal title (extended) and eISSN
+  \rhead{\small\sffamily $journal.title$$if(issuedisplay)$. $issuedisplay$$endif$$if(journal.eissn)$ \\ ISSN $journal.eissn$$endif$}
+  % left header: section, peer-reviewed plus DOI or journal url
+  $if(article.section)$
+  \lhead{\small\sffamily $article.section$$if(article.peer-review)$ -- \emph{$localization.peer-reviewed$}$endif$$if(article.doi)$ \\ \url{https://doi.org/$article.doi$}$else$ \\ \url{$journal.url$}$endif$}
+  $else$
+  $if(article.doi)$\lhead{\small\sffamily \url{$journal.url$} \\ \url{https://doi.org/$article.doi$}}$endif$
+  $endif$
+  % right footer (ID + page (with optional prefix))
+  $if(article.id)$
+  \rfoot{\small\sffamily Art. \#$article.id$ \\ p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
+	$else$
+	\rfoot{\small\sffamily p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
+  $endif$
+  $if(copyright)$
+  % left footer: copyright block
+  \lfoot{\small\sffamily Copyright © $if(copyright.year)$$copyright.year$$endif$ $if(copyright.holder)$$copyright.holder$$endif$ \\ $if(copyright.text)$$copyright.text$ \\$endif$ $if(copyright.link)$\url{$copyright.link$}$endif$}
+  $endif$
+}
 $endif$
 $if(abstract)$
+$if(localization.abstract)$\renewcommand{\abstractname}{$localization.abstract$}$endif$
 \begin{abstract}
-$abstract$
+$if(indent)$\par\noindent $else$\setlength{\parindent}{0pt}
+\par\noindent $endif$$abstract$
+% custom: keywords in abstract
+$if(keywords)$\vspace{1mm}\\ \textbf{$localization.keywords$}: $for(keywords)$$keywords$$sep$; $endfor$$endif$
 \end{abstract}
 $endif$
+$if(acknowledgements)$ % custom: acknowledgements
+\vspace{1.5em}
+\renewcommand{\abstractname}{$localization.acknowledgements$}
+\begin{abstract}
+$if(indent)$\par\noindent $else$\setlength{\parindent}{0pt}
+\par\noindent $endif$$acknowledgements$
+\end{abstract}
 $endif$
+$if(affiliationonly)$
+% custom: no author blocks, just affiliation
+$else$
+% custom: author blocks
+\vspace{2em} % ia safe spacing if lots of authors
+\vspace*{\fill} % push to the bottom
+\renewenvironment{abstract}
+ {\par\noindent\textbf{\abstractname}\ \ignorespaces}
+ {\par\medskip}
+$for(author)$ % custom: author block with email, orcid and bio
+\begin{samepage}
+\renewcommand{\abstractname}{$author.name$$if(author.affiliation)$:$endif$}
+\begin{abstract} % was \sffamily
+\small $for(author.affiliation)$$author.affiliation$$sep$; $endfor$
+$if(author.orcid)$ \\ \url{$author.orcid$}$endif$$if(author.corresp)$\\ $localization.corresp$: $author.email$$endif$$if(author.bio)$ \\ $author.bio$$endif$
+\end{abstract}
+\end{samepage}
+$endfor$
+$endif$
+$endif$ % if(title)
 
 $for(include-before)$
 $include-before$
 
 $endfor$
+$if(nopdftoc)$ % custom: to opt-out to toc in pdf
+$else$
 $if(toc)$
 $if(beamer)$
 \begin{frame}
@@ -359,6 +535,13 @@ $if(lot)$
 $endif$
 $if(lof)$
 \listoffigures
+$endif$
+$endif$ % custom: - end if(nopdftoc)
+% custom: space from title or separate title page
+$if(notitlepage)$
+\vspace{5cm}
+$else$
+\newpage
 $endif$
 $body$
 

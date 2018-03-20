@@ -7,13 +7,15 @@ $if(title)$
       <title>$title$</title>
 $endif$
 $for(author)$
-      $author$
+      $author.name$$-- custom --$
 $endfor$
     </titleStmt>
     <publicationStmt>
-      <p>$if(publicationStmt)$$publicationStmt$$endif$</p>
+      <p>$if(publicationStmt)$$publicationStmt$$else$$copyright.text$$endif$</p>
       $if(license)$
       <availability><licence>$license$</licence></availability>
+      $else$
+      <availability><licence>$copyright.link$</licence></availability>
 $endif$
     </publicationStmt>
     <sourceDesc>
