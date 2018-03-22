@@ -1,13 +1,14 @@
 ---
 # Please, fill every field carefully. Mandatory fields cannot be left unattended; unused fields must be excluded by removing the corresponding line or commenting it (adding # before the variable)
 title: "Article title. A demo article full of gibberish word meant to test the Pandoc solution"
-shorttitle: "Article title" # if the title is composed by two sentences (separated by a period or colons), the first sentence could be considered a shorter form
+shorttitle: "Article title" # applied in PDF internal pages (optional)
 
 dates: # please follow the example: YYYY-MM-DD;
-  submitted: 2017-02-05 # just an example, very important
-  #revised:
-  accepted: 2017-06-18 # just an example, very important
-  published: 2018-03-01 # very important
+  submitted: 2017-02-05
+  #revised: # multiple values are possible
+  accepted: 2017-06-18
+  published: 2018-03-01
+# in PDF dates will be converted in the current language; If you have only a textual value you can use "date" instead
 
 # be respectful of spacings, the dash identify each authors block
 author:
@@ -42,9 +43,9 @@ acknowledgements: |
 keywords: [Lorem, ipsum, dolor, sit, amet] # keep square brackets and comma separated values
 
 article:
-  #doi: 10.6092/issn.1234-567X/NNNN # mandatory, replace NNNN with submission ID
-  id: NNNN # mandatory, replace with submission ID
-  section: "Essays" # or "Articles"
+  #doi: # insert the DOI here, without the prefix "https://doi.org/"
+  #id: NNNN # optional submission ID / publisher ID
+  section: "Essays" # the displayed name of the article section
   type: "article" # possible options are: `article`, `editorial`, `review`, `book-review`
   peer-review: true
 
@@ -56,7 +57,7 @@ copyright:
   link: https://creativecommons.org/licenses/by/4.0/ # journal based, do not edit
 
 # language
-lang: en-US # mandatory: en-US, en-GB or it-IT
+lang: en-US # mandatory: en-US, en-GB, it-IT...
 
 # page numbering
 page:

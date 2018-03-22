@@ -6,7 +6,7 @@ This is a simple workflow for scholarly journals, for managing the preparation o
 The workflow is based on two conversions:
 
 1. manuscripts from DOCX/ODT to markdown
-2. manuscripts in markdown + YAML to galleys files (publication formats: HTML, PDF, XML, see [output](#Output)) in one take
+2. manuscripts in markdown + YAML to galleys files (publication formats: HTML, PDF, XML, see [output](#output)) in one take
 
 This is meant to happen on a shared folder, so that a single computer could be prepared for the proper conversions, while editors could work on their own machines.
 

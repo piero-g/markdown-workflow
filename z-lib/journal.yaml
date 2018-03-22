@@ -11,6 +11,7 @@ journal:
 mainfont: "Libre Baskerville" # fonts must be installed -- used for PDF body
 sansfont: "Libre Franklin" # used for PDF paratext and titles
 #titlefont: # optional font for titles and headings
+# HTML
 css: "../z-lib/article.css" # used for a minimal HTML styling
 
 papersize: a4 # ok
@@ -25,7 +26,7 @@ documentclass: article
 #classoption: twocolumn # WARNING: untested
 
 # for american paragraphs indentation in PDF (see article.css for HTML)
-indent: 1in # if disabled: no indentation, vertical separation for paragraphs
+indent: 1in # if disabled: no indentation but vertical separation for paragraphs
 
 # dark color for decent printing quality
 colorlinks: true
@@ -40,13 +41,14 @@ nopdftoc: true
 # Text labels: Default values (English) can be overwritten at article level if using other languages
 localization:
   # ENGLISH
-  published: "Published"
-  submitted: "Submitted"
-  revised: "Revised version"
+  #abstract: # could be used do overwrite the default LaTeX label
   accepted: "Accepted"
-  corresp: "Contact"
-  tableofcontent: "Table of Contents"
   acknowledgements: "Acknowledgements"
+  corresp: "Contact"
   keywords: "Keywords"
   peer-reviewed: "peer-reviewed"
+  published: "Published"
+  revised: "Revised version"
+  submitted: "Submitted"
+  tableofcontent: "Table of Contents"
 ---
