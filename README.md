@@ -10,6 +10,8 @@ The workflow is based on two conversions:
 
 This is meant to happen on a shared folder, so that a single computer could be prepared for the proper conversions, while editors could work on their own machines.
 
+Further considerations and a more in-depth description of the workflow are [available in this post](http://pierog.it/en/2018/03/markdown-workflow/).
+
 
 ## Disclaimer
 
