@@ -294,9 +294,10 @@ $endif$
 $endif$
 
 $-- Various customizations --$
-% custom: suppress figure numbering, caption centered and small
+% custom: suppress numbering in figures and tables, caption centered and small
 \usepackage[font=small,justification=centering]{caption}
 \captionsetup[figure]{labelformat=empty}
+\captionsetup[table]{labelformat=empty}
 
 % custom: dates
 \usepackage[useregional]{datetime2}
