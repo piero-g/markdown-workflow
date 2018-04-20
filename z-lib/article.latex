@@ -402,7 +402,7 @@ $if(subtitle)$
 \subtitle{$subtitle$}
 $endif$
 $if(author)$ % custom: affiliation only if "affiliationonly" is true, else boxed version below abstract
-\author{$for(author)$$author.name$$if(affiliationonly)$$if(author.affiliation)$\thanks{$for(author.affiliation)$$author.affiliation$$sep$; $endfor$$if(author.corresp)$; $localization.corresp$: $author.email$$endif$}$endif$$endif$ $sep$ \and $endfor$}
+\author{$for(author)$$author.name$$if(affiliationonly)$$if(author.affiliation)$\thanks{$for(author.affiliation)$$author.affiliation$$sep$; $endfor$$if(author.corresp)$; $localization.corresp$: $author.email$$endif$}$endif$$endif$$sep$ \and $endfor$}
 $endif$
 $if(institute)$ % custom: TODO prova institute e sistema data revised con "for"
 \providecommand{\institute}[1]{}
