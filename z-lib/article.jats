@@ -90,7 +90,7 @@ $endif$
 <name>
 $if(author.surname)$
 <surname>$author.surname$</surname>
-<given-names>$author.given-names$</given-names>
+<given-names>$author.given-name$</given-names>
 $else$$-- custom --$
   $if(author.name)$
 <string-name>$author.name$</string-name>
