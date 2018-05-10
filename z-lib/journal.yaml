@@ -26,7 +26,7 @@ documentclass: article
 #classoption: twocolumn # WARNING: untested
 
 # for american paragraphs indentation in PDF (see article.css for HTML)
-indent: 1in # if disabled: no indentation but vertical separation for paragraphs
+#indent: 1in # if disabled: no indentation but vertical separation for paragraphs
 
 # dark color for decent printing quality
 colorlinks: true

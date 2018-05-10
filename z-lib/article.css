@@ -63,7 +63,7 @@ div.author-block p.author { margin-bottom: 0; }
 
 .header-section-number, .toc-section-number { margin-right: 0.5em; }
 /* indentation rules */
-.author-block p, .meta p, #articleBody p { margin: 0; text-indent: 2em; }
+/*.author-block p, .meta p, #articleBody p { margin: 0; text-indent: 2em; }
 .author-block p:first-of-type, .meta p:first-of-type, #articleBody p:first-of-type { text-indent: 0; }
 
-#articleBody section#references p, #articleBody section.list p { margin: 1em; text-indent: -1em; }
+#articleBody section#references p, #articleBody section.list p { margin: 1em; text-indent: -1em; }*/
