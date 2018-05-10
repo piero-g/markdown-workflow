@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.0 20120330//EN"
+                  "JATS-journalpublishing1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" dtd-version="1.0" article-type="article">
+<front>
+<journal-meta>
+<journal-title-group>
+<journal-title>Journal Title – A Fictional Scholarly Journal</journal-title>
+<abbrev-journal-title>Journal Title</abbrev-journal-title>
+</journal-title-group>
+<issn pub-type="epub">1234-567X</issn>
+<publisher>
+<publisher-name></publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+
+  <article-id pub-id-type="doi">10.5555/12345678</article-id>
+<title-group>
+<article-title>Demo Article. An example to test the Pandoc solution</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">https://orcid.org/0000-0002-1825-0097</contrib-id>
+<name>
+<surname>Doe</surname>
+<given-names>John</given-names>
+</name>
+<email>example@email.org</email>
+
+  <aff>Affiliation (country)</aff>
+  
+</contrib>
+</contrib-group>
+
+<pub-date pub-type="epub" iso-8601-date="2018-03-01" />
+<history>
+<date date-type="received" iso-8601-date="2017-02-05" />
+<date date-type="accepted" iso-8601-date="2017-06-18" />
+</history>
+<permissions>
+<copyright-year>2018</copyright-year>
+<copyright-holder>John Doe</copyright-holder>
+<license license-type="open-access" xlink:href="https://creativecommons.org/licenses/by/4.0/">
+<license-p>This work is licensed under the Creative Commons BY License.</license-p>
+</license>
+</permissions>
+</article-meta>
+</front>
+<body>
+<p>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce sit
+  amet elit ut enim commodo ultricies a nec sapien. Sed blandit
+  hendrerit luctus. Lorem ipsum dolor sit amet, consectetur adipiscing
+  elit. Morbi condimentum non risus nec tempus.
+</p>
+<sec id="first-section-with-formatted-text">
+  <title>First section with formatted text</title>
+  <p>
+    <italic>This sentence is in italic</italic>. Vestibulum ante ipsum
+    primis in <bold role="strong">a few bold words (strong
+    emphasis)</bold> faucibus orci luctus et ultrices posuere cubilia
+    Curae; here we have a hard breakline.<break />No new paragraph was
+    created. In auctor pulvinar auctor. Vivamus nulla lectus, elementum
+    vitae tellus quis, volutpat iaculis tellus.
+  </p>
+  <p>
+    Here we have a new paragraph. Nulla eget porttitor leo.<fn>
+      <p>
+        This is a simple footnote;
+      </p>
+    </fn> Ut cursus ultrices augue in commodo. Nulla in est tellus. Nam
+    ac massa at dolor cursus hendrerit quis id orci. Nam nec erat eget
+    dolor mattis facilisis nec et risus. Aenean mattis erat ac nisl
+    tincidunt pharetra.<fn>
+      <p>
+        All external links should be placed in footnotes rather than
+        inline, and should be rendered as plain URI, such as the
+        following:
+        <ext-link ext-link-type="uri" xlink:href="https://pandoc.org">https://pandoc.org</ext-link>
+      </p>
+    </fn>
+  </p>
+  <sec id="subsection-with-quotations">
+    <title>Subsection with quotations</title>
+    <p>
+      Ut vulputate, neque vitae accumsan luctus, risus lorem molestie
+      sapien, ut vehicula magna diam et dolor.
+    </p>
+    <disp-quote>
+      <p>
+        This is a long quotation made with a simple “Increase left
+        indent.” In a libero eu arcu auctor blandit sed quis dui. Nam
+        feugiat ultricies ligula quis scelerisque. Nulla facilisi.
+        Vivamus rutrum ante eros, ut elementum est consequat elementum.
+        Vivamus commodo libero facilisis, suscipit risus vel, egestas
+        felis.
+      </p>
+    </disp-quote>
+    <p>
+      Integer sollicitudin eleifend neque, vitae faucibus magna
+      consectetur nec. Vestibulum ante ipsum primis in faucibus orci
+      luctus et ultrices posuere cubilia Curae; on the other hand “this
+      is a short quotation.”
+    </p>
+  </sec>
+</sec>
+<sec id="second-section">
+  <title>Second section</title>
+  <sec id="different-languages">
+    <title>Different languages</title>
+    <p>
+      This is just some dummy text for testing purposes. This is a greek
+      word:
+      <milestone-start xml:lang="el-GR" />χάρισμα<milestone-end />,
+      while the next quotation is in Italian.
+    </p>
+    <disp-quote>
+      <p>
+        <milestone-start xml:lang="it-IT" />Due uomini stavano, l’uno
+        dirimpetto all’altro, al confluente, per dir così, delle due
+        viottole: un di costoro, a cavalcioni sul muricciolo basso, con
+        una gamba spenzolata al di fuori, e l’altro piede posato sul
+        terreno della strada; il compagno, in piedi, appoggiato al muro,
+        con le braccia incrociate sul petto.<milestone-end />
+      </p>
+    </disp-quote>
+  </sec>
+  <sec id="images-and-tables">
+    <title>Images and tables</title>
+    <p>
+      Quisque placerat, diam eget maximus mattis, ipsum risus dignissim
+      nisi, id rutrum ipsum augue a tortor. Integer quis fringilla odio.
+      Interdum et malesuada fames ac ante ipsum primis in faucibus.
+    </p>
+    <fig>
+      <caption>Figure 1: a short caption for the image</caption>
+      <graphic mimetype="image" mime-subtype="peg" xlink:href="demo_article-media/01.jpg" xlink:title="" />
+    </fig>
+    <p>
+      Quisque sit amet ligula ut nulla ultrices dictum. Nulla non
+      hendrerit erat, nec dictum dolor. Integer quis augue nec neque
+      posuere luctus non eu massa. Cras diam diam, dictum dignissim
+      turpis et, imperdiet vestibulum ipsum.
+    </p>
+    <table-wrap>
+      <caption>
+        <p>
+          Simple Table
+        </p>
+      </caption>
+      <table>
+        <col align="left" />
+        <col align="left" />
+        <col align="left" />
+        <thead>
+          <tr>
+            <th>
+            </th>
+            <th>
+              <p>
+                <bold role="strong">Column A</bold>
+              </p>
+            </th>
+            <th>
+              <p>
+                <bold role="strong">Column B</bold>
+              </p>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <p>
+                <italic>First Row</italic>
+              </p>
+            </td>
+            <td>
+              <p>
+                Cell 1A
+              </p>
+            </td>
+            <td>
+              <p>
+                Cell 1B
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p>
+                <italic>Second Row</italic>
+              </p>
+            </td>
+            <td>
+              <p>
+                Cell 2A
+              </p>
+            </td>
+            <td>
+              <p>
+                Cell 2B
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </table-wrap>
+    <p>
+      Aliquam eget sapien laoreet velit placerat ornare. Vivamus tempor
+      a eros id volutpat. Aliquam blandit vitae felis pretium pretium.
+      Nulla lobortis imperdiet nisi, nec tincidunt neque tempus sed. In
+      hac habitasse platea dictumst. Cras suscipit nisi vitae cursus
+      semper.
+    </p>
+  </sec>
+</sec>
+<sec id="third-section-messy-formatting">
+  <title>Third Section: messy formatting</title>
+  <p>
+    Different font, different size, different style! Etiam ac fermentum
+    turpis. Nunc id iaculis ipsum. Aliquam in hendrerit nisi, quis
+    lacinia lectus. Sed scelerisque interdum neque, ac ultrices nisi
+    interdum sit amet. Fusce convallis aliquet vehicula.
+  </p>
+  <p>
+    Various revisions and comments. Pellentesque porta odio porta dui
+    auctor, a viverra nibh sodales. This is a new revision ante semper
+    ipsum ullamcorper blandit. Cras iaculis, nisl et convallis blandit,
+    nulla mi congue urna, et laoreet est nisl quis felis. et metus sed
+    lacinia. Donec consequat ornare urna sed congue.
+  </p>
+  <p>
+    Different colors and highlights. Cras ullamcorper, eros nec auctor
+    mattis, mauris neque sodales velit, et condimentum augue diam eu
+    nunc. Sed vel malesuada eros. Sed quis ultrices neque, non commodo
+    augue. Maecenas efficitur sapien eget nisi euismod, eu lacinia leo
+    tempus. Ut pretium magna ultricies ultrices fermentum. Mauris
+    ultricies pellentesque consectetur. Proin iaculis mollis dolor, et
+    faucibus tortor. Lorem ipsum dolor sit amet, consectetur adipiscing
+    elit. Morbi eget mollis nisl.
+  </p>
+</sec>
+<sec id="references">
+  <title>References</title>
+  <p>
+    Hisakata, R., Nishida, S., &amp; Johnston, A. (2016). An adaptable
+    metric shapes perceptual space. <italic>Current Biology</italic>,
+    <italic>26</italic>(14), 1911–1915.
+    <ext-link ext-link-type="uri" xlink:href="https://doi.org/10.1016/j.cub.2016.05.047">https://doi.org/10.1016/j.cub.2016.05.047</ext-link>
+  </p>
+  <p>
+    Hogue, C. W. V. (2001). Structure databases. In A. D. Baxevanis
+    &amp; B. F. F. Ouellette (Eds.), <italic>Bioinformatics</italic>
+    (2nd ed., pp. 83–109). New York, NY: Wiley-Interscience.
+  </p>
+  <p>
+    Musk, E. (2006, August 2). The secret Tesla Motors master plan (just
+    between you and me). Retrieved September 29, 2016, from
+    <ext-link ext-link-type="uri" xlink:href="https://www.tesla.com/blog/secret-tesla-motors-master-plan-just-between-you-and-me">https://www.tesla.com/blog/secret-tesla-motors-master-plan-just-between-you-and-me</ext-link>
+  </p>
+  <p>
+    Sambrook, J., &amp; Russell, D. W. (2001). <italic>Molecular
+    cloning: a laboratory manual</italic> (3rd ed.). Cold Spring Harbor,
+    NY: CSHL Press
+  </p>
+</sec>
+</body>
+<back>
+</back>
+</article>

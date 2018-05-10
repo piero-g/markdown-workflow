@@ -38,7 +38,7 @@ The working directory contains the following subdirectories:
 
 - `./0-original/` where documents ready to be processed shall be placed
 - `./1-layout/` where the markdown files will be edited
-- `./2-publication/` where the publication files will appear
+- `./2-publication/` where the publication files added will appear
 - `./archive/` will contain past logs and backup files
 - `./z-lib/` is the directory for configurations and templates.
 
@@ -89,3 +89,20 @@ The resulting file formats are:
 - (needs testing) TEI XML ([_Text Encoding Initiative_](http://www.tei-c.org/index.xml))
 
 Several other file formats are possible due to the power of pandoc!
+
+
+## Demo
+
+You can see an example of the results:
+
+`Demo Article.docx`, with revisions, comments, messy formatting etc. can be found in `0-original`
+
+In `./1-layout/`:
+
+- `demo_article.md`, the version of the docx as converted by pandoc and with the default yaml block;
+- `demo_article-edited.md` is the same file after the required work (metadata was added in the yaml block; markdown syntax was fixed where necessary)
+- in the directory `./demo_article-media/` you find the image in the file, as processed by the `img-compress.sh` script; the original image is available in `./orig/`
+
+In `./2-publication/` you will find the publication files of `demo_article-edited.md`: the self-contained HTML galley; the PDF and its TeX file; a version in JATS XML format.
+
+Please note that the references in this demo are embedded in the docx file, thus pandoc-citeproc is not used.

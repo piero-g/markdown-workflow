@@ -1,0 +1,361 @@
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+% custom: no * to svgnames, causes some colors not to be recognized
+\PassOptionsToPackage{dvipsnames,svgnames,x11names*}{xcolor}
+\documentclass[american,a4paper,]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+  \newfontfamily{\greekfont}[Script=Greek,Language=Greek]{FreeSerif}
+  \newfontfamily{\greekfontsf}[Script=Greek,Language=Greek]{FreeSans}
+    \setmainfont[]{Libre Baskerville}
+    \setsansfont[]{Libre Franklin}
+
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+% custom: footnotes
+\usepackage[bottom,hang,multiple]{footmisc}
+\setlength{\footnotesep}{4mm}
+\usepackage{xcolor}
+% custom: url color
+\usepackage{hyperref}
+\hypersetup{
+            pdftitle={Demo Article. An example to test the Pandoc solution},
+ % custom
+              pdfauthor={John Doe},
+              pdfkeywords={Lorem, ipsum, dolor, sit, amet},
+            colorlinks=true,
+            linkcolor=DarkBlue,
+            citecolor=DarkBlue,
+            urlcolor=DarkBlue,
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage[a4paper,headheight=20pt,bottom=100pt,left=1.25in,right=1.25in]{geometry}
+% custom: to improve separations
+\widowpenalty=1000
+\clubpenalty=1000
+% custom: Title Font for headings and titles (\titlefont is set above)
+ % custom: sans font for headings
+\usepackage{sectsty}
+	\allsectionsfont{\sffamily\bfseries\raggedright}
+ % custom: for titles
+\usepackage{titling}
+\renewcommand{\maketitlehooka}{\sffamily}
+\usepackage{longtable,booktabs}
+% Fix footnotes in tables (requires footnote package)
+\IfFileExists{footnote.sty}{\usepackage{footnote}\makesavenoteenv{longtable}}{}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% custom: suppress numbering in figures and tables, caption centered and small
+\usepackage[font=small,justification=centering]{caption}
+\captionsetup[figure]{labelformat=empty}
+\captionsetup[table]{labelformat=empty}
+
+% custom: dates
+\usepackage[useregional]{datetime2}
+
+% custom: page number
+  \setcounter{page}{1}
+
+% custom: footer and header (except first page)
+\usepackage[breakwords]{truncate}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} % clear all default
+% left header
+\lhead{\small\sffamily Demo Article}
+% right reader
+\rhead{\small\sffamily Journal Title. Vol. 1 (2018)}
+% left footer (DOI)
+\lfoot{\small\sffamily \url{https://doi.org/10.5555/12345678}}
+% right footer (ID + page (with optional prefix))
+\rfoot{\small\sffamily p. draft \thepage}
+% custom: TEST for fixing footnotes in first page
+\usepackage{etoolbox}
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+% custom: TEST for fixing footnotes in first page
+\patchcmd\maketitle{\renewcommand\thefootnote{\@fnsymbol\c@footnote}}{\AdaptNote\thanks\multthanks}{}{}
+\patchcmd\maketitle{%
+  \def\@makefnmark{\rlap{\@textsuperscript{\normalfont\@thefnmark}}}}{}{}{}
+\makeatother
+
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[shorthands=off,greek,italian,main=american]{babel}
+  \newcommand{\textgreek}[2][]{\foreignlanguage{greek}{#2}}
+  \newenvironment{greek}[2][]{\begin{otherlanguage}{greek}}{\end{otherlanguage}}
+  \newcommand{\textitalian}[2][]{\foreignlanguage{italian}{#2}}
+  \newenvironment{italian}[2][]{\begin{otherlanguage}{italian}}{\end{otherlanguage}}
+\else
+  % load polyglossia as late as possible as it *could* call bidi if RTL lang (e.g. Hebrew or Arabic)
+  \usepackage{polyglossia}
+  \setmainlanguage[variant=american]{english}
+  \setotherlanguage[]{italian}
+  \setotherlanguage[]{greek}
+\fi
+
+\title{Demo Article. An example to test the Pandoc solution}
+ % custom: affiliation only if "affiliationonly" is true, else boxed version below abstract
+\author{John Doe}
+
+
+% custom: dates
+
+ % submitted, revised, accepted, published dates, in YYYY-MM-DD
+\date{\small Submitted: \DTMdate{2017-02-05} -- Accepted: \DTMdate{2017-06-18} -- Published: \DTMdate{2018-03-01}}
+
+ % end custom dates
+
+\setlength{\thanksmarkwidth}{1.8em}
+\thanksfootextra{}{\hspace{5pt}}
+
+
+
+\begin{document}
+\maketitle
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  % right header: journal title (extended) and eISSN
+  \rhead{\small\sffamily Journal Title -- A Fictional Scholarly Journal. Vol. 1 (2018) \\ ISSN 1234-567X}
+  % left header: section, peer-reviewed plus DOI or journal url
+    \lhead{\small\sffamily Essays -- \emph{peer-reviewed} \\ \url{https://doi.org/10.5555/12345678}}
+    % right footer (ID + page (with optional prefix))
+  	\rfoot{\small\sffamily p. draft \thepage}
+      % left footer: copyright block
+  \lfoot{\small\sffamily Copyright © 2018 John Doe \\ This work is licensed under the Creative Commons BY License. \\ \url{https://creativecommons.org/licenses/by/4.0/}}
+  }
+
+\begin{abstract}
+\setlength{\parindent}{0pt}
+\par\noindent Lorem ipsum dolor sit amet, \emph{consectetur adipiscing elit}.
+Curabitur in ante lobortis, euismod ligula varius, pellentesque ante.
+Curabitur suscipit lacus nibh, ut finibus purus -- scelerisque eget.
+Vestibulum nec enim odio. Sed feugiat metus iaculis, efficitur massa in,
+pulvinar neque. Donec tellus dui, luctus eu efficitur et, tristique a
+odio.
+
+Integer faucibus porttitor eros at finibus.
+% custom: keywords in abstract
+\vspace{1mm}\\ \textbf{Keywords}: Lorem; ipsum; dolor; sit; amet
+\end{abstract}
+ % custom: acknowledgements
+\vspace{1.5em}
+\renewcommand{\abstractname}{Acknowledgements}
+\begin{abstract}
+\setlength{\parindent}{0pt}
+\par\noindent Lorem ipsum dolor sit amet, \emph{consectetur adipiscing elit}.
+Curabitur in ante lobortis, euismod ligula varius, pellentesque ante.
+\end{abstract}
+
+% custom: author blocks
+\vspace{2em} % ia safe spacing if lots of authors
+\vspace*{\fill} % push to the bottom
+\renewenvironment{abstract}
+ {\par\noindent\textbf{\abstractname}\ \ignorespaces}
+ {\par\medskip}
+ % custom: author block with email, orcid and bio
+\begin{samepage}
+\renewcommand{\abstractname}{John Doe:}
+\begin{abstract} % was \sffamily
+\small Affiliation (country)
+ \\ \url{https://orcid.org/0000-0002-1825-0097}\\ Contact: example@email.org \\ This is a short bio, \emph{italics} and \textbf{bold}. Lorem ipsum dolor
+sit amet, consectetur adipiscing elit. Etiam auctor blandit egestas.
+Maecenas faucibus eros velit, vitae posuere metus tincidunt et. In vel
+justo sed ante iaculis facilisis a quis sapien. Nulla lacinia eu massa
+pharetra sollicitudin. Pellentesque tempor elit sit amet libero
+fermentum commodo.
+\end{abstract}
+\end{samepage}
+
+ % if(title)
+
+ % custom: to opt-out to toc in pdf
+ % custom: - end if(nopdftoc)
+% custom: space from title or separate title page
+\newpage
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce sit amet
+elit ut enim commodo ultricies a nec sapien. Sed blandit hendrerit
+luctus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
+condimentum non risus nec tempus.
+
+\hypertarget{first-section-with-formatted-text}{%
+\section{First section with formatted
+text}\label{first-section-with-formatted-text}}
+
+\emph{This sentence is in italic}. Vestibulum ante ipsum primis in
+\textbf{a few bold words (strong emphasis)} faucibus orci luctus et
+ultrices posuere cubilia Curae; here we have a hard breakline.\\
+No new paragraph was created. In auctor pulvinar auctor. Vivamus nulla
+lectus, elementum vitae tellus quis, volutpat iaculis tellus.
+
+Here we have a new paragraph. Nulla eget porttitor leo.\footnote{This is
+  a simple footnote;} Ut cursus ultrices augue in commodo. Nulla in est
+tellus. Nam ac massa at dolor cursus hendrerit quis id orci. Nam nec
+erat eget dolor mattis facilisis nec et risus. Aenean mattis erat ac
+nisl tincidunt pharetra.\footnote{All external links should be placed in
+  footnotes rather than inline, and should be rendered as plain URI,
+  such as the following: \url{https://pandoc.org}}
+
+\hypertarget{subsection-with-quotations}{%
+\subsection{Subsection with
+quotations}\label{subsection-with-quotations}}
+
+Ut vulputate, neque vitae accumsan luctus, risus lorem molestie sapien,
+ut vehicula magna diam et dolor.
+
+\begin{quote}
+This is a long quotation made with a simple ``Increase left indent.'' In
+a libero eu arcu auctor blandit sed quis dui. Nam feugiat ultricies
+ligula quis scelerisque. Nulla facilisi. Vivamus rutrum ante eros, ut
+elementum est consequat elementum. Vivamus commodo libero facilisis,
+suscipit risus vel, egestas felis.
+\end{quote}
+
+Integer sollicitudin eleifend neque, vitae faucibus magna consectetur
+nec. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
+posuere cubilia Curae; on the other hand ``this is a short quotation.''
+
+\hypertarget{second-section}{%
+\section{Second section}\label{second-section}}
+
+\hypertarget{different-languages}{%
+\subsection{Different languages}\label{different-languages}}
+
+This is just some dummy text for testing purposes. This is a greek word:
+\textgreek{χάρισμα}, while the next quotation is in Italian.
+
+\begin{quote}
+\textitalian{Due uomini stavano, l'uno dirimpetto all'altro, al
+confluente, per dir così, delle due viottole: un di costoro, a
+cavalcioni sul muricciolo basso, con una gamba spenzolata al di fuori, e
+l'altro piede posato sul terreno della strada; il compagno, in piedi,
+appoggiato al muro, con le braccia incrociate sul petto.}
+\end{quote}
+
+\hypertarget{images-and-tables}{%
+\subsection{Images and tables}\label{images-and-tables}}
+
+Quisque placerat, diam eget maximus mattis, ipsum risus dignissim nisi,
+id rutrum ipsum augue a tortor. Integer quis fringilla odio. Interdum et
+malesuada fames ac ante ipsum primis in faucibus.
+
+\begin{figure}
+\centering
+\includegraphics{demo_article-media/01.jpg}
+\caption{Figure 1: a short caption for the image}
+\end{figure}
+
+Quisque sit amet ligula ut nulla ultrices dictum. Nulla non hendrerit
+erat, nec dictum dolor. Integer quis augue nec neque posuere luctus non
+eu massa. Cras diam diam, dictum dignissim turpis et, imperdiet
+vestibulum ipsum.
+
+\begin{longtable}[]{@{}lll@{}}
+\caption{Simple Table}\tabularnewline
+\toprule
+& \textbf{Column A} & \textbf{Column B}\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+& \textbf{Column A} & \textbf{Column B}\tabularnewline
+\midrule
+\endhead
+\emph{First Row} & Cell 1A & Cell 1B\tabularnewline
+\emph{Second Row} & Cell 2A & Cell 2B\tabularnewline
+\bottomrule
+\end{longtable}
+
+Aliquam eget sapien laoreet velit placerat ornare. Vivamus tempor a eros
+id volutpat. Aliquam blandit vitae felis pretium pretium. Nulla lobortis
+imperdiet nisi, nec tincidunt neque tempus sed. In hac habitasse platea
+dictumst. Cras suscipit nisi vitae cursus semper.
+
+\hypertarget{third-section-messy-formatting}{%
+\section{Third Section: messy
+formatting}\label{third-section-messy-formatting}}
+
+Different font, different size, different style! Etiam ac fermentum
+turpis. Nunc id iaculis ipsum. Aliquam in hendrerit nisi, quis lacinia
+lectus. Sed scelerisque interdum neque, ac ultrices nisi interdum sit
+amet. Fusce convallis aliquet vehicula.
+
+Various revisions and comments. Pellentesque porta odio porta dui
+auctor, a viverra nibh sodales. This is a new revision ante semper ipsum
+ullamcorper blandit. Cras iaculis, nisl et convallis blandit, nulla mi
+congue urna, et laoreet est nisl quis felis. et metus sed lacinia. Donec
+consequat ornare urna sed congue.
+
+Different colors and highlights. Cras ullamcorper, eros nec auctor
+mattis, mauris neque sodales velit, et condimentum augue diam eu nunc.
+Sed vel malesuada eros. Sed quis ultrices neque, non commodo augue.
+Maecenas efficitur sapien eget nisi euismod, eu lacinia leo tempus. Ut
+pretium magna ultricies ultrices fermentum. Mauris ultricies
+pellentesque consectetur. Proin iaculis mollis dolor, et faucibus
+tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
+eget mollis nisl.
+
+\newpage
+
+\hypertarget{references}{%
+\section*{References}\label{references}}
+\addcontentsline{toc}{section}{References}
+
+Hisakata, R., Nishida, S., \& Johnston, A. (2016). An adaptable metric
+shapes perceptual space. \emph{Current Biology}, \emph{26}(14),
+1911--1915. \url{https://doi.org/10.1016/j.cub.2016.05.047}
+
+Hogue, C. W. V. (2001). Structure databases. In A. D. Baxevanis \& B. F.
+F. Ouellette (Eds.), \emph{Bioinformatics} (2nd ed., pp.~83--109). New
+York, NY: Wiley-Interscience.
+
+Musk, E. (2006, August 2). The secret Tesla Motors master plan (just
+between you and me). Retrieved September 29, 2016, from
+\url{https://www.tesla.com/blog/secret-tesla-motors-master-plan-just-between-you-and-me}
+
+Sambrook, J., \& Russell, D. W. (2001). \emph{Molecular cloning: a
+laboratory manual} (3rd ed.). Cold Spring Harbor, NY: CSHL Press
+
+\end{document}

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+
+  <meta name="author" content="John Doe" />
+
+  <meta name="keywords" content="Lorem, ipsum, dolor, sit, amet" />
+  <title>Demo Article. An example to test the Pandoc solution</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      div.line-block{white-space: pre-line;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+
+article { overflow: hidden; padding: 2em; }
+article #journal-header { text-align: right; border-bottom: 1px solid #E2E2E2; }
+article footer { border-top: 1px solid #E2E2E2; margin-top: 2em; padding-top: 1em; }
+
+header > .date, header > .dates { text-align: left !important; }
+
+a.footnote-ref sup { vertical-align: baseline; padding-left: 1px; padding-right: 1px; }
+a.footnote-ref sup:before { content: "["; }
+a.footnote-ref sup:after { content: "]"; }
+
+a.footnote-back { margin-left: 6px; }
+h1.title { font-size: 2em; }
+#articleBody { border-top: 1px solid #E2E2E2; margin-top: 3em; padding-top: 2em; }
+#articleBody h1 { font-size: 2em; }
+#articleBody section { margin-top: 3em; }
+#articleBody ul, #articleBody ol { padding: 0 0 0 1.1em; }
+#articleBody li { margin: 0.5em 0; }
+#articleBody .footnotes ol { margin-left: 1em; }
+#articleBody nav { background-color: #E2E2E2; border-radius: 5px; padding: 9px; font-size: 0.8em; margin: 0 0 2em 0; }
+#articleBody nav li { list-style-type: none; padding-top: 7px; }
+#articleBody nav h1 { text-align: center; }
+#articleBody nav ul { padding-left: 2em; }
+#articleBody figure { text-align: center; }
+#articleBody figure img { max-width: 100%; width: auto !important; }
+#articleBody figure figcaption { font-size: 0.9em; }
+#articleBody table { border: 2px solid #ffffff; border-collapse: collapse; margin: auto; text-align: left; }
+#articleBody table td, #articleBody table th { border-left: 1px solid #888888; border-right: 1px solid #888888; padding: 5px 8px; }
+#articleBody table tr.even { background: #E2E2E2; }
+#articleBody table thead { background: #ffffff; border-bottom: 1px solid #888888; }
+#articleBody table thead th { font-weight: bold; }
+#articleBody table tfoot { font-weight: bold; border-top: 1px solid #888888; }
+#articleBody blockquote { border-left: 3px solid #E2E2E2; margin-left: 0; margin-right: 0; padding: 0 3em; }
+@media (min-width: 48em) { #articleBody nav { float: right; margin: 0 0 2em 2em; width: 35%; } }
+@media (min-width: 64em) { #articleBody nav { font-size: 1em; }
+#articleBody ul, #articleBody ol { padding: 0 0 0 2.5em; }
+#articleBody li { margin: 0; } }
+
+div.author-block { margin-bottom: 2em; }
+div.author-block .author-bio { font-size: 0.9em; }
+div.author-block .author-name { font-weight: bold; }
+div.author-block p.author { margin-bottom: 0; }
+
+.meta { padding: 0 3em; border-left: 5px solid #E2E2E2; font-size: 0.9em; margin-top: 3em; }
+.meta .keywords-head { font-weight: bold; font-variant: small-caps; }
+.meta h1 { font-size: 1.5em; }
+.front-meta { font-size: 0.9em; }
+.front-meta p { margin: 0; }
+.front-meta .journal-meta { float: right; text-align: right; width: 45%; }
+.front-meta .article-meta { width: 45%; }
+.front-meta .article-meta .article-reviewed { font-style: italic; }
+.header-section-number, .toc-section-number { margin-right: 0.5em; }
+
+
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<article vocab="http://schema.org/" resource="#" typeof="ScholarlyArticle" lang="en-US" xml:lang="en-US">
+<header>
+<div class="front-meta">
+<div class="journal-meta" property="isPartOf" typeof="PublicationIssue">
+<meta property="issueNumber" content="1" />
+<div property="isPartOf" typeof="PublicationVolume">
+<meta property="volumeNumber" content="1" />
+<meta property="datePublished" content="2018" />
+<p property="isPartOf" typeof="Periodical"><span property="name" resource="https://example.org/" content="Journal Title – A Fictional Scholarly Journal">Journal Title – A Fictional Scholarly Journal</span>. Vol. 1 (2018)
+<br />ISSN <span property="issn">1234-567X</span>
+</p>
+</div>
+</div>
+<div class="article-meta">
+<p property="articleSection"><span class="article-section">Essays</span> – <span class="article-reviewed">peer-reviewed</span></p>
+<p property="identifier" typeof="PropertyValue">
+<meta property="propertyID" content="doi" />
+<a href="https://doi.org/10.5555/12345678" property="value">https://doi.org/10.5555/12345678</a></p>
+</div>
+</div>
+<h1 class="title" property="headline name">Demo Article. An example to test the Pandoc solution</h1>
+  <!-- author block -->
+  <div class="author-block" property="author" typeof="Person" resource="https://orcid.org/0000-0002-1825-0097">
+    <p class="author"><meta property="givenName" content="John" /><meta property="familyName" content="Doe" /><span class="author-name" property="name">John Doe</span>
+     — <span class="affiliation" property="affiliation">Affiliation (country)</span>
+     — <span class="email">Contact: <span property="email">example@email.org</span></span>
+    <br> <span class="orcid" property="identifier" typeof="PropertyValue"><span property="propertyID">ORCID</span> <a href="https://orcid.org/0000-0002-1825-0097" property="value">https://orcid.org/0000-0002-1825-0097</a></span>
+    </p>
+        <div class="author-bio" property="description">
+      This is a short bio, <em>italics</em> and <strong>bold</strong>. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam auctor blandit egestas. Maecenas faucibus eros velit, vitae posuere metus tincidunt et. In vel justo sed ante iaculis facilisis a quis sapien. Nulla lacinia eu massa pharetra sollicitudin. Pellentesque tempor elit sit amet libero fermentum commodo.
+    </div>
+      </div>
+<p class="dates">Submitted: <span type="dateCreated" content="2017-02-05">2017-02-05</span> – Accepted: 2017-06-18 – Published: <span property="datePublished" content="2018-03-01">2018-03-01</span></p>
+<div class="meta">
+<!-- Abstract -->
+<section id="abstract">
+<h1 class="abstract"></h1>
+<div property="description">
+<p>Lorem ipsum dolor sit amet, <em>consectetur adipiscing elit</em>. Curabitur in ante lobortis, euismod ligula varius, pellentesque ante. Curabitur suscipit lacus nibh, ut finibus purus – scelerisque eget. Vestibulum nec enim odio. Sed feugiat metus iaculis, efficitur massa in, pulvinar neque. Donec tellus dui, luctus eu efficitur et, tristique a odio.</p>
+Integer faucibus porttitor eros at finibus.
+</div>
+</section>
+<!-- Keywords -->
+<p class="keywords"><span class="keywords-head">Keywords:</span>
+<span property="about">Lorem</span>; <span property="about">ipsum</span>; <span property="about">dolor</span>; <span property="about">sit</span>; <span property="about">amet</span><p>
+<!-- Acknowledgements -->
+<section id="acknowledgements">
+<h1 class="acknowledgements">Acknowledgements</h1>
+Lorem ipsum dolor sit amet, <em>consectetur adipiscing elit</em>. Curabitur in ante lobortis, euismod ligula varius, pellentesque ante.
+</section>
+</div>
+</header>
+<div id="articleBody" property="articleBody">
+<nav id="TOC">
+<h1 class="TOC">Table of Contents</h1>
+<ul>
+<li><a href="#first-section-with-formatted-text"><span class="toc-section-number">1</span> First section with formatted text</a><ul>
+<li><a href="#subsection-with-quotations"><span class="toc-section-number">1.1</span> Subsection with quotations</a></li>
+</ul></li>
+<li><a href="#second-section"><span class="toc-section-number">2</span> Second section</a><ul>
+<li><a href="#different-languages"><span class="toc-section-number">2.1</span> Different languages</a></li>
+<li><a href="#images-and-tables"><span class="toc-section-number">2.2</span> Images and tables</a></li>
+</ul></li>
+<li><a href="#third-section-messy-formatting"><span class="toc-section-number">3</span> Third Section: messy formatting</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+</nav>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce sit amet elit ut enim commodo ultricies a nec sapien. Sed blandit hendrerit luctus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi condimentum non risus nec tempus.</p>
+<section id="first-section-with-formatted-text" class="level1">
+<h1><span class="header-section-number">1</span> First section with formatted text</h1>
+<p><em>This sentence is in italic</em>. Vestibulum ante ipsum primis in <strong>a few bold words (strong emphasis)</strong> faucibus orci luctus et ultrices posuere cubilia Curae; here we have a hard breakline.<br />
+No new paragraph was created. In auctor pulvinar auctor. Vivamus nulla lectus, elementum vitae tellus quis, volutpat iaculis tellus.</p>
+<p>Here we have a new paragraph. Nulla eget porttitor leo.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> Ut cursus ultrices augue in commodo. Nulla in est tellus. Nam ac massa at dolor cursus hendrerit quis id orci. Nam nec erat eget dolor mattis facilisis nec et risus. Aenean mattis erat ac nisl tincidunt pharetra.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<section id="subsection-with-quotations" class="level2">
+<h2><span class="header-section-number">1.1</span> Subsection with quotations</h2>
+<p>Ut vulputate, neque vitae accumsan luctus, risus lorem molestie sapien, ut vehicula magna diam et dolor.</p>
+<blockquote>
+<p>This is a long quotation made with a simple “Increase left indent.” In a libero eu arcu auctor blandit sed quis dui. Nam feugiat ultricies ligula quis scelerisque. Nulla facilisi. Vivamus rutrum ante eros, ut elementum est consequat elementum. Vivamus commodo libero facilisis, suscipit risus vel, egestas felis.</p>
+</blockquote>
+<p>Integer sollicitudin eleifend neque, vitae faucibus magna consectetur nec. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; on the other hand “this is a short quotation.”</p>
+</section>
+</section>
+<section id="second-section" class="level1">
+<h1><span class="header-section-number">2</span> Second section</h1>
+<section id="different-languages" class="level2">
+<h2><span class="header-section-number">2.1</span> Different languages</h2>
+<p>This is just some dummy text for testing purposes. This is a greek word: <span lang="el-GR">χάρισμα</span>, while the next quotation is in Italian.</p>
+<blockquote>
+<p><span lang="it-IT">Due uomini stavano, l’uno dirimpetto all’altro, al confluente, per dir così, delle due viottole: un di costoro, a cavalcioni sul muricciolo basso, con una gamba spenzolata al di fuori, e l’altro piede posato sul terreno della strada; il compagno, in piedi, appoggiato al muro, con le braccia incrociate sul petto.</span></p>
+</blockquote>
+</section>
+<section id="images-and-tables" class="level2">
+<h2><span class="header-section-number">2.2</span> Images and tables</h2>
+<p>Quisque placerat, diam eget maximus mattis, ipsum risus dignissim nisi, id rutrum ipsum augue a tortor. Integer quis fringilla odio. Interdum et malesuada fames ac ante ipsum primis in faucibus.</p>
+<figure>
+<img src="data:image/jpeg;base64,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" alt="Figure 1: a short caption for the image" /><figcaption>Figure 1: a short caption for the image</figcaption>
+</figure>
+<p>Quisque sit amet ligula ut nulla ultrices dictum. Nulla non hendrerit erat, nec dictum dolor. Integer quis augue nec neque posuere luctus non eu massa. Cras diam diam, dictum dignissim turpis et, imperdiet vestibulum ipsum.</p>
+<table>
+<caption>Simple Table</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: left;"><strong>Column A</strong></th>
+<th style="text-align: left;"><strong>Column B</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>First Row</em></td>
+<td style="text-align: left;">Cell 1A</td>
+<td style="text-align: left;">Cell 1B</td>
+</tr>
+<tr class="even">
+<td><em>Second Row</em></td>
+<td style="text-align: left;">Cell 2A</td>
+<td style="text-align: left;">Cell 2B</td>
+</tr>
+</tbody>
+</table>
+<p>Aliquam eget sapien laoreet velit placerat ornare. Vivamus tempor a eros id volutpat. Aliquam blandit vitae felis pretium pretium. Nulla lobortis imperdiet nisi, nec tincidunt neque tempus sed. In hac habitasse platea dictumst. Cras suscipit nisi vitae cursus semper.</p>
+</section>
+</section>
+<section id="third-section-messy-formatting" class="level1">
+<h1><span class="header-section-number">3</span> Third Section: messy formatting</h1>
+<p>Different font, different size, different style! Etiam ac fermentum turpis. Nunc id iaculis ipsum. Aliquam in hendrerit nisi, quis lacinia lectus. Sed scelerisque interdum neque, ac ultrices nisi interdum sit amet. Fusce convallis aliquet vehicula.</p>
+<p>Various revisions and comments. Pellentesque porta odio porta dui auctor, a viverra nibh sodales. This is a new revision ante semper ipsum ullamcorper blandit. Cras iaculis, nisl et convallis blandit, nulla mi congue urna, et laoreet est nisl quis felis. et metus sed lacinia. Donec consequat ornare urna sed congue.</p>
+<p>Different colors and highlights. Cras ullamcorper, eros nec auctor mattis, mauris neque sodales velit, et condimentum augue diam eu nunc. Sed vel malesuada eros. Sed quis ultrices neque, non commodo augue. Maecenas efficitur sapien eget nisi euismod, eu lacinia leo tempus. Ut pretium magna ultricies ultrices fermentum. Mauris ultricies pellentesque consectetur. Proin iaculis mollis dolor, et faucibus tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eget mollis nisl.</p>
+
+</section>
+<section id="references" class="level1 unnumbered">
+<h1>References</h1>
+<p>Hisakata, R., Nishida, S., &amp; Johnston, A. (2016). An adaptable metric shapes perceptual space. <em>Current Biology</em>, <em>26</em>(14), 1911–1915. <a href="https://doi.org/10.1016/j.cub.2016.05.047" class="uri">https://doi.org/10.1016/j.cub.2016.05.047</a></p>
+<p>Hogue, C. W. V. (2001). Structure databases. In A. D. Baxevanis &amp; B. F. F. Ouellette (Eds.), <em>Bioinformatics</em> (2nd ed., pp. 83–109). New York, NY: Wiley-Interscience.</p>
+<p>Musk, E. (2006, August 2). The secret Tesla Motors master plan (just between you and me). Retrieved September 29, 2016, from <a href="https://www.tesla.com/blog/secret-tesla-motors-master-plan-just-between-you-and-me" class="uri">https://www.tesla.com/blog/secret-tesla-motors-master-plan-just-between-you-and-me</a></p>
+<p>Sambrook, J., &amp; Russell, D. W. (2001). <em>Molecular cloning: a laboratory manual</em> (3rd ed.). Cold Spring Harbor, NY: CSHL Press</p>
+</section>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>This is a simple footnote;<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>All external links should be placed in footnotes rather than inline, and should be rendered as plain URI, such as the following: <a href="https://pandoc.org" class="uri">https://pandoc.org</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+</div>
+<footer>
+<!-- Copyright block -->
+<div id="copyright">
+Copyright © <span property="copyrightYear">2018</span>
+<span class="copyright-holder" property="copyrightHolder">John Doe</span>
+<br /><span class="copyright-text">This work is licensed under the Creative Commons BY License.</span>
+<br /><a href="https://creativecommons.org/licenses/by/4.0/" property="license">https://creativecommons.org/licenses/by/4.0/</a>
+</div>
+</footer>
+</article>
+</body>
+</html>
