@@ -3,13 +3,24 @@
 $if(colorlinks)$
 % custom: no * to svgnames, causes some colors not to be recognized
 \PassOptionsToPackage{dvipsnames,svgnames,x11names*}{xcolor}
-$endif$
+$endif$$if(dir)$$if(latex-dir-rtl)$
+\PassOptionsToPackage{RTLdocument}{bidi}
+$endif$$endif$%
 \documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$babel-lang$,$endif$$if(papersize)$$papersize$paper,$endif$$if(beamer)$ignorenonframetext,$if(handout)$handout,$endif$$if(aspectratio)$aspectratio=$aspectratio$,$endif$$endif$$for(classoption)$$classoption$$sep$,$endfor$]{$documentclass$}
 $if(beamer)$
+$if(background-image)$
+\usebackgroundtemplate{%
+\includegraphics[width=\paperwidth]{$background-image$}%
+}
+$endif$
+\usepackage{pgfpages}
 \setbeamertemplate{caption}[numbered]
 \setbeamertemplate{caption label separator}{: }
 \setbeamercolor{caption name}{fg=normal text.fg}
 \beamertemplatenavigationsymbols$if(navigation)$$navigation$$else$empty$endif$
+$for(beameroption)$
+\setbeameroption{$beameroption$}
+$endfor$
 $endif$
 $if(beamerarticle)$
 \usepackage{beamerarticle} % needs to be loaded first
@@ -129,9 +140,7 @@ $if(verbatim-in-note)$
 $endif$
 $if(colorlinks)$
 \usepackage{xcolor}
-% custom: url color
 $endif$
-$-- custom: issuecolor if colorlinks --$
 \usepackage{hyperref}
 \hypersetup{
 $if(title-meta)$
@@ -191,16 +200,6 @@ $endif$
 $if(beamer)$
 \newif\ifbibliography
 $endif$
-$if(natbib)$
-\usepackage[$natbiboptions$]{natbib}
-\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}
-$endif$
-$if(biblatex)$
-\usepackage[$if(biblio-style)$style=$biblio-style$,$endif$$for(biblatexoptions)$$biblatexoptions$$sep$,$endfor$]{biblatex}
-$for(bibliography)$
-\addbibresource{$bibliography$}
-$endfor$
-$endif$
 $if(listings)$
 \usepackage{listings}
 \newcommand{\passthrough}[1]{#1}
@@ -240,22 +239,34 @@ $if(beamer)$
 \widowpenalties 1 10000
 \raggedbottom
 $if(section-titles)$
+\setbeamertemplate{part page}{
+\centering
+\begin{beamercolorbox}[sep=16pt,center]{part title}
+  \usebeamerfont{part title}\insertpart\par
+\end{beamercolorbox}
+}
+\setbeamertemplate{section page}{
+\centering
+\begin{beamercolorbox}[sep=12pt,center]{part title}
+  \usebeamerfont{section title}\insertsection\par
+\end{beamercolorbox}
+}
+\setbeamertemplate{subsection page}{
+\centering
+\begin{beamercolorbox}[sep=8pt,center]{part title}
+  \usebeamerfont{subsection title}\insertsubsection\par
+\end{beamercolorbox}
+}
 \AtBeginPart{
-  \let\insertpartnumber\relax
-  \let\partname\relax
   \frame{\partpage}
 }
 \AtBeginSection{
   \ifbibliography
   \else
-    \let\insertsectionnumber\relax
-    \let\sectionname\relax
     \frame{\sectionpage}
   \fi
 }
 \AtBeginSubsection{
-  \let\insertsubsectionnumber\relax
-  \let\subsectionname\relax
   \frame{\subsectionpage}
 }
 $endif$
@@ -291,6 +302,9 @@ $else$
 \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
 $endif$
+$endif$
+$if(pagestyle)$
+\pagestyle{$pagestyle$}
 $endif$
 
 $-- Various customizations --$
@@ -379,11 +393,7 @@ $endif$
 $if(dir)$
 \ifxetex
   % load bidi as late as possible as it modifies e.g. graphicx
-  $if(latex-dir-rtl)$
-  \usepackage[RTLdocument]{bidi}
-  $else$
   \usepackage{bidi}
-  $endif$
 \fi
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \TeXXeTstate=1
@@ -392,6 +402,16 @@ $if(dir)$
   \newenvironment{RTL}{\beginR}{\endR}
   \newenvironment{LTR}{\beginL}{\endL}
 \fi
+$endif$
+$if(natbib)$
+\usepackage[$natbiboptions$]{natbib}
+\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}
+$endif$
+$if(biblatex)$
+\usepackage[$if(biblio-style)$style=$biblio-style$,$endif$$for(biblatexoptions)$$biblatexoptions$$sep$,$endfor$]{biblatex}
+$for(bibliography)$
+\addbibresource{$bibliography$}
+$endfor$
 $endif$
 
 $if(title)$
@@ -404,7 +424,7 @@ $endif$
 $if(author)$ % custom: affiliation only if "affiliationonly" is true, else boxed version below abstract
 \author{$for(author)$$author.name$$if(affiliationonly)$$if(author.affiliation)$\thanks{$for(author.affiliation)$$author.affiliation$$sep$; $endfor$$if(author.corresp)$; $localization.corresp$: $author.email$$endif$}$endif$$endif$$sep$ \and $endfor$}
 $endif$
-$if(institute)$ % custom: TODO prova institute e sistema data revised con "for"
+$if(institute)$
 \providecommand{\institute}[1]{}
 \institute{$for(institute)$$institute$$sep$ \and $endfor$}
 $endif$
@@ -472,7 +492,7 @@ $-- custom: first page header and footer --$
   $endif$
 }
 $endif$
-$if(abstract)$
+$if(abstract)$ % custom: abstract name and style
 $if(localization.abstract)$\renewcommand{\abstractname}{$localization.abstract$}$endif$
 \begin{abstract}
 $if(indent)$\par\noindent $else$\setlength{\parindent}{0pt}

@@ -19,7 +19,7 @@ $endif$
   <style type="text/css">
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
-      div.line-block{white-space: pre-line;}
+      span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
 $if(quotes)$
       q { quotes: "“" "”" "‘" "’"; }
@@ -31,7 +31,7 @@ $highlighting-css$
   </style>
 $endif$
 $for(css)$
-  <link rel="stylesheet" href="$css$">
+  <link rel="stylesheet" href="$css$" />
 $endfor$
 $if(math)$
   $math$
