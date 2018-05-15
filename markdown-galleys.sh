@@ -75,33 +75,58 @@ converttoformats() {
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   copy of ${manuscript%.md} archived" >> "$workingDir/$eventslog"
 }
 
-printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts in ./1-layout..." >> "$workingDir/$eventslog"
-( # start subshell
-	if cd ./1-layout ; then
-		echo "Starting conversions..."
-	else
-		echo "WARNING: ./1-layout directory not found!"
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$workingDir/$eventslog"
-		exit 77
-	fi
+# Do you want to run conversion on a specific article?
+if [ -z ${@+x} ]; then
+	echo -e "\tno file specified"
 
-	# check if there are valid files
-	EXT=(`find ./ -maxdepth 1 -regextype posix-extended -regex '.*\.(md)$'`)
-	if [ ${#EXT[@]} -gt 0 ]; then
-		: # valid files, ok
-	else
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] No valid files found in ./1-layout, exiting now" >> "$workingDir/$eventslog"
-		echo "WARNING: no valid files!"
-		exit 77
-	fi
+	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts in ./1-layout..." >> "$workingDir/$eventslog"
+	( # start subshell
+		if cd ./1-layout ; then
+			echo "Starting conversions..."
+		else
+			echo "WARNING: ./1-layout directory not found!"
+			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$workingDir/$eventslog"
+			exit 77
+		fi
 
-	# convert valid files
-	for markdown in ./*.md; do
-		manuscript=${markdown#.\/};
-		# launch conversion
-		converttoformats
+		# check if there are valid files
+		EXT=(`find ./ -maxdepth 1 -regextype posix-extended -regex '.*\.(md)$'`)
+		if [ ${#EXT[@]} -gt 0 ]; then
+			: # valid files, ok
+		else
+			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] No valid files found in ./1-layout, exiting now" >> "$workingDir/$eventslog"
+			echo "WARNING: no valid files!"
+			exit 77
+		fi
 
+		# convert valid files
+		for markdown in ./*.md; do
+			manuscript=${markdown#.\/};
+			# launch conversion
+			converttoformats
+
+		done
+	) # end subshell
+
+else # we have a parameter: convert only specified file
+	for parameter in $@; do
+		echo -e "\nparameter is set to '$parameter'";
+		manuscript=${parameter#.\/1-layout\/};
+
+		( # start subshell
+			if cd ./1-layout ; then
+				echo "Starting conversions..."
+			else
+				echo "WARNING: ./1-layout directory not found!"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$workingDir/$eventslog"
+				exit 77
+			fi
+
+			converttoformats
+
+		) # end subshell
 	done
-) # end subshell
+
+fi
 
 echo -e "\nWe are done here!"
