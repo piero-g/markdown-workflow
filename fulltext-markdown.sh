@@ -69,7 +69,7 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts from
 	if [ ${#EXT[@]} -gt 0 ]; then
 		: # valid files, ok
 	else
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t[WARN] No valid files found in ./0-original, exiting now" >> "$workingDir/$eventslog"
+		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] No valid files found in ./0-original, exiting now" >> "$workingDir/$eventslog"
 		echo "WARNING: no valid files!"
 		exit 77
 	fi
@@ -77,29 +77,29 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts from
 	# convert valid files
 	for manuscript in *{docx,odt} ; do
 		if [ "${manuscript}" != "${manuscript%.${EXT1}}" ]; then
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t${manuscript}: trying to convert it in Markdown..." >> "$workingDir/$eventslog"
+			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript}: trying to convert it in Markdown..." >> "$workingDir/$eventslog"
 			# actual conversion with Pandoc
 			if pandoc --wrap=none --atx-headers -o "$tempdir/${manuscript%.${EXT1}}.md" "$manuscript" ; then
-				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t... ${manuscript} was converted!" >> "$workingDir/$eventslog"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
 				# archive the processed manuscript
 				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT1}}-$(date +"%Y-%m-%dT%H:%M:%S").${EXT1}"
-				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t${manuscript} archived" >> "$workingDir/$eventslog"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript} archived" >> "$workingDir/$eventslog"
 			else
 				# pandoc returned errors, print a warning and don't archive
-				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t... [WARN] pandoc failed in converting ${manuscript} to Markdown!" >> "$workingDir/$eventslog"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ... [WARN] pandoc failed in converting ${manuscript} to Markdown!" >> "$workingDir/$eventslog"
 				echo WARN=true >> $tempvar
 			fi
 		elif [ "${manuscript}" != "${manuscript%.${EXT2}}" ]; then
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t${manuscript}: trying to convert it in Markdown..." >> "$workingDir/$eventslog"
+			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript}: trying to convert it in Markdown..." >> "$workingDir/$eventslog"
 			# actual conversion with Pandoc
 			if pandoc --wrap=none --atx-headers -o "$tempdir/${manuscript%.${EXT2}}.md" "$manuscript" ; then
-				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t... ${manuscript} was converted!" >> "$workingDir/$eventslog"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
 				# archive the processed manuscript - TEST: cp instead of mv
 				cp "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT2}}-$(date +"%Y-%m-%dT%H:%M:%S").${EXT2}"
-				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t${manuscript} archived" >> "$workingDir/$eventslog"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript} archived" >> "$workingDir/$eventslog"
 			else
 				# pandoc returned errors, print a warning and don't archive
-				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t... [WARN] pandoc failed in converting ${manuscript} to Markdown!" >> "$workingDir/$eventslog"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ... [WARN] pandoc failed in converting ${manuscript} to Markdown!" >> "$workingDir/$eventslog"
 				echo WARN=true >> $tempvar
 			fi
 		fi
@@ -109,7 +109,7 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts from
 	# check if any file is left behind in ./0-original
 	for manuscript in * .*; do
 		[ -f "$manuscript" ] || continue
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t[WARN] ${manuscript} was skipped (had errors, wrong extension or it is hidden)" >> "$workingDir/$eventslog"
+		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] ${manuscript} was skipped (had errors, wrong extension or it is hidden)" >> "$workingDir/$eventslog"
 		echo WARN=true >> $tempvar
 	done
 ) # end subshell
@@ -133,7 +133,7 @@ shopt -s nullglob # Sets nullglob
 	for oldname in *.md; do
 		# copy to archive
 		cp "$oldname" "$workingDir/archive/first-conversion/${oldname%.md}-$(date +"%Y-%m-%dT%H:%M:%S").md"
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t$oldname archived" >> "$workingDir/$eventslog"
+		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname archived" >> "$workingDir/$eventslog"
 	done
 
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Renaming converted manuscripts..." >> "$workingDir/$eventslog"
@@ -144,7 +144,7 @@ shopt -s nullglob # Sets nullglob
 			# rename keeping only relevant part and transforming to lowercase
 			cleanname=$(echo "$oldname" | sed -r "s/$goodname/\1.md/" | tr "[:upper:]" "[:lower:]")
 			mv "$oldname" "$cleanname"
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t$oldname renamed as $cleanname" >> "$workingDir/$eventslog"
+			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname renamed as $cleanname" >> "$workingDir/$eventslog"
 		else
 			# safer filenames to lowercase and replacing spaces with underscore
 			safename=$(echo "$oldname" | sed -r "s/$goodname/\1.md/" | tr "[:upper:]" "[:lower:]" | tr "[:blank:]" "_")
@@ -152,7 +152,7 @@ shopt -s nullglob # Sets nullglob
 				: # all ok, does nothing
 			else
 				mv "$oldname" "$safename"
-				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t[WARN] $oldname has an unexpected name, converted in a safer one!" >> "$workingDir/$eventslog"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] $oldname has an unexpected name, converted in a safer one!" >> "$workingDir/$eventslog"
 				echo WARN=true >> $tempvar
 			fi
 		fi
@@ -172,12 +172,12 @@ shopt -s nullglob # Sets nullglob
 			mkdir "$workingDir/1-layout/$fname-media"
 		else
 			RERUN=true
-			#printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t./archive/$dir/ already there" >> "$workingDir/$eventslog"
+			#printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ./archive/$dir/ already there" >> "$workingDir/$eventslog"
 		fi
 	done
 	if [ $RERUN ]; then
 		echo "NOTICE: some files where already parsed before (or something is wrong!)"
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\tsome folders already there, skipped" >> "$workingDir/$eventslog"
+		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   some folders already there, skipped" >> "$workingDir/$eventslog"
 	else
 		: # all ok, does nothing
 	fi
@@ -189,13 +189,13 @@ shopt -s nullglob # Sets nullglob
 
 	for file in *.md; do
 		if ( cmp -n "$size" "$yaml_file" "$file" &> /dev/null ); then
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t[WARN] $file has already YAML" >> "$workingDir/$eventslog"
+			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] $file has already YAML" >> "$workingDir/$eventslog"
 			echo WARN=true >> $tempvar
 		else
 			tempfile=$(mktemp)
 			cat "$yaml_file" "$file" > "$tempfile"
 			mv "$tempfile" "$file"
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t$file has now the empty YAML" >> "$workingDir/$eventslog"
+			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $file has now the empty YAML" >> "$workingDir/$eventslog"
 		fi
 	done
 
@@ -204,13 +204,13 @@ shopt -s nullglob # Sets nullglob
 	for editing in *.md; do
 		cp "$editing" "$workingDir/1-layout/"
 		mv "$editing" "$workingDir/archive/editing-ready/${editing%.md}-$(date +"%Y-%m-%dT%H:%M:%S").md"
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t$editing is ready" >> "$workingDir/$eventslog"
+		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $editing is ready" >> "$workingDir/$eventslog"
 	done
 
 	# check if any file is left behind in ./$tempdir
 	for garbage in * .*; do
 		[ -f "$garbage" ] || continue
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t[WARN] ${garbage} should not be here" >> "$workingDir/$eventslog"
+		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] ${garbage} should not be here" >> "$workingDir/$eventslog"
 		echo WARN=true >> $tempvar
 		echo KEEPDIR=true >> $tempvar
 	done

@@ -65,7 +65,7 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving publication files..." >> "$wo
 	for galley in *.{pdf,html,xml,tex} ; do
 		# TEST: change with mv
 		mv ${galley} -t $workingDir/archive/final-version/publication/
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t...publication file ${galley} archived" >> "$workingDir/$eventslog"
+		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ...publication file ${galley} archived" >> "$workingDir/$eventslog"
 	done
 ) # end subshell
 
@@ -76,7 +76,7 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving layout files..." >> "$working
 	for layout in *.md ; do
 		# TEST: change with mv
 		mv ${layout} -t $workingDir/archive/final-version/
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t...final version of layout file for ${layout%.md} archived" >> "$workingDir/$eventslog"
+		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ...final version of layout file for ${layout%.md} archived" >> "$workingDir/$eventslog"
 	done
 ) # end subshell
 
@@ -101,7 +101,7 @@ cp -a {img-compress,fulltext-markdown,markdown-galleys}.sh -t ./archive/
 cd $tempdir
 	for garbage in * .*; do
 		[ -f "$garbage" ] || continue
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t[WARN] ${garbage} should not be here" >> "$workingDir/$eventslog"
+		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] ${garbage} should not be here" >> "$workingDir/$eventslog"
 		KEEPDIR=true
 	done
 	if [ $KEEPDIR ]; then

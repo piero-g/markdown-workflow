@@ -53,7 +53,7 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts in .
 	if [ ${#EXT[@]} -gt 0 ]; then
 		: # valid files, ok
 	else
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t[WARN] No valid files found in ./1-layout, exiting now" >> "$workingDir/$eventslog"
+		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] No valid files found in ./1-layout, exiting now" >> "$workingDir/$eventslog"
 		echo "WARNING: no valid files!"
 		exit 77
 	fi
@@ -64,7 +64,7 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts in .
 	# convert valid files
 	for manuscript in ./*.md; do
 		echo -e "\n\tconverting ${manuscript%.md}..."
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\t${manuscript%.md}, trying to convert it in PDF, HTML, TeX and JATS" >> "$workingDir/$eventslog"
+		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript%.md}, trying to convert it in PDF, HTML, TeX and JATS" >> "$workingDir/$eventslog"
 		# PDF conversion with Pandoc # -N --toc
 		pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" -N --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.latex" --pdf-engine=xelatex --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.pdf"
 		# LaTeX
@@ -77,8 +77,8 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts in .
 		#pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" --toc -N --filter=pandoc-citeproc --template="$workingDir/z-lib/article.tei" --write=tei -s -o "$workingDir/2-publication/${manuscript%.md}.tei.xml"
 		# archive the processed manuscript
 		cp "$manuscript" "$workingDir/archive/layout-versions/$today/${manuscript%.md}-$(date +"%Y-%m-%dT%H:%M:%S").md"
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]\tcopy of ${manuscript%.md} archived" >> "$workingDir/$eventslog"
+		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   copy of ${manuscript%.md} archived" >> "$workingDir/$eventslog"
 	done
 ) # end subshell
 
-echo "We are done here!"
+echo -e "\nWe are done here!"
