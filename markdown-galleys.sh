@@ -38,6 +38,43 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure, if n
 ######
 # 2. conversion, change extension, not filename; then archive manuscript
 ######
+
+# prepare daily subdirectory for layout-versions archiving
+mkdir -p $workingDir/archive/layout-versions/$today
+
+# conversion functions
+converttohtml() {
+	# HTML conversion with Pandoc  --self-contained
+	pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" -N --toc --filter=pandoc-citeproc --email-obfuscation=references --section-divs --self-contained --template="$workingDir/z-lib/article.html5" --write=html5 --default-image-extension=.low.jpg -o "$workingDir/2-publication/${manuscript%.md}.html"
+}
+converttopdf() {
+	# PDF conversion with Pandoc # -N --toc
+	pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" -N --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.latex" --pdf-engine=xelatex --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.pdf"
+	# LaTeX
+	pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" -N --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.latex" --pdf-engine=xelatex --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.tex"
+}
+converttoxml() {
+	# JATS XML
+	pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" -N --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.jats" --write=jats --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.jats.xml"
+	# TEI XML
+	#pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" --toc -N --filter=pandoc-citeproc --template="$workingDir/z-lib/article.tei" --write=tei -s -o "$workingDir/2-publication/${manuscript%.md}.tei.xml"
+}
+
+# generic function that calls the specific conversions (for future enhancements)
+converttoformats() {
+	echo -e "\n\tconverting ${manuscript%.md}..."
+	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript%.md}, trying to convert it" >> "$workingDir/$eventslog"
+
+	# call specific conversions
+	converttohtml
+	converttopdf
+	converttoxml
+
+	# archive the processed manuscript
+	cp "$manuscript" "$workingDir/archive/layout-versions/$today/${manuscript%.md}-$(date +"%Y-%m-%dT%H:%M:%S").md"
+	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   copy of ${manuscript%.md} archived" >> "$workingDir/$eventslog"
+}
+
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts in ./1-layout..." >> "$workingDir/$eventslog"
 ( # start subshell
 	if cd ./1-layout ; then
@@ -58,26 +95,12 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts in .
 		exit 77
 	fi
 
-	# prepare daily subdirectory for layout-versions archiving
-	mkdir -p $workingDir/archive/layout-versions/$today
-
 	# convert valid files
-	for manuscript in ./*.md; do
-		echo -e "\n\tconverting ${manuscript%.md}..."
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript%.md}, trying to convert it in PDF, HTML, TeX and JATS" >> "$workingDir/$eventslog"
-		# PDF conversion with Pandoc # -N --toc
-		pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" -N --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.latex" --pdf-engine=xelatex --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.pdf"
-		# LaTeX
-		pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" -N --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.latex" --pdf-engine=xelatex --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.tex"
-		# HTML conversion with Pandoc  --self-contained
-		pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" -N --toc --filter=pandoc-citeproc --email-obfuscation=references --section-divs --self-contained --template="$workingDir/z-lib/article.html5" --write=html5 --default-image-extension=.low.jpg -o "$workingDir/2-publication/${manuscript%.md}.html"
-		# JATS XML
-		pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" -N --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.jats" --write=jats --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.jats.xml"
-		# TEI XML
-		#pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" --toc -N --filter=pandoc-citeproc --template="$workingDir/z-lib/article.tei" --write=tei -s -o "$workingDir/2-publication/${manuscript%.md}.tei.xml"
-		# archive the processed manuscript
-		cp "$manuscript" "$workingDir/archive/layout-versions/$today/${manuscript%.md}-$(date +"%Y-%m-%dT%H:%M:%S").md"
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   copy of ${manuscript%.md} archived" >> "$workingDir/$eventslog"
+	for markdown in ./*.md; do
+		manuscript=${markdown#.\/};
+		# launch conversion
+		converttoformats
+
 	done
 ) # end subshell
 
