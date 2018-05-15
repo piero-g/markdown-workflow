@@ -142,4 +142,4 @@ Sambrook, J., & Russell, D. W. (2001). *Molecular cloning: a laboratory manual* 
 
 [^1]: This is a simple footnote;
 
-[^2]: All external links should be placed in footnotes rather than inline, and should be rendered as plain URI, such as the following: [https://pandoc.org]{.underline}
+[^2]: All external links should be placed in footnotes rather than inline, and should be rendered as plain URI, such as the following: [[https://pandoc.org]{.underline}](https://pandoc.org)
