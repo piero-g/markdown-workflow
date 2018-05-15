@@ -119,6 +119,8 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts from
 # 3. rename files
 ######
 
+shopt -s nullglob # Sets nullglob
+
 ( # start subshell
 	if cd "$tempdir" ; then
 		echo "Starting conversions..."
@@ -215,6 +217,8 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts from
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Manuscripts are processed and ready for editing in ./1-layout; each step has been archived with timestamp in ./archive" >> "$workingDir/$eventslog"
 
 ) # end subshell
+
+shopt -u nullglob # Unsets nullglob
 
 # variable check
 . $tempvar
