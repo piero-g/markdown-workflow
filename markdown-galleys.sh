@@ -34,9 +34,58 @@ mkdir -p $workingDir/{archive/layout-versions,2-publication}
 # creating only the directories pertaining this part of the workflow
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure, if not ready" >> "$workingDir/$eventslog"
 
+######
+# 2. parse options and parameters, if getopt isn't too old
+######
+
+getopt --test > /dev/null
+if [[ $? -ne 4 ]]; then
+		echo "I’m sorry, getopt --test failed in this environment!"
+		exit 1
+else
+	# getopt is updated, parse options
+	OPTIONS=phxo:
+	LONGOPTIONS=pdf,html,xml,output:
+
+	PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
+	if [[ $? -ne 0 ]]; then
+			# e.g. $? == 1
+			#  then getopt has complained about wrong arguments to stdout
+			exit 2
+	fi
+	# read getopt’s output this way to handle the quoting right:
+	eval set -- "$PARSED"
+
+	# now enjoy the options in order and nicely split until we see --
+	while true; do
+		case "$1" in
+			-p|--pdf)
+				p=y
+				shift
+				;;
+			-h|--html)
+				h=y
+				shift
+				;;
+			-x|--xml)
+				x=y
+				shift
+				;;
+			--)
+				shift
+				break
+				;;
+			*)
+				echo "Programming error"
+				exit 3
+				;;
+		esac
+	done
+
+fi
 
 ######
-# 2. conversion, change extension, not filename; then archive manuscript
+# 3. conversion, change extension, not filename; then archive manuscript
 ######
 
 # prepare daily subdirectory for layout-versions archiving
@@ -74,6 +123,9 @@ converttoformats() {
 	cp "$manuscript" "$workingDir/archive/layout-versions/$today/${manuscript%.md}-$(date +"%Y-%m-%dT%H:%M:%S").md"
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   copy of ${manuscript%.md} archived" >> "$workingDir/$eventslog"
 }
+
+# log the specified command options
+printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] command options: $PARSED" >> "$workingDir/$eventslog"
 
 # Do you want to run conversion on a specific article?
 if [ -z ${@+x} ]; then
