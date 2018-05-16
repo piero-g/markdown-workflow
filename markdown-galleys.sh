@@ -40,8 +40,8 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure, if n
 
 getopt --test > /dev/null
 if [[ $? -ne 4 ]]; then
-		echo "I’m sorry, getopt --test failed in this environment!"
-		exit 1
+		echo "I’m sorry, getopt --test failed in this environment, options will be ignored!"
+		NOOPT=true
 else
 	# getopt is updated, parse options
 	OPTIONS=phxo:
@@ -128,7 +128,7 @@ converttoformats() {
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] command options: $PARSED" >> "$workingDir/$eventslog"
 
 # Do you want to run conversion on a specific article?
-if [ -z ${@+x} ]; then
+if [ $NOOPT ] || [ -z ${@+x} ]; then
 	echo -e "\tno file specified"
 
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts in ./1-layout..." >> "$workingDir/$eventslog"
