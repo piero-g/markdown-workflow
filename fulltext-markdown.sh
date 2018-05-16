@@ -5,7 +5,7 @@
 # Please provide the manuscript in "./0-original/"
 #
 # Author: Piero Grandesso
-# Version: 0.9
+# https://github.com/piero-g/markdown-workflow
 #
 
 #####

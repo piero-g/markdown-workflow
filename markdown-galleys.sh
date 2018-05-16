@@ -4,7 +4,7 @@
 # Also archive a backup copy of the markdown version and log all the events
 #
 # Author: Piero Grandesso
-# Version: 0.9
+# https://github.com/piero-g/markdown-workflow
 #
 
 #####

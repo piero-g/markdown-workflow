@@ -6,7 +6,7 @@
 # Future desiderata are: compression via TinyPNG API, renaming etc
 #
 # Author: Piero Grandesso
-# Version: 0.3
+# https://github.com/piero-g/markdown-workflow
 #
 
 maxheight=2650 # at 300dpi = 225mm (A4 main body height, circa)
