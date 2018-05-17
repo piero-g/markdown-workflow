@@ -58,6 +58,24 @@ The `./z-lib/` directory contains the template to generate the publication forma
 
 The last two steps shall be repeated until happy with the results.
 
+### markdown-galleys options
+
+Currently the script for the conversion from markdown to publication files supports some options:
+
+- `-h` or `--html` for the conversion to html format
+- `-p` or `--pdf` for the conversion to pdf and TeX formats
+- `-x` or `--xml` for the conversion to xml formats
+
+Options can be combined; if no option is specified, the script will generate all formats.
+
+You can also specify the path of the files to be converted (one ore more); else the conversion will happen on every markdown file in `/1-layout/`.
+
+Example:
+
+```sh
+$ ./markdown-galleys.sh -ph ./1-layout/demo-article.md
+```
+
 ### Images
 
 The first conversion will create subdirectories for media files inside `./1-layout/`. Media files may be processed using the shell, with `./img-compress.sh` (it must be launched inside the media directory). Each image will be scaled to optimal dimensions at 300DPI; a low resolution version, to be used in the HTML file, will also be generated.
