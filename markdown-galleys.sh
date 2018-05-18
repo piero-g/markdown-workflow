@@ -109,15 +109,32 @@ converttoxml() {
 	#pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" --toc -N --filter=pandoc-citeproc --template="$workingDir/z-lib/article.tei" --write=tei -s -o "$workingDir/2-publication/${manuscript%.md}.tei.xml"
 }
 
-# generic function that calls the specific conversions (for future enhancements)
+# generic function that calls the specific conversions
 converttoformats() {
 	echo -e "\n\tconverting ${manuscript%.md}..."
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript%.md}, trying to convert it" >> "$workingDir/$eventslog"
 
-	# call specific conversions
-	converttohtml
-	converttopdf
-	converttoxml
+	if [ $p ] || [ $h ] || [ $x ]; then
+		echo -e "\tconverting only to the specified formats"
+	else
+		echo -e "\tno options given, preparing all formats"
+		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   no options given, preparing all formats" >> "$workingDir/$eventslog"
+		converttohtml
+		converttopdf
+		converttoxml
+	fi
+
+	if [ $h ]; then
+		converttohtml
+	fi
+
+	if [ $p ]; then
+		converttopdf
+	fi
+
+	if [ $x ]; then
+		converttoxml
+	fi
 
 	# archive the processed manuscript
 	cp "$manuscript" "$workingDir/archive/layout-versions/$today/${manuscript%.md}-$(date +"%Y-%m-%dT%H:%M:%S").md"
