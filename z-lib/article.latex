@@ -461,6 +461,12 @@ $for(hyphenation)$
 $endfor$
 $endif$
 
+% custom: draft mark with date
+$if(draft)$
+\usepackage{draftwatermark}
+\SetWatermarkText{\shortstack{draft \\ {\LARGE\today}}}
+$endif$
+
 $if(beamer)$
 $if(titlegraphic)$
 \titlegraphic{\includegraphics{$titlegraphic$}}

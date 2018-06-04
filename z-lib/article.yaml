@@ -59,6 +59,9 @@ copyright:
 # language
 lang: en-US # mandatory: en-US, en-GB, it-IT...
 
+# draft watermark with date
+draft: true # keep to true until the proofreading is complete
+
 # page numbering
 page:
   prefix: draft # uncomment and fill if you need a prefix for the page sequence (eg: reviews could use a "p. R 12")
