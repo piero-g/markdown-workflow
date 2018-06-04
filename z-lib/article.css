@@ -20,24 +20,25 @@ a.footnote-back { margin-left: 6px; }
 h1.title { font-size: 2em; }
 
 #articleBody { border-top: 1px solid #E2E2E2; margin-top: 3em; padding-top: 2em; }
-#articleBody h1 { font-size: 2em; }
 #articleBody section { margin-top: 3em; }
 #articleBody ul, #articleBody ol { padding: 0 0 0 1.1em; }
 #articleBody li { margin: 0.5em 0; }
 #articleBody .footnotes ol { margin-left: 1em; }
-#articleBody nav { background-color: #E2E2E2; border-radius: 5px; padding: 9px; font-size: 0.8em; margin: 0 0 2em 0; }
+#articleBody nav { background-color: #E2E2E2; border-radius: 12px; padding: 9px; font-size: 0.8em; margin: 0 0 2em 0; }
 #articleBody nav li { list-style-type: none; padding-top: 7px; }
 #articleBody nav h1 { text-align: center; }
 #articleBody nav ul { padding-left: 2em; }
 #articleBody figure { text-align: center; }
 #articleBody figure img { max-width: 100%; width: auto !important; }
 #articleBody figure figcaption { font-size: 0.9em; }
-#articleBody table { border: 2px solid #ffffff; border-collapse: collapse; margin: auto; text-align: left; }
+#articleBody .centered { text-align: center; }
+#articleBody table { border: 2px solid #ffffff; border-collapse: collapse; margin: 1em auto; text-align: left; }
 #articleBody table td, #articleBody table th { border-left: 1px solid #888888; border-right: 1px solid #888888; padding: 5px 8px; }
-#articleBody table tr.even { background: #E2E2E2; }
+div.simple-table #articleBody table tr.even { background: #E2E2E2; }
 #articleBody table thead { background: #ffffff; border-bottom: 1px solid #888888; }
 #articleBody table thead th { font-weight: bold; }
 #articleBody table tfoot { font-weight: bold; border-top: 1px solid #888888; }
+div.wide-table #articleBody table tr td { padding-bottom: 1.2em; vertical-align: top; }
 #articleBody blockquote { border-left: 3px solid #E2E2E2; margin-left: 0; margin-right: 0; padding: 0 3em; }
 
 @media (min-width: 48em) { #articleBody nav { float: right; margin: 0 0 2em 2em; width: 35%; } }
@@ -62,8 +63,10 @@ div.author-block p.author { margin-bottom: 0; }
 .front-meta .article-meta .article-reviewed { font-style: italic; }
 
 .header-section-number, .toc-section-number { margin-right: 0.5em; }
-/* indentation rules */
-/*.author-block p, .meta p, #articleBody p { margin: 0; text-indent: 2em; }
+
+/* text indentation */
+.author-block p, .meta p, #articleBody p { margin: 0; text-indent: 2em; }
 .author-block p:first-of-type, .meta p:first-of-type, #articleBody p:first-of-type { text-indent: 0; }
 
-#articleBody section#references p, #articleBody section.list p { margin: 1em; text-indent: -1em; }*/
+#articleBody section#references p, #articleBody section.list p { margin: 1em; text-indent: -1em; }
+#articleBody .footnotes p { margin: 1em 0; }
