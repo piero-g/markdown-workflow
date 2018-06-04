@@ -316,6 +316,10 @@ $-- Various customizations --$
 \captionsetup[figure]{labelformat=empty}
 \captionsetup[table]{labelformat=empty}
 
+% custom: icons
+\usepackage{academicons}
+\usepackage{fontawesome}
+
 % custom: dates
 \usepackage[useregional]{datetime2}
 
@@ -425,7 +429,7 @@ $if(subtitle)$
 \subtitle{$subtitle$}
 $endif$
 $if(author)$ % custom: affiliation only if "affiliationonly" is true, else boxed version below abstract
-\author{$for(author)$$author.name$$if(affiliationonly)$$if(author.affiliation)$\thanks{$for(author.affiliation)$$author.affiliation$$sep$; $endfor$$if(author.corresp)$; $localization.corresp$: $author.email$$endif$}$endif$$endif$$sep$ \and $endfor$}
+\author{$for(author)$$author.name$$if(affiliationonly)$$if(author.affiliation)$\thanks{$for(author.affiliation)$$author.affiliation$$sep$; $endfor$$if(author.corresp)$; \faEnvelope~$author.email$$endif$}$endif$$endif$$sep$ \and $endfor$}
 $endif$
 $if(institute)$
 \providecommand{\institute}[1]{}
@@ -491,7 +495,7 @@ $-- custom: first page header and footer --$
   $endif$
   $if(copyright)$
   % left footer: copyright block
-  \lfoot{\small\sffamily Copyright © $if(copyright.year)$$copyright.year$$endif$ $if(copyright.holder)$$copyright.holder$$endif$ \\ $if(copyright.text)$$copyright.text$ \\$endif$ $if(copyright.link)$\url{$copyright.link$}$endif$}
+  \lfoot{\small\sffamily Copyright \copyright~$if(copyright.year)$$copyright.year$$endif$ $if(copyright.holder)$$copyright.holder$$endif$ \\ $if(copyright.text)$$copyright.text$ \\$endif$ $if(copyright.link)$\url{$copyright.link$}$endif$}
   $endif$
 }
 $endif$
@@ -526,7 +530,7 @@ $for(author)$ % custom: author block with email, orcid and bio
 \renewcommand{\abstractname}{$author.name$$if(author.affiliation)$:$endif$}
 \begin{abstract} % was \sffamily
 \small $for(author.affiliation)$$author.affiliation$$sep$; $endfor$
-$if(author.orcid)$ \\ \url{$author.orcid$}$endif$$if(author.corresp)$\\ $localization.corresp$: $author.email$$endif$$if(author.bio)$ \\ $author.bio$$endif$
+$if(author.orcid)$ \\ \aiOrcid~\url{$author.orcid$}$endif$$if(author.corresp)$\\ \faEnvelope~$author.email$$endif$$if(author.bio)$ \\ $author.bio$$endif$
 \end{abstract}
 \end{samepage}
 $endfor$
