@@ -369,6 +369,12 @@ $endif$
 $if(issuecolor)$
 \definecolor{issuecolor}{HTML}{$issuecolor$}
 $endif$
+% custom: hideFromPandoc command to allow latex block with \Begin and \End
+\newcommand{\hideFromPandoc}[1]{#1}
+\hideFromPandoc{
+  \let\Begin\begin
+  \let\End\end
+}
 
 % set default figure placement to htbp
 \makeatletter
