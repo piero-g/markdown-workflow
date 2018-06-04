@@ -429,7 +429,7 @@ $if(subtitle)$
 \subtitle{$subtitle$}
 $endif$
 $if(author)$ % custom: affiliation only if "affiliationonly" is true, else boxed version below abstract
-\author{$for(author)$$author.name$$if(affiliationonly)$$if(author.affiliation)$\thanks{$for(author.affiliation)$$author.affiliation$$sep$; $endfor$$if(author.corresp)$; {\scriptsize\faEnvelope}~$author.email$$endif$}$endif$$endif$$sep$ \and $endfor$}
+\author{$for(author)$$author.name$$if(affiliationonly)$$if(author.affiliation)$\thanks{$for(author.affiliation)$$author.affiliation$$sep$; $endfor$$if(author.corresp)$; {\scriptsize\faEnvelope}~$author.email$$endif$$if(author.orcid)$; \aiOrcid~\url{$author.orcid$}$endif$}$else$$if(author.corresp)$\thanks{{\scriptsize\faEnvelope}~$author.email$$if(author.orcid)$; \aiOrcid~\url{$author.orcid$}$endif$}$endif$$endif$$endif$$sep$ \and $endfor$}
 $endif$
 $if(institute)$
 \providecommand{\institute}[1]{}
