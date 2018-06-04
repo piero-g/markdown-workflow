@@ -87,10 +87,13 @@ $endif$
 $for(author)$
   <!-- author block -->
   <div class="author-block" property="author" typeof="Person"$if(author.orcid)$ resource="$author.orcid$"$endif$>
-    <p class="author">$if(author.given-name)$<meta property="givenName" content="$author.given-name$" />$endif$$if(author.surname)$<meta property="familyName" content="$author.surname$" />$endif$<span class="author-name" property="name">$author.name$</span>
-    $if(author.affiliation)$ &mdash; $for(author.affiliation)$<span class="affiliation" property="affiliation">$author.affiliation$</span>$sep$; $endfor$$endif$
-    $if(author.corresp)$ &mdash; <span class="email"><span class="contact-intro">$localization.corresp$:</span> <span class="email-address" property="email">$author.email$</span></span>$endif$
-    $if(author.orcid)$<br> <span class="orcid" property="identifier" typeof="PropertyValue"><span class="orcid-intro" property="propertyID">ORCID</span> <a href="$author.orcid$" property="value">$author.orcid$</a></span>$endif$
+    <p class="author">
+      $if(author.given-name)$<meta property="givenName" content="$author.given-name$" />$endif$
+      $if(author.surname)$<meta property="familyName" content="$author.surname$" />$endif$
+      <span class="author-name" property="name">$author.name$</span>
+      $if(author.affiliation)$ &mdash; $for(author.affiliation)$<span class="affiliation" property="affiliation">$author.affiliation$</span>$sep$; $endfor$$endif$
+      $if(author.corresp)$ &mdash; <span class="email"><span class="contact-intro">$localization.corresp$:</span>&nbsp;<span class="email-address" property="email">$author.email$</span></span>$endif$
+      $if(author.orcid)$<br> <span class="orcid" property="identifier" typeof="PropertyValue"><span class="orcid-intro" property="propertyID">ORCID</span>&nbsp;<a href="$author.orcid$" property="value">$author.orcid$</a></span>$endif$
     </p>
     $if(author.bio)$
     <div class="author-bio" property="description">
@@ -152,7 +155,7 @@ $endfor$
 $if(copyright)$
 <!-- Copyright block -->
 <div id="copyright">
-Copyright © $if(copyright.year)$<span property="copyrightYear">$copyright.year$</span>$endif$
+Copyright ©&nbsp;$if(copyright.year)$<span property="copyrightYear">$copyright.year$</span>$endif$
 $if(copyright.holder)$<span class="copyright-holder" property="copyrightHolder">$copyright.holder$</span>$endif$
 $if(copyright.text)$<br /><span class="copyright-text">$copyright.text$</span>$endif$
 $if(copyright.link)$<br /><a href="$copyright.link$" property="license">$copyright.link$</a>$endif$

@@ -360,7 +360,7 @@ $else$
 $endif$
 % right footer (ID + page (with optional prefix))
 $if(article.id)$
-\rfoot{\small\sffamily Art. \#$article.id$ \\ p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
+\rfoot{\small\sffamily Art.~\#$article.id$ \\ p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
 $else$
 \rfoot{\small\sffamily p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
 $endif$
@@ -429,7 +429,7 @@ $if(subtitle)$
 \subtitle{$subtitle$}
 $endif$
 $if(author)$ % custom: affiliation only if "affiliationonly" is true, else boxed version below abstract
-\author{$for(author)$$author.name$$if(affiliationonly)$$if(author.affiliation)$\thanks{$for(author.affiliation)$$author.affiliation$$sep$; $endfor$$if(author.corresp)$; \faEnvelope~$author.email$$endif$}$endif$$endif$$sep$ \and $endfor$}
+\author{$for(author)$$author.name$$if(affiliationonly)$$if(author.affiliation)$\thanks{$for(author.affiliation)$$author.affiliation$$sep$; $endfor$$if(author.corresp)$; {\scriptsize\faEnvelope}~$author.email$$endif$}$endif$$endif$$sep$ \and $endfor$}
 $endif$
 $if(institute)$
 \providecommand{\institute}[1]{}
@@ -486,7 +486,7 @@ $-- custom: first page header and footer --$
 \fancypagestyle{plain}{%
   \fancyhf{}%
   % right header: journal title (extended) and eISSN
-  \rhead{\small\sffamily $journal.title$$if(issuedisplay)$. $issuedisplay$$endif$$if(journal.eissn)$ \\ ISSN $journal.eissn$$endif$}
+  \rhead{\small\sffamily $journal.title$$if(issuedisplay)$. $issuedisplay$$endif$$if(journal.eissn)$ \\ ISSN~$journal.eissn$$endif$}
   % left header: section, peer-reviewed plus DOI or journal url
   $if(article.section)$
   \lhead{\small\sffamily $article.section$$if(article.peer-review)$ -- \emph{$localization.peer-reviewed$}$endif$$if(article.doi)$ \\ \url{https://doi.org/$article.doi$}$else$ \\ \url{$journal.url$}$endif$}
@@ -495,7 +495,7 @@ $-- custom: first page header and footer --$
   $endif$
   % right footer (ID + page (with optional prefix))
   $if(article.id)$
-  \rfoot{\small\sffamily Art. \#$article.id$ \\ p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
+  \rfoot{\small\sffamily Art.~\#$article.id$ \\ p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
 	$else$
 	\rfoot{\small\sffamily p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
   $endif$
@@ -536,7 +536,7 @@ $for(author)$ % custom: author block with email, orcid and bio
 \renewcommand{\abstractname}{$author.name$$if(author.affiliation)$:$endif$}
 \begin{abstract} % was \sffamily
 \small $for(author.affiliation)$$author.affiliation$$sep$; $endfor$
-$if(author.orcid)$ \\ \aiOrcid~\url{$author.orcid$}$endif$$if(author.corresp)$\\ \faEnvelope~$author.email$$endif$$if(author.bio)$ \\ $author.bio$$endif$
+$if(author.orcid)$ \\ \aiOrcid~\url{$author.orcid$}$endif$$if(author.corresp)$\\ {\scriptsize\faEnvelope}~$author.email$$endif$$if(author.bio)$ \\ $author.bio$$endif$
 \end{abstract}
 \end{samepage}
 $endfor$
