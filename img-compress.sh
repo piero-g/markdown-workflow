@@ -32,6 +32,59 @@ EXTPNG=png
 EXTJPG=jpg
 EXTJPEG=jpeg
 EXTTIFF=tiff
+DENSITY=300
+
+######
+# parse options and parameters, if getopt isn't too old
+######
+
+getopt --test > /dev/null
+if [[ $? -ne 4 ]]; then
+		echo "I’m sorry, getopt --test failed in this environment, exiting now!"
+		exit 1
+else
+	# getopt is updated, parse options
+	OPTIONS=pd:
+	LONGOPTIONS=preserve,dpi:
+
+	PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
+	if [[ $? -ne 0 ]]; then
+			# e.g. $? == 1
+			#  then getopt has complained about wrong arguments to stdout
+			exit 2
+	fi
+	# read getopt’s output this way to handle the quoting right:
+	eval set -- "$PARSED"
+
+	# now enjoy the options in order and nicely split until we see --
+	while true; do
+		case "$1" in
+			-p|--preserve)
+				p=y
+				shift
+				;;
+			-d|--dpi)
+				if [ "$2" -eq "$2" ] 2>/dev/null
+				then
+					DENSITY="$2"
+				else
+					echo "ERROR: --dpi must be an integer."
+					exit 1
+				fi
+				shift 2
+				;;
+			--)
+				shift
+				break
+				;;
+			*)
+				echo "Programming error"
+				exit 3
+				;;
+		esac
+	done
+
+fi
 
 for image in *.{jpeg,jpg,png,tiff} ; do
 	echo "${image}:"
