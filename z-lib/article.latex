@@ -132,8 +132,8 @@ $else$
 \setlength{\parskip}{6pt plus 2pt minus 1pt}
 }
 $endif$
-% custom: footnotes
-\usepackage[bottom,hang,multiple]{footmisc}
+% custom: footnotes (more below)
+\usepackage[bottom,hang,multiple,stable]{footmisc}
 \setlength{\footnotesep}{4mm}
 $if(verbatim-in-note)$
 \usepackage{fancyvrb}
@@ -364,8 +364,22 @@ $if(article.id)$
 $else$
 \rfoot{\small\sffamily p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
 $endif$
-% custom: TEST for fixing footnotes in first page
+% custom: TEST for more behaved footnotes
 \usepackage{etoolbox}
+% no superscript footnote marks, by egreg from https://tex.stackexchange.com/a/96400
+\makeatletter
+\newcommand{\nosupmark@makefnmark}{\@thefnmark}
+\pretocmd{\@makefntext}{\let\@makefnmark\nosupmark@makefnmark}{}{}
+
+% custom: footnotes in first page similar to normal ones
+\patchcmd\maketitle{\renewcommand\thefootnote{\@alph\c@footnote}}{\AdaptNote\thanks\multthanks}{}{}
+\patchcmd\maketitle{%
+  \def\@makefnmark{\rlap{\@textsuperscript{\normalfont\@thefnmark}}}}{}{}{}
+\makeatother
+$if(thanksmarkseries)$
+% custom: footnotes in first page (thanks) not using fnsymbol (depends on \usepackage{titling})
+\thanksmarkseries{$thanksmarkseries$}
+$endif$
 $if(issuecolor)$
 \definecolor{issuecolor}{HTML}{$issuecolor$}
 $endif$
@@ -379,10 +393,6 @@ $endif$
 % set default figure placement to htbp
 \makeatletter
 \def\fps@figure{htbp}
-% custom: TEST for fixing footnotes in first page
-\patchcmd\maketitle{\renewcommand\thefootnote{\@fnsymbol\c@footnote}}{\AdaptNote\thanks\multthanks}{}{}
-\patchcmd\maketitle{%
-  \def\@makefnmark{\rlap{\@textsuperscript{\normalfont\@thefnmark}}}}{}{}{}
 \makeatother
 
 $for(header-includes)$
