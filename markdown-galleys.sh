@@ -180,7 +180,7 @@ if [ $NOOPT ] || [ -z ${@+x} ]; then
 else # we have a parameter: convert only specified file
 	for parameter in $@; do
 		echo -e "\nparameter is set to '$parameter'";
-		manuscript=${parameter#.\/1-layout\/};
+		manuscript="$( echo "$parameter" | sed -r 's/^\.?\/?1\-layout\///' )"
 
 		( # start subshell
 			if cd ./1-layout ; then
