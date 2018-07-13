@@ -75,8 +75,11 @@ $if(article.id)$
 <meta property="propertyID" content="publisher-id" />
 Art. <span property="value">#$article.id$</span></p>
 $endif$
-$if(pagination)$
+$if(issuepagination)$
 <meta property="pageStart" content="$if(page.prefix)$$page.prefix$ $endif$$page.start$" />
+$if(page.end)$
+<meta property="pageEnd" content="$if(page.prefix)$$page.prefix$ $endif$$page.end$" />
+$endif$
 $endif$
 </div>
 </div>

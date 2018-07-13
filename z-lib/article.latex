@@ -358,12 +358,8 @@ $if(article.doi)$
 $else$
 \lfoot{\small\sffamily \url{$journal.url$}}
 $endif$
-% right footer (ID + page (with optional prefix))
-$if(article.id)$
-\rfoot{\small\sffamily Art.~\#$article.id$ \\ p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
-$else$
-\rfoot{\small\sffamily p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
-$endif$
+% right footer (ID (if issuepagination false) + page (with optional prefix))
+\rfoot{\small\sffamily $if(article.id)$$if(issuepagination)$$else$Art.~\#$article.id$ \\ p.$endif$$endif$$if(page.prefix)$ $page.prefix$$endif$ \thepage}
 % custom: TEST for more behaved footnotes
 \usepackage{etoolbox}
 % no superscript footnote marks, by egreg from https://tex.stackexchange.com/a/96400
@@ -513,11 +509,7 @@ $-- custom: first page header and footer --$
   $if(article.doi)$\lhead{\small\sffamily \url{$journal.url$} \\ \url{https://doi.org/$article.doi$}}$endif$
   $endif$
   % right footer (ID + page (with optional prefix))
-  $if(article.id)$
-  \rfoot{\small\sffamily Art.~\#$article.id$ \\ p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
-	$else$
-	\rfoot{\small\sffamily p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
-  $endif$
+  \rfoot{\small\sffamily $if(article.id)$Art.~\#$article.id$ \\ p.$endif$$if(page.prefix)$ $page.prefix$$endif$ \thepage}
   $if(copyright)$
   % left footer: copyright block
   \lfoot{\small\sffamily Copyright \copyright~$if(copyright.year)$$copyright.year$$endif$ $if(copyright.holder)$$copyright.holder$$endif$ \\ $if(copyright.text)$$copyright.text$ \\$endif$ $if(copyright.link)$\url{$copyright.link$}$endif$}
