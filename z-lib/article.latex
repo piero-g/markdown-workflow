@@ -547,8 +547,6 @@ $else$
 \vspace{2em} % ia safe spacing if lots of authors
 \vspace*{\fill} % push to the bottom
 $endif$
-\vspace{2em} % ia safe spacing if lots of authors
-\vspace*{\fill} % push to the bottom
 \renewenvironment{abstract}
  {\par\noindent\textbf{\abstractname}\ \ignorespaces}
  {\par\medskip}
