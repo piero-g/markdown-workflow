@@ -542,6 +542,12 @@ $if(affiliationonly)$
 % custom: no author blocks, just affiliation
 $else$
 % custom: author blocks
+$if(authorspagebreak)$ % custom: put authors in a second page
+\newpage
+$else$
+\vspace{2em} % ia safe spacing if lots of authors
+\vspace*{\fill} % push to the bottom
+$endif$
 \vspace{2em} % ia safe spacing if lots of authors
 \vspace*{\fill} % push to the bottom
 \renewenvironment{abstract}
