@@ -368,7 +368,7 @@ $endif$
 \usepackage{etoolbox}
 % no superscript footnote marks, by egreg from https://tex.stackexchange.com/a/96400
 \makeatletter
-\newcommand{\nosupmark@makefnmark}{\@thefnmark}
+\newcommand{\nosupmark@makefnmark}{\@thefnmark.}
 \pretocmd{\@makefntext}{\let\@makefnmark\nosupmark@makefnmark}{}{}
 
 % custom: footnotes in first page similar to normal ones
