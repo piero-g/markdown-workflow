@@ -379,7 +379,10 @@ $endif$
 $if(thanksmarkseries)$
 % custom: footnotes in first page (thanks) not using fnsymbol (depends on \usepackage{titling})
 \thanksmarkseries{$thanksmarkseries$}
-$endif$
+$else$$if(fnsymbol)$
+% custom: different symbols set for thanks (default: lamport*)
+\setfnsymbol{$fnsymbol$}
+$endif$$endif$
 $if(issuecolor)$
 \definecolor{issuecolor}{HTML}{$issuecolor$}
 $endif$
