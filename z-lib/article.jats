@@ -78,6 +78,11 @@ $endif$
 $if(title)$
 <title-group>
 <article-title>$title$</article-title>
+$f(othertitle)
+<trans-title-group>
+<trans-title>$othertitle$</trans-title>
+</trans-title-group>
+$endif$
 </title-group>
 $endif$
 $if(author)$

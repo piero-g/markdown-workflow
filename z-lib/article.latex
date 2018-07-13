@@ -525,8 +525,12 @@ $-- custom: first page header and footer --$
 }
 $endif$
 $if(abstract)$ % custom: abstract name and style
-$if(localization.abstract)$\renewcommand{\abstractname}{$localization.abstract$}$endif$
+% custom if othertitle:
+$if(othertitle)$
+\renewcommand{\abstractname}{\vspace{-\baselineskip}}$else$
+$if(localization.abstract)$\renewcommand{\abstractname}{$localization.abstract$}$endif$$endif$
 \begin{abstract}
+$if(othertitle)$\par\noindent\textbf{$othertitle$}\medskip$endif$
 $if(indent)$\par\noindent $else$\setlength{\parindent}{0pt}
 \par\noindent $endif$$abstract$
 % custom: keywords in abstract

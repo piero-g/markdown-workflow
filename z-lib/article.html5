@@ -110,6 +110,9 @@ $if(dates)$
 $endif$
 $endif$
 <div class="meta">
+$if(othertitle)$
+<p class="othertitle" property="alternateName">$othertitle$</p>
+$endif$
 $if(abstract)$
 <!-- Abstract -->
 <section id="abstract">
