@@ -78,7 +78,7 @@ $endif$
 $if(title)$
 <title-group>
 <article-title>$title$</article-title>
-$f(othertitle)
+$if(othertitle)$
 <trans-title-group>
 <trans-title>$othertitle$</trans-title>
 </trans-title-group>
