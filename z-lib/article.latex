@@ -530,7 +530,7 @@ $if(localization.abstract)$\renewcommand{\abstractname}{$localization.abstract$}
 $if(indent)$\par\noindent $else$\setlength{\parindent}{0pt}
 \par\noindent $endif$$abstract$
 % custom: keywords in abstract
-$if(keywords)$\vspace{1mm}\\ \textbf{$localization.keywords$}: $for(keywords)$$keywords$$sep$; $endfor$$endif$
+$if(keywords)$\vspace{1mm}\\ \textbf{$localization.keywords$}: $for(keywords)$$keywords$$sep$; $endfor$.$endif$
 \end{abstract}
 $endif$
 $if(acknowledgements)$ % custom: acknowledgements

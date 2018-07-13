@@ -122,7 +122,7 @@ $endif$
 $if(keywords)$
 <!-- Keywords -->
 <p class="keywords"><span class="keywords-head">$localization.keywords$:</span>
-$for(keywords)$<span property="about">$keywords$</span>$sep$; $endfor$
+$for(keywords)$<span property="about">$keywords$</span>$sep$; $endfor$.
 </p>
 $endif$
 $if(acknowledgements)$
