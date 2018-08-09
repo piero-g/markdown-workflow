@@ -132,8 +132,8 @@ $else$
 \setlength{\parskip}{6pt plus 2pt minus 1pt}
 }
 $endif$
-% custom: footnotes
-\usepackage[bottom,hang,multiple]{footmisc}
+% custom: footnotes (more below)
+\usepackage[bottom,hang,multiple,stable]{footmisc}
 \setlength{\footnotesep}{4mm}
 $if(verbatim-in-note)$
 \usepackage{fancyvrb}
@@ -159,6 +159,9 @@ $else$ % custom
 $endif$
 $if(keywords)$
             pdfkeywords={$for(keywords)$$keywords$$sep$, $endfor$},
+$endif$
+$if(lang)$
+            pdflang={$lang$},
 $endif$
 $if(colorlinks)$
             colorlinks=true,
@@ -313,6 +316,10 @@ $-- Various customizations --$
 \captionsetup[figure]{labelformat=empty}
 \captionsetup[table]{labelformat=empty}
 
+% custom: icons
+\usepackage{academicons}
+\usepackage{fontawesome}
+
 % custom: dates
 \usepackage[useregional]{datetime2}
 
@@ -351,25 +358,40 @@ $if(article.doi)$
 $else$
 \lfoot{\small\sffamily \url{$journal.url$}}
 $endif$
-% right footer (ID + page (with optional prefix))
-$if(article.id)$
-\rfoot{\small\sffamily Art. \#$article.id$ \\ p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
-$else$
-\rfoot{\small\sffamily p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
-$endif$
-% custom: TEST for fixing footnotes in first page
+% right footer (ID (if issuepagination false) + page (with optional prefix))
+\rfoot{\small\sffamily $if(article.id)$$if(issuepagination)$$else$Art.~\#$article.id$ \\ p.$endif$$endif$$if(page.prefix)$ $page.prefix$$endif$ \thepage}
+% custom: TEST for more behaved footnotes
 \usepackage{etoolbox}
+% no superscript footnote marks, by egreg from https://tex.stackexchange.com/a/96400
+\makeatletter
+\newcommand{\nosupmark@makefnmark}{\@thefnmark.}
+\pretocmd{\@makefntext}{\let\@makefnmark\nosupmark@makefnmark}{}{}
+
+% custom: footnotes in first page similar to normal ones
+\patchcmd\maketitle{\renewcommand\thefootnote{\@alph\c@footnote}}{\AdaptNote\thanks\multthanks}{}{}
+\patchcmd\maketitle{%
+  \def\@makefnmark{\rlap{\@textsuperscript{\normalfont\@thefnmark}}}}{}{}{}
+\makeatother
+$if(thanksmarkseries)$
+% custom: footnotes in first page (thanks) not using fnsymbol (depends on \usepackage{titling})
+\thanksmarkseries{$thanksmarkseries$}
+$else$$if(fnsymbol)$
+% custom: different symbols set for thanks (default: lamport*)
+\setfnsymbol{$fnsymbol$}
+$endif$$endif$
 $if(issuecolor)$
 \definecolor{issuecolor}{HTML}{$issuecolor$}
 $endif$
+% custom: hideFromPandoc command to allow latex block with \Begin and \End
+\newcommand{\hideFromPandoc}[1]{#1}
+\hideFromPandoc{
+  \let\Begin\begin
+  \let\End\end
+}
 
 % set default figure placement to htbp
 \makeatletter
 \def\fps@figure{htbp}
-% custom: TEST for fixing footnotes in first page
-\patchcmd\maketitle{\renewcommand\thefootnote{\@fnsymbol\c@footnote}}{\AdaptNote\thanks\multthanks}{}{}
-\patchcmd\maketitle{%
-  \def\@makefnmark{\rlap{\@textsuperscript{\normalfont\@thefnmark}}}}{}{}{}
 \makeatother
 
 $for(header-includes)$
@@ -422,7 +444,7 @@ $if(subtitle)$
 \subtitle{$subtitle$}
 $endif$
 $if(author)$ % custom: affiliation only if "affiliationonly" is true, else boxed version below abstract
-\author{$for(author)$$author.name$$if(affiliationonly)$$if(author.affiliation)$\thanks{$for(author.affiliation)$$author.affiliation$$sep$; $endfor$$if(author.corresp)$; $localization.corresp$: $author.email$$endif$}$endif$$endif$$sep$ \and $endfor$}
+\author{$for(author)$$author.name$$if(affiliationonly)$$if(author.affiliation)$\thanks{$for(author.affiliation)$$author.affiliation$$sep$; $endfor$$if(author.corresp)$; {\scriptsize\faEnvelope}~$author.email$$endif$$if(author.orcid)$; \aiOrcid~\url{$author.orcid$}$endif$}$else$$if(author.corresp)$\thanks{{\scriptsize\faEnvelope}~$author.email$$if(author.orcid)$; \aiOrcid~\url{$author.orcid$}$endif$}$endif$$endif$$endif$$sep$ \and $endfor$}
 $endif$
 $if(institute)$
 \providecommand{\institute}[1]{}
@@ -454,6 +476,12 @@ $for(hyphenation)$
 $endfor$
 $endif$
 
+% custom: draft mark with date
+$if(draft)$
+\usepackage{draftwatermark}
+\SetWatermarkText{\shortstack{draft \\ {\LARGE\today}}}
+$endif$
+
 $if(beamer)$
 $if(titlegraphic)$
 \titlegraphic{\includegraphics{$titlegraphic$}}
@@ -473,7 +501,7 @@ $-- custom: first page header and footer --$
 \fancypagestyle{plain}{%
   \fancyhf{}%
   % right header: journal title (extended) and eISSN
-  \rhead{\small\sffamily $journal.title$$if(issuedisplay)$. $issuedisplay$$endif$$if(journal.eissn)$ \\ ISSN $journal.eissn$$endif$}
+  \rhead{\small\sffamily $journal.title$$if(issuedisplay)$. $issuedisplay$$endif$$if(journal.eissn)$ \\ ISSN~$journal.eissn$$endif$$if(extrarowheader)$ \\ \url{$journal.url$}$endif$}
   % left header: section, peer-reviewed plus DOI or journal url
   $if(article.section)$
   \lhead{\small\sffamily $article.section$$if(article.peer-review)$ -- \emph{$localization.peer-reviewed$}$endif$$if(article.doi)$ \\ \url{https://doi.org/$article.doi$}$else$ \\ \url{$journal.url$}$endif$}
@@ -481,24 +509,24 @@ $-- custom: first page header and footer --$
   $if(article.doi)$\lhead{\small\sffamily \url{$journal.url$} \\ \url{https://doi.org/$article.doi$}}$endif$
   $endif$
   % right footer (ID + page (with optional prefix))
-  $if(article.id)$
-  \rfoot{\small\sffamily Art. \#$article.id$ \\ p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
-	$else$
-	\rfoot{\small\sffamily p. $if(page.prefix)$$page.prefix$$endif$ \thepage}
-  $endif$
+  \rfoot{\small\sffamily $if(article.id)$Art.~\#$article.id$ \\ p.$endif$$if(page.prefix)$ $page.prefix$$endif$ \thepage}
   $if(copyright)$
   % left footer: copyright block
-  \lfoot{\small\sffamily Copyright © $if(copyright.year)$$copyright.year$$endif$ $if(copyright.holder)$$copyright.holder$$endif$ \\ $if(copyright.text)$$copyright.text$ \\$endif$ $if(copyright.link)$\url{$copyright.link$}$endif$}
+  \lfoot{\small\sffamily Copyright \copyright~$if(copyright.year)$$copyright.year$$endif$ $if(copyright.holder)$$copyright.holder$$endif$ \\ $if(copyright.text)$$copyright.text$ \\$endif$ $if(copyright.link)$\url{$copyright.link$}$endif$}
   $endif$
 }
 $endif$
 $if(abstract)$ % custom: abstract name and style
-$if(localization.abstract)$\renewcommand{\abstractname}{$localization.abstract$}$endif$
+% custom if othertitle:
+$if(othertitle)$
+\renewcommand{\abstractname}{\vspace{-\baselineskip}}$else$
+$if(localization.abstract)$\renewcommand{\abstractname}{$localization.abstract$}$endif$$endif$
 \begin{abstract}
+$if(othertitle)$\par\noindent\textbf{$othertitle$}\medskip$endif$
 $if(indent)$\par\noindent $else$\setlength{\parindent}{0pt}
 \par\noindent $endif$$abstract$
 % custom: keywords in abstract
-$if(keywords)$\vspace{1mm}\\ \textbf{$localization.keywords$}: $for(keywords)$$keywords$$sep$; $endfor$$endif$
+$if(keywords)$\vspace{1mm}\\ \textbf{$localization.keywords$}: $for(keywords)$$keywords$$sep$; $endfor$.$endif$
 \end{abstract}
 $endif$
 $if(acknowledgements)$ % custom: acknowledgements
@@ -513,8 +541,12 @@ $if(affiliationonly)$
 % custom: no author blocks, just affiliation
 $else$
 % custom: author blocks
+$if(authorspagebreak)$ % custom: put authors in a second page
+\newpage
+$else$
 \vspace{2em} % ia safe spacing if lots of authors
 \vspace*{\fill} % push to the bottom
+$endif$
 \renewenvironment{abstract}
  {\par\noindent\textbf{\abstractname}\ \ignorespaces}
  {\par\medskip}
@@ -523,7 +555,7 @@ $for(author)$ % custom: author block with email, orcid and bio
 \renewcommand{\abstractname}{$author.name$$if(author.affiliation)$:$endif$}
 \begin{abstract} % was \sffamily
 \small $for(author.affiliation)$$author.affiliation$$sep$; $endfor$
-$if(author.orcid)$ \\ \url{$author.orcid$}$endif$$if(author.corresp)$\\ $localization.corresp$: $author.email$$endif$$if(author.bio)$ \\ $author.bio$$endif$
+$if(author.orcid)$ \\ \aiOrcid~\url{$author.orcid$}$endif$$if(author.corresp)$\\ {\scriptsize\faEnvelope}~$author.email$$if(author.url)$;  {\scriptsize\faExternalLink}~\url{$author.url$}$endif$$else$$if(author.url)$\\ {\scriptsize\faExternalLink}~\url{$author.url$}$endif$$endif$$if(author.bio)$ \\ $author.bio$$endif$
 \end{abstract}
 \end{samepage}
 $endfor$

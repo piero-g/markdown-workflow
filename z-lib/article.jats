@@ -78,12 +78,17 @@ $endif$
 $if(title)$
 <title-group>
 <article-title>$title$</article-title>
+$if(othertitle)$$-- custom othertitle --$
+<trans-title-group>
+<trans-title>$othertitle$</trans-title>
+</trans-title-group>
+$endif$
 </title-group>
 $endif$
 $if(author)$
 <contrib-group>
 $for(author)$
-<contrib contrib-type="author">
+<contrib contrib-type="author"$if(author.corresp)$ corresp="yes"$endif$>
 $if(author.orcid)$
 <contrib-id contrib-id-type="orcid">$author.orcid$</contrib-id>
 $endif$
@@ -168,12 +173,23 @@ $endif$
 $endif$
 $if(article.volume)$
 <volume>$article.volume$</volume>
+$else$$if(volume)$$-- custom volume + issue identifiers --$
+<volume>$volume$</volume>
+      $endif$
 $endif$
 $if(article.issue)$
 <issue>$article.issue$</issue>
+$else$$if(issue)$
+<issue>$issue$</issue>
+      $endif$
 $endif$
 $if(article.fpage)$
 <fpage>$article.fpage$</fpage>
+$else$$if(page.start)$$-- custom pagination --$
+<fpage$if(issuepagination)$$if(page.prefix)$ seq="$page.prefix$"$endif$$else$$if(article.id)$ seq="$article.id$"$endif$$endif$>$page.start$</fpage>
+$if(page.end)$
+<lpage>$page.end$</lpage>
+$endif$$endif$
 $endif$
 $if(article.lpage)$
 <lpage>$article.lpage$</lpage>
