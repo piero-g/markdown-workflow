@@ -555,7 +555,7 @@ $for(author)$ % custom: author block with email, orcid and bio
 \renewcommand{\abstractname}{$author.name$$if(author.affiliation)$:$endif$}
 \begin{abstract} % was \sffamily
 \small $for(author.affiliation)$$author.affiliation$$sep$; $endfor$
-$if(author.orcid)$ \\ \aiOrcid~\url{$author.orcid$}$endif$$if(author.corresp)$\\ {\scriptsize\faEnvelope}~$author.email$$endif$$if(author.bio)$ \\ $author.bio$$endif$
+$if(author.orcid)$ \\ \aiOrcid~\url{$author.orcid$}$endif$$if(author.corresp)$\\ {\scriptsize\faEnvelope}~$author.email$$if(author.url)$;  {\scriptsize\faExternalLink}~\url{$author.url$}$endif$$else$$if(author.url)$\\ {\scriptsize\faExternalLink}~\url{$author.url$}$endif$$endif$$if(author.bio)$ \\ $author.bio$$endif$
 \end{abstract}
 \end{samepage}
 $endfor$

@@ -96,6 +96,7 @@ $for(author)$
       <span class="author-name" property="name">$author.name$</span>
       $if(author.affiliation)$ &mdash; $for(author.affiliation)$<span class="affiliation" property="affiliation">$author.affiliation$</span>$sep$; $endfor$$endif$
       $if(author.corresp)$ &mdash; <span class="email"><span class="contact-intro">$localization.corresp$:</span>&nbsp;<span class="email-address" property="email">$author.email$</span></span>$endif$
+      $if(author.url)$<span class="author-website"> &mdash; <a href="$author.url$" property="url">$author.url$</a></span>$endif$
       $if(author.orcid)$<br> <span class="orcid" property="identifier" typeof="PropertyValue"><span class="orcid-intro" property="propertyID">ORCID</span>&nbsp;<a href="$author.orcid$" property="value">$author.orcid$</a></span>$endif$
     </p>
     $if(author.bio)$
