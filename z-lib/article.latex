@@ -317,6 +317,9 @@ $-- Various customizations --$
 \captionsetup[table]{labelformat=empty}
 
 % custom: icons
+% fix for custom icons (fontawesome), since TeXLive 2018
+\usepackage{fontspec}
+\defaultfontfeatures{Extension = .otf}
 \usepackage{academicons}
 \usepackage{fontawesome}
 
