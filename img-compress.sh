@@ -28,6 +28,7 @@ EXTPNG=png
 EXTJPG=jpg
 EXTJPEG=jpeg
 EXTTIFF=tiff
+EXTTIF=tif
 DENSITY=300
 
 ######
@@ -83,7 +84,7 @@ else
 
 fi
 
-for image in *.{jpeg,jpg,png,tiff} ; do
+for image in *.{jpeg,jpg,png,tiff,tif} ; do
 	echo "${image}:"
 	identify -format '%[width] %[height]\n' ${image}
 	cp ${image} ./orig/${image}
@@ -116,6 +117,12 @@ for image in *.{jpeg,jpg,png,tiff} ; do
 		convert ${image} -resize ${lowwidth}x${lowheight}\> ${image%.${EXTTIFF}}.low.jpg
 		convert -units PixelsPerInch ${image} -density $DENSITY ${image%.${EXTTIFF}}.jpg
 		convert ${image%.${EXTTIFF}}.jpg -resize ${maxwidth}x${maxheight}\> ${image%.${EXTTIFF}}.jpg
+		rm ${image}
+		echo "${image} converted in JPG and resized (if necessary)"
+	elif [ "${image}" != "${image%.${EXTTIF}}" ]; then
+		convert ${image} -resize ${lowwidth}x${lowheight}\> ${image%.${EXTTIF}}.low.jpg
+		convert -units PixelsPerInch ${image} -density $DENSITY ${image%.${EXTTIF}}.jpg
+		convert ${image%.${EXTTIF}}.jpg -resize ${maxwidth}x${maxheight}\> ${image%.${EXTTIF}}.jpg
 		rm ${image}
 		echo "${image} converted in JPG and resized (if necessary)"
 	fi
