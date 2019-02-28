@@ -85,9 +85,11 @@ else
 fi
 
 for image in *.{jpeg,jpg,png,tiff,tif} ; do
-	echo "${image}:"
+	echo -e "\n${image}:"
 	identify -format '%[width] %[height]\n' ${image}
 	cp ${image} ./orig/${image}
+	# is it going to work?
+	convert ${image} -colorspace sRGB ${image}
 
 	if [ "${image}" != "${image%.${EXTPNG}}" ]; then
 		# if "preserve"
