@@ -41,17 +41,18 @@ tempdir=`mktemp -d $workingDir/tmp.XXXXXXXXXXXX`
 
 echo "Preparing \"self contained\" layout files"
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Copying layout files to a temporary directory" >> "$workingDir/$eventslog"
-cp -a ./1-layout/*.md $tempdir
+cp -a "./1-layout/*.md" $tempdir
 
 ( # start subshell
 	cd $tempdir
 	for layout in *.md ; do
-		cat "$workingDir/z-lib/issue.yaml" >> ${layout}
+		printf "\n" >> "${layout}"
+		cat "$workingDir/z-lib/issue.yaml" >> "${layout}"
 		wait
-		cat "$workingDir/z-lib/journal.yaml" >> ${layout}
+		cat "$workingDir/z-lib/journal.yaml" >> "${layout}"
 		wait
 		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Issue and journal settings appended to ${layout}, now archiving" >> "$workingDir/$eventslog"
-		mv ${layout} $workingDir/archive/final-version/self-contained/${layout}
+		mv "${layout}" "$workingDir/archive/final-version/self-contained/${layout}"
 	done
 ) # end subshell
 
@@ -64,8 +65,7 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving publication files..." >> "$wo
 ( # start subshell
 	cd ./2-publication/
 	for galley in *.{pdf,html,xml,tex} ; do
-		# TEST: change with mv
-		mv ${galley} -t $workingDir/archive/final-version/publication/
+		mv "${galley}" -t $workingDir/archive/final-version/publication/
 		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ...publication file ${galley} archived" >> "$workingDir/$eventslog"
 	done
 ) # end subshell
@@ -75,15 +75,14 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving layout files..." >> "$working
 ( # start subshell
 	cd ./1-layout/
 	for layout in *.md ; do
-		# TEST: change with mv
-		mv ${layout} -t $workingDir/archive/final-version/
+		mv "${layout}" -t $workingDir/archive/final-version/
 		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ...final version of layout file for ${layout%.md} archived" >> "$workingDir/$eventslog"
 	done
 ) # end subshell
 
 # z-lib directory
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving ./z-lib/ folder" >> "$workingDir/$eventslog"
-cp -a ./z-lib/* ./archive/final-version/z-lib/
+cp -a "./z-lib/*" ./archive/final-version/z-lib/
 
 # media directories
 if [ ! -d ./1-layout/*-media ] ; then
@@ -95,7 +94,7 @@ fi
 
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving scripts" >> "$workingDir/$eventslog"
 # copy the current scripts
-cp -a {img-compress,fulltext-markdown,markdown-galleys}.sh -t ./archive/
+cp -a {img-compress,fulltext-markdown,markdown-galleys,serial-editor}.sh -t ./archive/
 
 # check if any file is left behind in ./$tempdir
 ( # start subshell
