@@ -65,10 +65,11 @@ Currently the script for the conversion from markdown to publication files suppo
 - `-h` or `--html` for the conversion to html format
 - `-p` or `--pdf` for the conversion to pdf and TeX formats
 - `-x` or `--xml` for the conversion to xml formats
+- `-b` or `--backup` will backup the current markdown files (find them in the archive), without any actual conversion
 
 Options can be combined; if no option is specified, the script will generate all formats.
 
-You can also specify the path of the files to be converted (one ore more); else the conversion will happen on every markdown file in `/1-layout/`.
+You can also specify the path of the files to be converted (one ore more); else the conversion will happen on every markdown file in `./1-layout/`.
 
 Example:
 
