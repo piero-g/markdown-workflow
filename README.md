@@ -65,9 +65,10 @@ Currently the script for the conversion from markdown to publication files suppo
 - `-h` or `--html` for the conversion to html format
 - `-p` or `--pdf` for the conversion to pdf and TeX formats
 - `-x` or `--xml` for the conversion to xml formats
+- `-w` or `--word` for the conversion to docx format -- experimental
 - `-b` or `--backup` will backup the current markdown files (find them in the archive), without any actual conversion
 
-Options can be combined; if no option is specified, the script will generate all formats.
+Options can be combined; if no option is specified, the script will generate all formats (with the exception of the word format, that is available only when the `--word` option is given). The `--backup` option will exclude any other option.
 
 You can also specify the path of the files to be converted (one ore more); else the conversion will happen on every markdown file in `./1-layout/`.
 
@@ -106,6 +107,7 @@ The resulting file formats are:
 	- the TeX file for PDF triaging and editing
 - (needs testing) JATS XML ([_Journal Article Tag Suite_](https://jats.nlm.nih.gov/))
 - (needs testing) TEI XML ([_Text Encoding Initiative_](http://www.tei-c.org/index.xml))
+- (experimental) DOCX
 
 Several other file formats are possible due to the power of pandoc!
 

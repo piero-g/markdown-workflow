@@ -44,8 +44,8 @@ if [[ $? -ne 4 ]]; then
 		NOOPT=true
 else
 	# getopt is updated, parse options
-	OPTIONS=phxbo:
-	LONGOPTIONS=pdf,html,xml,backup,output:
+	OPTIONS=phxwbo:
+	LONGOPTIONS=pdf,html,xml,word,backup,output:
 
 	PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
 	if [[ $? -ne 0 ]]; then
@@ -69,6 +69,10 @@ else
 				;;
 			-x|--xml)
 				x=y
+				shift
+				;;
+			-w|--word)
+				w=y
 				shift
 				;;
 			-b|--backup)
@@ -112,7 +116,11 @@ converttoxml() {
 	# TEI XML
 	#pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" --toc -N --filter=pandoc-citeproc --template="$workingDir/z-lib/article.tei" --write=tei -s -o "$workingDir/2-publication/${manuscript%.md}.tei.xml"
 }
-
+# this is just a test
+converttoword() {
+	# DOCX format # --reference-doc="$workingDir/z-lib/article.docx"
+	pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" -N --toc --filter=pandoc-citeproc  -w docx+styles  -s -o "$workingDir/2-publication/${manuscript%.md}.docx"
+}
 # generic function that calls the specific conversions
 converttoformats() {
 	echo -e "\n\tconverting ${manuscript%.md}..."
@@ -120,7 +128,7 @@ converttoformats() {
 
 	# if backup don't run any conversion
 	if [ $b ]; then
-		if [ $p ] || [ $h ] || [ $x ]; then
+		if [ $p ] || [ $h ] || [ $x ] || [ $w ]; then
 			echo -e "\t[WARN] backup only, no conversion will run"
 		else
 			echo -e "\tbackup only"
@@ -128,7 +136,7 @@ converttoformats() {
 		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   backup only!" >> "$workingDir/$eventslog"
 	else
 		# no backup, proceed with conversions
-		if [ $p ] || [ $h ] || [ $x ]; then
+		if [ $p ] || [ $h ] || [ $x ] || [ $w ]; then
 			echo -e "\tconverting only to the specified formats"
 		else
 			echo -e "\tno options given, preparing all formats"
@@ -136,6 +144,7 @@ converttoformats() {
 			converttohtml
 			converttopdf
 			converttoxml
+			# no converttoword, use it only when explicitly requested
 		fi
 
 		if [ $h ]; then
@@ -148,6 +157,10 @@ converttoformats() {
 
 		if [ $x ]; then
 			converttoxml
+		fi
+
+		if [ $w ]; then
+			converttoword
 		fi
 	fi # end check on backup
 
