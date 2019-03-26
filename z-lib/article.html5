@@ -136,12 +136,16 @@ $if(acknowledgements)$
 <!-- Acknowledgements -->
 <section id="acknowledgements">
 <h1 class="acknowledgements">$localization.acknowledgements$</h1>
+<div>
 $acknowledgements$
+</div>
 </section>
 $endif$
 $if(thanks)$
 <!-- Thanks -->
+$for(thanks)$
 <p class="thanks">$thanks$</p>
+$endfor$
 $endif$
 </div>
 </header>
