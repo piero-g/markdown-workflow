@@ -88,6 +88,19 @@ Since the `--default-image-extension` of pandoc, editors should link images with
 
 Each conversion will generate an archive of backup copies and daily events logs, in order to secure the workflow. When works on an issue are closed, a complete archive of the working directory is available with `./archiver.sh`. The resulting zip will include also a copy of the setup files and of the scripts, along with a "self-contained" version of the markdown files, with the current config (in YAML) appended.
 
+#### Backup of the working directory
+
+When working with multiple journals and editors, using a cloud service for file synchronization, you will probably have your working directory synced: it is a good idea to make a daily backup of the whole directory for each journal. This is optional and it is made via rsync. To enable it you must compile the `./z-lib/journal.conf` file: the parameters can accept only latin alphabet chars (A-Z and a-z), numbers (0-9), and the path can accept slashes. The conf file accepts comments only in a newline.
+
+For example:
+
+```
+journal_shortname=demo
+backup_path=/home/name/Backup/
+```
+
+The backup path must be absolute and will be combined with the `journal_shortname`; thus in this example the daily backup will happen in `~/Backup/demo/`. Please _double check_ your backup path before enabling this feature.
+
 
 ## Output
 
