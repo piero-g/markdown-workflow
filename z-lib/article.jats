@@ -141,7 +141,11 @@ $if(date)$
 $if(date.iso-8601)$
 <pub-date pub-type="epub" iso-8601-date="$date.iso-8601$">
 $else$
+$if(date-meta)$
+<pub-date pub-type="epub" iso-8601-date="$date-meta$">
+$else$
 <pub-date pub-type="epub">
+$endif$
 $endif$
 $if(date.day)$
 <day>$pub-date.day$</day>

@@ -11,6 +11,10 @@ $else$
 $endif$
 $if(date-meta)$
   <meta name="dcterms.date" content="$date-meta$" />
+$else$
+$if(dates.published)$
+  <meta name="dcterms.date" content="$dates.published$" />
+$endif$
 $endif$
 $if(keywords)$
   <meta name="keywords" content="$for(keywords)$$keywords$$sep$, $endfor$" />
@@ -107,7 +111,7 @@ $for(author)$
   </div>
 $endfor$
 $if(date)$
-<p class="date" property="datePublished">$date$</p>
+<p class="date" property="datePublished"$if(date-meta)$ content="$date-meta$"$endif$>$date$</p>
 $else$
 $if(dates)$
 <p class="dates">$if(dates.submitted)$$localization.submitted$: <span type="dateCreated" content="$dates.submitted$">$dates.submitted$</span>$if(dates.accepted)$ &ndash; $else$$if(dates.published)$ &ndash; $endif$$endif$$endif$$if(dates.revised)$$localization.revised$: $for(dates.revised)$$dates.revised$$sep$; $endfor$ &ndash; $endif$$if(dates.accepted)$$localization.accepted$: $dates.accepted$$if(dates.published)$ &ndash; $endif$$endif$$if(dates.published)$$localization.published$: <span property="datePublished" content="$dates.published$">$dates.published$</span>$endif$</p>
