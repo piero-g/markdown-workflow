@@ -137,6 +137,18 @@ $if(article.author-notes.con)$
 $endif$
 </author-notes>
 $endif$
+$-- custom --$
+$if(editor)$
+<contrib-group>
+  $for(editor.name)$
+  <contrib contrib-type="editor">
+    <name>
+      <string-name>$editor.name$</string-name>
+    </name>
+  </contrib>
+  $endfor$
+</contrib-group>
+$endif$
 $if(date)$
 $if(date.iso-8601)$
 <pub-date pub-type="epub" iso-8601-date="$date.iso-8601$">

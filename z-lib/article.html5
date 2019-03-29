@@ -69,6 +69,12 @@ $if(journal.eissn)$<br />ISSN <span property="issn">$journal.eissn$</span>$endif
 $if(article.section)$
 <p property="articleSection"><span class="article-section">$article.section$</span>$if(article.peer-review)$ &ndash; <span class="article-reviewed">$localization.peer-reviewed$</span>$endif$</p>
 $endif$
+$if(editor)$
+<p class="editor-meta">$editor.text$</p>
+$for(editor.name)$
+<meta property="editor" content="$editor.name$" />
+$endfor$
+$endif$
 $if(article.doi)$
 <p property="identifier" typeof="PropertyValue">
 <meta property="propertyID" content="doi" />
