@@ -362,7 +362,7 @@ $else$
 \lfoot{\small\sffamily \url{$journal.url$}}
 $endif$
 % right footer (ID (if issuepagination false) + page (with optional prefix))
-\rfoot{\small\sffamily $if(article.id)$$if(issuepagination)$$else$Art.~\#$article.id$ \\ p.$endif$$endif$$if(page.prefix)$ $page.prefix$$endif$ \thepage}
+\rfoot{\small\sffamily $if(article.id)$$if(issuepagination)$$else$Art.~\#$article.id$ \\ p.$endif$$endif$$if(page.prefix)$ $page.prefix$$endif$ $if(draft)$\color{red} $endif$\thepage}
 % custom: TEST for more behaved footnotes
 \usepackage{etoolbox}
 % no superscript footnote marks, by egreg from https://tex.stackexchange.com/a/96400
@@ -458,7 +458,7 @@ $if(date)$ % normal publication date (simple text)
 \date{\normalsize $date$}
 $else$
 $if(dates)$ % submitted, revised, accepted, published dates, in YYYY-MM-DD
-\date{\small $if(dates.submitted)$$localization.submitted$: \DTMdate{$dates.submitted$}$if(dates.accepted)$ -- $else$$if(dates.published)$ -- $endif$$endif$$endif$$if(dates.revised)$$localization.revised$: $for(dates.revised)$\DTMdate{$dates.revised$}$sep$; $endfor$ \\ $endif$$if(dates.accepted)$$localization.accepted$: \DTMdate{$dates.accepted$}$if(dates.published)$ -- $endif$$endif$$if(dates.published)$$localization.published$: \DTMdate{$dates.published$}$endif$}
+\date{\small $if(dates.submitted)$$localization.submitted$: \DTMdate{$dates.submitted$}$if(dates.accepted)$ -- $else$$if(dates.published)$ -- $endif$$endif$$endif$$if(dates.revised)$$localization.revised$: $for(dates.revised)$\DTMdate{$dates.revised$}$sep$; $endfor$ \\ $endif$$if(dates.accepted)$$localization.accepted$: \DTMdate{$dates.accepted$}$if(dates.published)$ -- $endif$$endif$$if(dates.published)$$localization.published$: $if(draft)$\color{red} $endif$\DTMdate{$dates.published$}$endif$}
 $endif$
 $endif$ % end custom dates
 
@@ -481,8 +481,13 @@ $endif$
 
 % custom: draft mark with date
 $if(draft)$
-\usepackage{draftwatermark}
+\usepackage[firstpage]{draftwatermark}
 \SetWatermarkText{\shortstack{draft \\ {\LARGE\today}}}
+$if(linenumbers)$
+% custom: in draft mode add line numbers (pagewise, count every 5 lines)
+\usepackage[pagewise, modulo]{lineno}
+\linenumbers
+$endif$
 $endif$
 
 $if(beamer)$
@@ -513,7 +518,7 @@ $-- custom: first page header and footer --$
   $if(article.doi)$\lhead{\small\sffamily \url{$journal.url$} \\ \url{https://doi.org/$article.doi$}}$endif$
   $endif$
   % right footer (ID + page (with optional prefix))
-  \rfoot{\small\sffamily $if(article.id)$Art.~\#$article.id$ \\ p.$endif$$if(page.prefix)$ $page.prefix$$endif$ \thepage}
+  \rfoot{\small\sffamily $if(article.id)$Art.~\#$article.id$ \\ p.$endif$$if(page.prefix)$ $page.prefix$$endif$ $if(draft)$\color{red} $endif$\thepage}
   $if(copyright)$
   % left footer: copyright block
   \lfoot{\small\sffamily Copyright \copyright~$if(copyright.year)$$copyright.year$$endif$ $if(copyright.holder)$$copyright.holder$$endif$ \\ $if(copyright.text)$$copyright.text$ \\$endif$ $if(copyright.link)$\url{$copyright.link$}$endif$}
