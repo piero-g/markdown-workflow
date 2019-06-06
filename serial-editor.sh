@@ -3,6 +3,7 @@
 # YAML mass edit?
 #
 # Author: Piero Grandesso
+# https://github.com/piero-g/markdown-workflow
 #
 
 #####
@@ -24,6 +25,9 @@ trap '[ "$?" -ne 77 ] || exit 77' ERR
 # set the current working directory for future cd
 workingDir=$PWD
 
+# temporary file for storing variables
+tempvar=`mktemp $workingDir/tmp-values.XXXXXXXXX.sh`
+
 # reading options with getopt...
 getopt --test > /dev/null
 if [[ $? -ne 4 ]]; then
@@ -31,8 +35,8 @@ if [[ $? -ne 4 ]]; then
 	exit 1
 fi
 
-OPTIONS=up:
-LONGOPTIONS=undraft,publication:
+OPTIONS=up:cs:
+LONGOPTIONS=undraft,publication:,countpages,pagesequence:
 
 PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
 
@@ -57,6 +61,14 @@ while true; do
 			publicationDate="$2"
 			shift 2
 			;;
+		-c|--countpages)
+			pageCount=y
+			shift
+			;;
+		-s|--pagesequence)
+			pageSequence="$2"
+			shift 2
+			;;
 		--)
 			shift
 			break
@@ -68,12 +80,23 @@ while true; do
 	esac
 done
 
+# countpages and pageSequence are exclusive options (and countpages prevails)
+if ([ $u ] || [ $publicationDate ] || [ $pageSequence ]) && [ $pageCount ]; then
+	echo -e "WARNING: Page count is requested, any other option will be ignored!\n"
+else
+	if ([ $u ] || [ $publicationDate ]) && [ $pageSequence ]; then
+		echo -e "WARNING: A pageSequence is selected: any other option will be ignored!\n"
+	else
+		:
+	fi
+fi
+
 
 ######
 # 1. create directory structure for working and archiving, if not already there
 ######
 
-mkdir -p ./{archive/layout-versions,2-publication}
+mkdir -p ./archive/layout-versions
 # creating only the directories pertaining this part of the workflow
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure, if not ready" >> "$eventslog"
 
