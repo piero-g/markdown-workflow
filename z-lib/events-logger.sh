@@ -5,7 +5,7 @@
 if [ -e './z-lib/journal.conf' ]; then
 	configfile='./z-lib/journal.conf'
 	# check if the file is clean
-	if egrep -q -v '^#|^[a-z0-9_]*=[A-Za-z0-9/]+$' "$configfile"; then
+	if egrep -q -v '^#|^[a-z0-9_]*=[A-Za-z0-9/]*$' "$configfile"; then
 		echo "Config file is unclean! Check ./z-lib/journal.conf before running me again"
 		echo "Exiting now"
 		exit 1
