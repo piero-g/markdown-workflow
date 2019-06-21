@@ -440,7 +440,7 @@ $endfor$
 $endif$
 
 $if(title)$
-\title{$title$$for(thanks)$\thanks{$thanks$}$sep$~~$endfor$}
+\title{$title$$for(thanks)$\thanks{$thanks$}$sep$~~$endfor$$if(correction)$$if(correction.notice)$$else$$if(thanks)$~~$endif$\thanks{$correction.text$}$endif$$endif$}
 $endif$
 $if(subtitle)$
 \providecommand{\subtitle}[1]{}

@@ -175,18 +175,31 @@ $else$$-- custom dates --$
 $if(dates.published)$
 <pub-date pub-type="epub" iso-8601-date="$dates.published$" />
 $endif$
+$endif$
+<pub-history>
 $if(dates.submitted)$
-<history>
-<date date-type="received" iso-8601-date="$dates.submitted$" />
+  <event>
+    <date date-type="received" iso-8601-date="$dates.submitted$" />
+  </event>
+$endif$
 $for(dates.revised)$
-<date date-type="revision" iso-8601-date="$dates.revised$" />
+  <event>
+    <date date-type="rev-recd" iso-8601-date="$dates.revised$" />
+  </event>
 $endfor$
 $if(dates.accepted)$
-<date date-type="accepted" iso-8601-date="$dates.accepted$" />
+  <event>
+    <date date-type="accepted" iso-8601-date="$dates.accepted$" />
+  </event>
 $endif$
-</history>
-$endif$
-$endif$
+$if(correction)$$if(correction.notice)$$else$
+  <event>
+    <date date-type="$if(correction.retraction)$retracted$else$corrected$endif$" iso-8601-date="$correction.date$" />
+    <event-desc>$correction.text$</event-desc>
+  </event>
+$endif$$endif$
+</pub-history>
+
 $if(article.volume)$
 <volume>$article.volume$</volume>
 $else$$if(volume)$$-- custom volume + issue identifiers --$
@@ -234,6 +247,9 @@ $if(copyright.text)$
 </license>
 </permissions>
 $endif$
+$endif$
+$if(correction.notice)$
+<related-article ext-link-type="doi" related-article-type="$if(correction.retraction)$retracted-article$else$corrected-article$endif$" xlink:href="$correction.reference$" />
 $endif$
 $if(tags)$
 <kwd-group kwd-group-type="author">
