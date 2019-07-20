@@ -6,11 +6,19 @@ journal:
   eissn: "1234-567X" # optional
   url: "https://example.org/"
 
-
 # style
-mainfont: "Libre Baskerville" # fonts must be installed -- used for PDF body
+
+# fonts for PDF must be installed (than you can simple specify their family name, see "Libre Franklin" below)
+# or you can specify their path, like for Libre Baskerville:
+mainfont: "LibreBaskerville-Regular.otf" # used for PDF body
+mainfontoptions:
+- Path=/home/user/Fonts/libre-baskerville/
+- BoldFont=LibreBaskerville-Bold.otf
+- ItalicFont=LibreBaskerville-Italic.otf
+- BoldItalicFont=LibreBaskerville-BoldItalic.otf
 sansfont: "Libre Franklin" # used for PDF paratext and titles
 #titlefont: # optional font for titles and headings
+
 # HTML
 css: "../z-lib/article.css" # used for a minimal HTML styling
 

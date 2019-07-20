@@ -65,10 +65,12 @@ Currently the script for the conversion from markdown to publication files suppo
 - `-h` or `--html` for the conversion to html format
 - `-p` or `--pdf` for the conversion to pdf and TeX formats
 - `-x` or `--xml` for the conversion to xml formats
+- `-w` or `--word` for the conversion to docx format -- experimental
+- `-b` or `--backup` will backup the current markdown files (find them in the archive), without any actual conversion
 
-Options can be combined; if no option is specified, the script will generate all formats.
+Options can be combined; if no option is specified, the script will generate all formats (with the exception of the word format, that is available only when the `--word` option is given). The `--backup` option will exclude any other option.
 
-You can also specify the path of the files to be converted (one ore more); else the conversion will happen on every markdown file in `/1-layout/`.
+You can also specify the path of the files to be converted (one ore more); else the conversion will happen on every markdown file in `./1-layout/`.
 
 Example:
 
@@ -85,6 +87,19 @@ Since the `--default-image-extension` of pandoc, editors should link images with
 ### Backup and archive
 
 Each conversion will generate an archive of backup copies and daily events logs, in order to secure the workflow. When works on an issue are closed, a complete archive of the working directory is available with `./archiver.sh`. The resulting zip will include also a copy of the setup files and of the scripts, along with a "self-contained" version of the markdown files, with the current config (in YAML) appended.
+
+#### Backup of the working directory
+
+When working with multiple journals and editors, using a cloud service for file synchronization, you will probably have your working directory synced: it is a good idea to make a daily backup of the whole directory for each journal. This is optional and it is made via rsync. To enable it you must compile the `./z-lib/journal.conf` file: the parameters can accept only latin alphabet chars (A-Z and a-z), numbers (0-9), and the path can accept slashes. The conf file accepts comments only in a newline.
+
+For example:
+
+```
+journal_shortname=demo
+backup_path=/home/name/Backup/
+```
+
+The backup path must be absolute and will be combined with the `journal_shortname`; thus in this example the daily backup will happen in `~/Backup/demo/`. Please _double check_ your backup path before enabling this feature.
 
 
 ## Output
@@ -105,6 +120,7 @@ The resulting file formats are:
 	- the TeX file for PDF triaging and editing
 - (needs testing) JATS XML ([_Journal Article Tag Suite_](https://jats.nlm.nih.gov/))
 - (needs testing) TEI XML ([_Text Encoding Initiative_](http://www.tei-c.org/index.xml))
+- (experimental) DOCX
 
 Several other file formats are possible due to the power of pandoc!
 

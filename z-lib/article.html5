@@ -9,8 +9,12 @@ $if(author-meta)$$-- custom: author --$
 $else$
   <meta name="author" content="$for(author)$$author.name$$sep$, $endfor$" />
 $endif$
+$if(dates.published)$
+  <meta name="dcterms.date" content="$dates.published$" />
+$else$
 $if(date-meta)$
   <meta name="dcterms.date" content="$date-meta$" />
+$endif$
 $endif$
 $if(keywords)$
   <meta name="keywords" content="$for(keywords)$$keywords$$sep$, $endfor$" />
@@ -65,6 +69,12 @@ $if(journal.eissn)$<br />ISSN <span property="issn">$journal.eissn$</span>$endif
 $if(article.section)$
 <p property="articleSection"><span class="article-section">$article.section$</span>$if(article.peer-review)$ &ndash; <span class="article-reviewed">$localization.peer-reviewed$</span>$endif$</p>
 $endif$
+$if(editor)$
+<p class="editor-meta">$editor.text$</p>
+$for(editor.name)$
+<meta property="editor" content="$editor.name$" />
+$endfor$
+$endif$
 $if(article.doi)$
 <p property="identifier" typeof="PropertyValue">
 <meta property="propertyID" content="doi" />
@@ -107,7 +117,7 @@ $for(author)$
   </div>
 $endfor$
 $if(date)$
-<p class="date" property="datePublished">$date$</p>
+<p class="date" property="datePublished"$if(date-meta)$ content="$date-meta$"$endif$>$date$</p>
 $else$
 $if(dates)$
 <p class="dates">$if(dates.submitted)$$localization.submitted$: <span type="dateCreated" content="$dates.submitted$">$dates.submitted$</span>$if(dates.accepted)$ &ndash; $else$$if(dates.published)$ &ndash; $endif$$endif$$endif$$if(dates.revised)$$localization.revised$: $for(dates.revised)$$dates.revised$$sep$; $endfor$ &ndash; $endif$$if(dates.accepted)$$localization.accepted$: $dates.accepted$$if(dates.published)$ &ndash; $endif$$endif$$if(dates.published)$$localization.published$: <span property="datePublished" content="$dates.published$">$dates.published$</span>$endif$</p>
@@ -147,6 +157,12 @@ $for(thanks)$
 <p class="thanks">$thanks$</p>
 $endfor$
 $endif$
+$if(correction)$$if(correction.notice)$$else$
+<!-- Correction -->
+<p property="correction"$if(correction.reference)$ resource="$correction.reference$"$endif$>$correction.text$</p>
+$endif$$if(correction.date)$
+<meta property="dateModified" content="$correction.date$" />
+$endif$$endif$
 </div>
 </header>
 $endif$
