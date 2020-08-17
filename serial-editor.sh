@@ -140,7 +140,7 @@ edityaml() {
 
 # Do you want to run editing on a specific article?
 if [ -z ${@+x} ]; then
-	# no specific file, run on each file within the directory
+	# no file specified, run on each file within the directory
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting editing of manuscripts in ./1-layout..." >> "$eventslog"
 	# also store a flag
 	echo ALL=true >> $tempvar
@@ -211,5 +211,46 @@ else # we have a parameter: convert only specified file
 
 
 fi
+
+###
+# COUNTING FUNCTION
+# page counter, it will only count pages of PDF on the entire "2-publication" folder
+###
+countpages() {
+	echo -e "\nnumber of pages for ${manuscript}..."
+	# actual conversion with Pandoc
+	pdfinfo "${manuscript}" | grep Pages
+}
+
+if [ $pageCount ]; then
+	# do not run setpage on a single file (variable check)
+	. $tempvar
+	if [ $ALL ]; then
+		# no file specified, proceed
+		( # start subshell
+			if cd ./2-publication ; then
+				for manuscript in *pdf ; do
+					# counter function
+					countpages
+				done
+			else
+				echo "WARNING: ./2-publication directory not found!"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./2-publication directory not found! Aborting." >> "$eventslog"
+				exit 77
+			fi
+		) # end subshell
+	else
+		echo "WARNING: the page sequence can only be applied to the full issue, I will exit"
+		exit 1
+	fi
+
+	# countpages has priority, so we have to exit now
+	# remove working files
+	rm $tempvar
+	exit 1
+else
+	:
+fi
+
 
 echo "We are done here!"
