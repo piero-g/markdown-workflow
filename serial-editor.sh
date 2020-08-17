@@ -139,9 +139,11 @@ edityaml() {
 }
 
 # Do you want to run editing on a specific article?
-if [ -z ${1+x} ]; then
+if [ -z ${@+x} ]; then
 	# no specific file, run on each file within the directory
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting editing of manuscripts in ./1-layout..." >> "$eventslog"
+	# also store a flag
+	echo ALL=true >> $tempvar
 	( # start subshell
 		if cd ./1-layout ; then
 			echo "Starting editing..."
@@ -161,40 +163,51 @@ if [ -z ${1+x} ]; then
 			exit 77
 		fi
 
-		# convert valid files
-		for markdown in ./*.md; do
+		if [ $pageCount ] || [ $pageSequence ]; then
+			: # skip edityaml
+		else
+			# convert valid files
+			for markdown in ./*.md; do
 
-			manuscript=${markdown#.\/}
-			# launch editing
-			edityaml
+				manuscript="${markdown#.\/}"
+				# launch editing
+				edityaml
 
-		done
+			done
+		fi
 	) # end subshell
 
 else # we have a parameter: convert only specified file
 
-	manuscript=${1#.\/1-layout\/};
-
-	if [[ $manuscript == *.md ]]; then
-		: # valid files, ok
-	else
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] The specified $manuscript has not a valid extension, exiting now" >> "$eventslog"
-		echo "WARNING: $manuscript is not valid!"
+	if [ $pageCount ] || [ $pageSequence ]; then
+		echo "WARNING: the option selected won't run on specific files, aborting!"
 		exit 1
 	fi
+	for parameter in $@; do
 
-	( # start subshell
-		if cd ./1-layout ; then
-			echo "Starting editing..."
+		manuscript="$( echo "$parameter" | sed -r 's/^\.?\/?1\-layout\///' )"
+
+		if [[ $manuscript == *.md ]]; then
+			: # valid files, ok
 		else
-			echo "WARNING: ./1-layout directory not found!"
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
-			exit 77
+			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] The specified $manuscript has not a valid extension, exiting now" >> "$eventslog"
+			echo "WARNING: $manuscript is not valid!"
+			exit 1
 		fi
 
-		edityaml
+		( # start subshell
+			if cd ./1-layout ; then
+				echo "Starting editing..."
+			else
+				echo "WARNING: ./1-layout directory not found!"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
+				exit 77
+			fi
 
-	) # end subshell
+			edityaml
+
+		) # end subshell
+	done
 
 
 fi
