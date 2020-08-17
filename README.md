@@ -15,7 +15,7 @@ Further considerations and a more in-depth description of the workflow are [avai
 
 ## Disclaimer
 
-It is currently experimental and build around the needs of open-access journals in the Humanities and Social Sciences. It is also influenced by the use of [_Open Journal Systems_](https://pkp.sfu.ca/ojs/), the publishing and managing platform (eg: the file name conventions, and the final HTML structure).
+It is currently experimental and built around the needs of open-access journals in the Humanities and Social Sciences. It is also influenced by the use of [_Open Journal Systems_](https://pkp.sfu.ca/ojs/), the publishing and managing platform (eg: the file name conventions, and the final HTML structure).
 
 Unlike other more advanced systems --- and unlike other projects such as Scholarly Markdown --- this solution is dedicated to Editorial Teams that do receive papers in DOCX or ODT formats, and doesn't require authors to change their (_often bad_) habits.
 
