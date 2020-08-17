@@ -253,4 +253,76 @@ else
 fi
 
 
+###
+# PAGE SEQUENCE
+# page sequence, it will run on the entire "1-layout" folder
+###
+
+setstartpage() {
+	sed -r -i.start.bak -e '0,/^(\s+start:)\s+[0-9] *#?(.*)$/s//\1 '${arry[1]}' #\2/' ${arry[0]}
+	diff ${arry[0]} ${arry[0]}.start.bak
+}
+setendpage() {
+	sed -r -i.end.bak -e '0,/^(\s+end:)\s+[0-9] *#?(.*)$/s//\1 '${arry[2]}' #\2/' ${arry[0]}
+	diff ${arry[0]} ${arry[0]}.end.bak
+}
+
+# parse TSV and take care for correct paring of file name and values
+parsepages() {
+	echo "set page ${pageSequence}!"
+	# parse TSV
+	sed 1d ${pageSequence} | while IFS=$'\t' read -r -a arry
+	do
+		echo -e "\n" ${arry[0]} "is the filename..."
+		echo "..." ${arry[1]} "is its startPage"
+		echo "..." ${arry[2]} "is its endPage"
+		( # start subshell
+			if cd ./1-layout ; then
+				:
+			else
+				echo "WARNING: ./1-layout directory not found!"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
+				exit 77
+			fi
+			if [[ -f ${arry[0]} ]] && [[ ${arry[0]} == *.md ]]; then
+				# we have the file, proceed
+				setstartpage
+				setendpage
+			else
+				echo "Warning:" ${arry[0]} "not found, skipping!"
+			fi
+		) # end subshell
+		sleep 2
+	done
+
+
+}
+
+# check input source if pageSequence
+if [ $pageSequence ]; then
+	# do not run setpage on a single file (variable check)
+	. $tempvar
+	if [ $ALL ]; then
+		# no file specified, proceed
+		# check that the input is a TSV
+		if [[ (-f ${pageSequence}) && (${pageSequence} == *.tsv) ]]; then
+			echo "ok, it's a TSV!"
+			parsepages
+		else
+			echo "I can't find a file named ${pageSequence} or its not a TSV, abort!"
+			exit 1
+		fi
+	else
+		echo "WARNING: the page sequence can only be applied to the full issue, I will exit"
+		exit 1
+	fi
+else
+	:
+fi
+
+# remove working files
+rm $tempvar
+# we should remove also .bak files
+
+
 echo "We are done here!"
