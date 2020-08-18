@@ -44,8 +44,8 @@ else
 	:
 fi
 
-OPTIONS=ilpd:
-LONGOPTIONS=identify,log,preserve,dpi:
+OPTIONS=ilpDd:
+LONGOPTIONS=identify,log,preserve,density,dpi:
 
 PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
 
@@ -95,6 +95,10 @@ while true; do
 			p=y
 			shift
 			;;
+		-D|--density)
+			densityOnly=y
+			shift
+			;;
 		-d|--dpi)
 			if [ "$2" -eq "$2" ] 2>/dev/null
 			then
@@ -126,6 +130,17 @@ identifyimage() {
 	identify -format '%f:\n  size    %[width]x%[height]\n  density %[x]x%[y] %[units]\n  colorSp %[colorspace]\n\n' "${image}"
 	if [ $log ]; then
 		identify -format '%f:\n  size    %[width]x%[height]\n  density %[x]x%[y] %[units]\n  colorSp %[colorspace]\n\n' "${image}" >> "$imagelog"
+	else
+		:
+	fi
+}
+
+# density only
+changedensity() {
+	echo "${image}: setting density to $DENSITY"
+	convert -units PixelsPerInch ${image} -density $DENSITY ${image}
+	if [ $log ]; then
+		printf "Density of ${image} is now set to $DENSITY" >> "$imagelog"
 	else
 		:
 	fi
@@ -193,7 +208,7 @@ if [ -z ${@+x} ]; then
 	# no file specified, run on each file within the directory
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting editing of manuscripts in ./1-layout..." >> "$eventslog"
 
-	if [ $identify ]; then
+	if [ $identify ] || [ $densityOnly ]; then
 		:
 	else
 		echo "Warning: the conversion will be performed on every image; it should be done only once"
@@ -211,6 +226,14 @@ if [ -z ${@+x} ]; then
 	for image in *.{jpeg,jpg,png,tiff,tif} ; do
 		if [ $identify ]; then
 			identifyimage
+		elif [ $densityOnly ]; then
+			# skip "low.jpg" images, we don't care about their resolution
+			if [ "${image}" != "${image%.low.jpg}" ]; then
+				:
+			else
+				echo "${image}: setting density to $DENSITY"
+				convert -units PixelsPerInch ${image} -density $DENSITY ${image}
+			fi
 		else
 			echo -e "\n\n"
 			identifyimage
@@ -227,6 +250,14 @@ else # we have a parameter: convert only specified file
 		if [[ $image =~ \.(jpeg|jpg|png|tiff|tif)$ ]]; then
 			if [ $identify ]; then
 				identifyimage
+			elif [ $densityOnly ]; then
+				# skip "low.jpg" images, we don't care about their resolution
+				if [ "${image}" != "${image%.low.jpg}" ]; then
+					echo "WARNING: You specified a low resolution image, so density won't be set!"
+				else
+					echo "${image}: setting density to $DENSITY"
+					convert -units PixelsPerInch ${image} -density $DENSITY ${image}
+				fi
 			else
 				identifyimage
 				backupimage
