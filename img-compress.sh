@@ -100,13 +100,8 @@ while true; do
 done
 
 
-for image in *.{jpeg,jpg,png,tiff,tif} ; do
-	echo -e "\n${image}:"
-	identify -format '%[width] %[height]\n' ${image}
-	cp ${image} ./orig/${image}
-	# is it going to work?
-	convert ${image} -colorspace sRGB ${image}
-
+# convert, resize, set density, make low resolution variant for HTML
+convertimage() {
 	if [ "${image}" != "${image%.${EXTPNG}}" ]; then
 		# if "preserve"
 		if [ $p ]; then
@@ -144,6 +139,16 @@ for image in *.{jpeg,jpg,png,tiff,tif} ; do
 		rm ${image}
 		echo "${image} converted in JPG and resized (if necessary)"
 	fi
+}
+
+for image in *.{jpeg,jpg,png,tiff,tif} ; do
+	echo -e "\n${image}:"
+	identify -format '%[width] %[height]\n' ${image}
+	cp ${image} ./orig/${image}
+	# is it going to work?
+	convert ${image} -colorspace sRGB ${image}
+
+	convertimage
 done
 
 shopt -u nullglob # Unsets nullglob
