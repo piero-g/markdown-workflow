@@ -141,14 +141,37 @@ convertimage() {
 	fi
 }
 
-for image in *.{jpeg,jpg,png,tiff,tif} ; do
-	echo -e "\n${image}:"
-	identify -format '%[width] %[height]\n' ${image}
-	cp ${image} ./orig/${image}
-	# is it going to work?
-	convert ${image} -colorspace sRGB ${image}
+# Do you want to edit a specific image?
+if [ -z ${@+x} ]; then
+	# no file specified, run on each file within the directory
+	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting editing of manuscripts in ./1-layout..." >> "$eventslog"
 
-	convertimage
-done
+	for image in *.{jpeg,jpg,png,tiff,tif} ; do
+		echo -e "\n${image}:"
+		identify -format '%[width] %[height]\n' ${image}
+		cp ${image} ./orig/${image}
+		# is it going to work?
+		convert ${image} -colorspace sRGB ${image}
+
+		convertimage
+	done
+
+else # we have a parameter: convert only specified file
+	for parameter in $@; do
+		echo -e "\nparameter is set to '$parameter'";
+		image=${parameter}
+		if [[ $image =~ \.(jpeg|jpg|png|tiff|tif)$ ]]; then
+
+			identify -format '%[width] %[height]\n' ${image}
+			cp ${image} ./orig/${image}
+
+			convertimage
+
+		else
+			echo "WARNING: $image is not valid!"
+			exit 1
+		fi
+	done
+fi
 
 shopt -u nullglob # Unsets nullglob
