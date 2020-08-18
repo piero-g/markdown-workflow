@@ -44,8 +44,8 @@ else
 	:
 fi
 
-OPTIONS=pd:
-LONGOPTIONS=preserve,dpi:
+OPTIONS=ipd:
+LONGOPTIONS=identify,preserve,dpi:
 
 PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
 
@@ -73,6 +73,10 @@ eval set -- "$PARSED"
 # now enjoy the options in order and nicely split until we see --
 while true; do
 	case "$1" in
+		-i|--identify)
+			identify=y
+			shift
+			;;
 		-p|--preserve)
 			p=y
 			shift
@@ -99,6 +103,14 @@ while true; do
 	esac
 done
 
+####
+# functions
+####
+
+# print size, resolution (density) and colorspace of an image
+identifyimage() {
+	identify -format '%f:\n  size    %[width]x%[height]\n  density %[x]x%[y] %[units]\n  colorSp %[colorspace]\n\n' "${image}"
+}
 
 # convert, resize, set density, make low resolution variant for HTML
 convertimage() {
@@ -141,19 +153,23 @@ convertimage() {
 	fi
 }
 
+####
+# logic
+####
 # Do you want to edit a specific image?
 if [ -z ${@+x} ]; then
 	# no file specified, run on each file within the directory
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting editing of manuscripts in ./1-layout..." >> "$eventslog"
 
 	for image in *.{jpeg,jpg,png,tiff,tif} ; do
-		echo -e "\n${image}:"
-		identify -format '%[width] %[height]\n' ${image}
-		cp ${image} ./orig/${image}
-		# is it going to work?
-		convert ${image} -colorspace sRGB ${image}
-
-		convertimage
+		if [ $identify ]; then
+			identifyimage
+		else
+			identifyimage
+			cp ${image} ./orig/${image}
+			convert ${image} -colorspace sRGB ${image}
+			convertimage
+		fi
 	done
 
 else # we have a parameter: convert only specified file
@@ -161,11 +177,13 @@ else # we have a parameter: convert only specified file
 		echo -e "\nparameter is set to '$parameter'";
 		image=${parameter}
 		if [[ $image =~ \.(jpeg|jpg|png|tiff|tif)$ ]]; then
-
-			identify -format '%[width] %[height]\n' ${image}
-			cp ${image} ./orig/${image}
-
-			convertimage
+			if [ $identify ]; then
+				identifyimage
+			else
+				identifyimage
+				cp ${image} ./orig/${image}
+				convertimage
+			fi
 
 		else
 			echo "WARNING: $image is not valid!"
