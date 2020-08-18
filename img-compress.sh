@@ -41,48 +41,64 @@ if [[ $? -ne 4 ]]; then
 		exit 1
 else
 	# getopt is updated, parse options
-	OPTIONS=pd:
-	LONGOPTIONS=preserve,dpi:
-
-	PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
-	if [[ $? -ne 0 ]]; then
-			# e.g. $? == 1
-			#  then getopt has complained about wrong arguments to stdout
-			exit 2
-	fi
-	# read getopt’s output this way to handle the quoting right:
-	eval set -- "$PARSED"
-
-	# now enjoy the options in order and nicely split until we see --
-	while true; do
-		case "$1" in
-			-p|--preserve)
-				p=y
-				shift
-				;;
-			-d|--dpi)
-				if [ "$2" -eq "$2" ] 2>/dev/null
-				then
-					# set a different density
-					DENSITY="$2"
-				else
-					echo "ERROR: --dpi must be an integer."
-					exit 1
-				fi
-				shift 2
-				;;
-			--)
-				shift
-				break
-				;;
-			*)
-				echo "Programming error"
-				exit 3
-				;;
-		esac
-	done
-
+	:
 fi
+
+OPTIONS=pd:
+LONGOPTIONS=preserve,dpi:
+
+PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
+
+# keep track of every script run
+today=$(date +"%Y-%m-%d")
+eventslog="../../$today-events.log"
+if [ ! -e "$eventslog" ]; then
+	echo "I am currently in $PWD and I couldn't find ${eventslog}: it is the right place? This command won't be logged"
+else
+	echo "Today's events log does exist"
+	printf "\n\n######\n\n" >> "$eventslog" # add separator
+	printf "[$(date +"%Y-%m-%d %H:%M:%S")] img-compress.sh started running in $PWD\n" >> "$eventslog"
+	printf "[$(date +"%Y-%m-%d %H:%M:%S")] current command options: $PARSED\n" >> "$eventslog"
+	printf "\n\n######\n\n" >> "$eventslog" # add separator
+fi
+
+if [[ $? -ne 0 ]]; then
+		# e.g. $? == 1
+		#  then getopt has complained about wrong arguments to stdout
+		exit 2
+fi
+# read getopt’s output this way to handle the quoting right:
+eval set -- "$PARSED"
+
+# now enjoy the options in order and nicely split until we see --
+while true; do
+	case "$1" in
+		-p|--preserve)
+			p=y
+			shift
+			;;
+		-d|--dpi)
+			if [ "$2" -eq "$2" ] 2>/dev/null
+			then
+				# set a different density
+				DENSITY="$2"
+			else
+				echo "ERROR: --dpi must be an integer."
+				exit 1
+			fi
+			shift 2
+			;;
+		--)
+			shift
+			break
+			;;
+		*)
+			echo "Programming error"
+			exit 3
+			;;
+	esac
+done
+
 
 for image in *.{jpeg,jpg,png,tiff,tif} ; do
 	echo -e "\n${image}:"
