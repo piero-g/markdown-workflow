@@ -131,6 +131,19 @@ identifyimage() {
 	fi
 }
 
+# backup image
+backupimage() {
+	if [ ! -e "./orig/${image}" ]; then
+		echo "backup ${image} in ./orig/"
+		cp "${image}" "./orig/${image}"
+		printf "${image} archived in ./orig/" >> "$imagelog"
+	else
+		echo "backup ${image} in ./orig/ with datestamp, an image was already there"
+		cp "${image}" "./orig/$(date +"%Y-%m-%dT%H:%M:%S")-${image}"
+		printf "${image} archived in ./orig/ as $(date +"%Y-%m-%dT%H:%M:%S")-${image}" >> "$imagelog"
+	fi
+}
+
 # convert, resize, set density, make low resolution variant for HTML
 convertimage() {
 	if [ "${image}" != "${image%.${EXTPNG}}" ]; then
@@ -199,8 +212,9 @@ if [ -z ${@+x} ]; then
 		if [ $identify ]; then
 			identifyimage
 		else
+			echo -e "\n\n"
 			identifyimage
-			cp ${image} ./orig/${image}
+			backupimage
 			convert ${image} -colorspace sRGB ${image}
 			convertimage
 		fi
@@ -215,7 +229,7 @@ else # we have a parameter: convert only specified file
 				identifyimage
 			else
 				identifyimage
-				cp ${image} ./orig/${image}
+				backupimage
 				convertimage
 			fi
 
