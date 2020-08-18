@@ -202,7 +202,12 @@ shopt -s nullglob # Sets nullglob
 	# archive editing-ready manuscripts in ./archive/editing-ready
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Manuscripts are ready, archiving to ./archived/editing-ready/ and moving to ./1-layout/..." >> "$workingDir/$eventslog"
 	for editing in *.md; do
-		cp "$editing" "$workingDir/1-layout/"
+		if [ ! -e "$workingDir/1-layout/${editing}" ]; then
+			cp "$editing" "$workingDir/1-layout/"
+		else
+			echo "NOTICE: move ${editing} in ./layout/ with datestamp, another file was already there!"
+			cp "${editing}" "$workingDir/1-layout/${editing}-$(date +"%Y-%m-%dT%H:%M:%S")"
+		fi
 		mv "$editing" "$workingDir/archive/editing-ready/${editing%.md}-$(date +"%Y-%m-%dT%H:%M:%S").md"
 		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $editing is ready" >> "$workingDir/$eventslog"
 	done
