@@ -44,8 +44,8 @@ else
 	:
 fi
 
-OPTIONS=ipd:
-LONGOPTIONS=identify,preserve,dpi:
+OPTIONS=ilpd:
+LONGOPTIONS=identify,log,preserve,dpi:
 
 PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
 
@@ -62,6 +62,16 @@ else
 	printf "\n\n######\n\n" >> "$eventslog" # add separator
 fi
 
+# a local log can be useful too
+imagelog="images-events.log"
+if [ ! -e "$imagelog" ]; then
+	touch "$imagelog" && echo "Creating images events log"
+	printf "[$(date +"%Y-%m-%d %H:%M:%S")] img-compress.sh is running with this options: $PARSED\n" >> "$imagelog"
+else
+	echo "Images events log does exist"
+	printf "[$(date +"%Y-%m-%d %H:%M:%S")] img-compress.sh is running with this options: $PARSED\n" >> "$imagelog"
+fi
+
 if [[ $? -ne 0 ]]; then
 		# e.g. $? == 1
 		#  then getopt has complained about wrong arguments to stdout
@@ -75,6 +85,10 @@ while true; do
 	case "$1" in
 		-i|--identify)
 			identify=y
+			shift
+			;;
+		-l|--log)
+			log=y
 			shift
 			;;
 		-p|--preserve)
@@ -110,6 +124,11 @@ done
 # print size, resolution (density) and colorspace of an image
 identifyimage() {
 	identify -format '%f:\n  size    %[width]x%[height]\n  density %[x]x%[y] %[units]\n  colorSp %[colorspace]\n\n' "${image}"
+	if [ $log ]; then
+		identify -format '%f:\n  size    %[width]x%[height]\n  density %[x]x%[y] %[units]\n  colorSp %[colorspace]\n\n' "${image}" >> "$imagelog"
+	else
+		:
+	fi
 }
 
 # convert, resize, set density, make low resolution variant for HTML
@@ -160,6 +179,21 @@ convertimage() {
 if [ -z ${@+x} ]; then
 	# no file specified, run on each file within the directory
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting editing of manuscripts in ./1-layout..." >> "$eventslog"
+
+	if [ $identify ]; then
+		:
+	else
+		echo "Warning: the conversion will be performed on every image; it should be done only once"
+		echo "Do you want to proceed?  (Y or N) "
+		read confirm
+		if echo "$confirm" | grep -iq "^[yY]$" ; then
+			echo -e "\nConverting all images with appropriate extension!\n"
+			printf "Performing the conversion on all images\n" >> "$imagelog"
+		else
+			echo "Exiting now!"
+			exit 1
+		fi
+	fi
 
 	for image in *.{jpeg,jpg,png,tiff,tif} ; do
 		if [ $identify ]; then
