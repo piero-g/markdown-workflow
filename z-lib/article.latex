@@ -403,6 +403,17 @@ $endif$
   \let\End\end
 }
 
+% custom: draft mark with date
+$if(draft)$
+\usepackage[firstpage]{draftwatermark}
+\SetWatermarkText{\shortstack{draft \\ {\LARGE\today}}}
+$if(linenumbers)$
+% custom: in draft mode add line numbers (pagewise, count every 5 lines)
+\usepackage[pagewise, modulo]{lineno}
+\linenumbers
+$endif$
+$endif$
+
 % set default figure placement to htbp
 \makeatletter
 \def\fps@figure{htbp}
@@ -488,17 +499,6 @@ $for(hyphenation)$
 \sethyphenation{$hyphenation.lang$}{$hyphenation.word$}$sep$
 
 $endfor$
-$endif$
-
-% custom: draft mark with date
-$if(draft)$
-\usepackage[firstpage]{draftwatermark}
-\SetWatermarkText{\shortstack{draft \\ {\LARGE\today}}}
-$if(linenumbers)$
-% custom: in draft mode add line numbers (pagewise, count every 5 lines)
-\usepackage[pagewise, modulo]{lineno}
-\linenumbers
-$endif$
 $endif$
 
 $if(beamer)$
