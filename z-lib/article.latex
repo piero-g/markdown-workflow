@@ -340,8 +340,13 @@ $else$
 \pagenumbering{Roman}
   $endif$
 $endif$
+$if(page.startpdf)$
+% if pages are in roman we still need an arabic start page for PDF
+\setcounter{page}{$page.startpdf$}
+$else$
 $if(page.start)$
 \setcounter{page}{$page.start$}
+$endif$
 $endif$
 
 % custom: footer and header (except first page)
@@ -353,7 +358,7 @@ $endif$
 $if(shorttitle)$
 \lhead{\small\sffamily $shorttitle$}
 $else$
-\lhead{\small\sffamily \truncate{9cm}{$title$}}
+\lhead{\small\sffamily \truncate{$if(titletruncate)$$titletruncate$$else$9cm$endif$}{$title$}}
 $endif$
 % right reader
 $if(journal.abbrev-title)$
