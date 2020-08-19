@@ -460,6 +460,16 @@ $for(bibliography)$
 \addbibresource{$bibliography$}
 $endfor$
 $endif$
+% update 2020
+$if(csl-refs)$
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newenvironment{cslreferences}%
+  {$if(csl-hanging-indent)$\setlength{\parindent}{0pt}%
+  \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces$endif$}%
+  {\par}%
+  \setlength{\parskip}{8pt plus 2pt minus 1pt}
+$endif$
 
 $if(title)$
 \title{$title$$for(thanks)$\thanks{$thanks$}$sep$~~$endfor$$if(correction)$$if(correction.notice)$$else$$if(thanks)$~~$endif$\thanks{$correction.text$}$endif$$endif$}
