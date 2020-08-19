@@ -182,22 +182,28 @@ $endif$
 % custom: to improve separations
 \widowpenalty=1000
 \clubpenalty=1000
+% custom: invoke sectsty, we are going to use it 95% of the time
+\usepackage{sectsty}
+$if(dottednumsect)$
+% custom dot in section numbers (using sectsty)
+\makeatletter
+\def\@seccntformat#1{\csname the#1\endcsname.\quad}
+\makeatother
+$endif$
 % custom: Title Font for headings and titles (\titlefont is set above)
 $if(titlefont)$
-  % custom: title font for headings
-  \usepackage{sectsty}
-    \allsectionsfont{\titlefont\bfseries\raggedright}
+  % custom: title font for headings (using sectsty)
+  \allsectionsfont{\titlefont\bfseries\raggedright}
   % custom: for titles
   \usepackage{titling}
   \renewcommand{\maketitlehooka}{\titlefont}
 $else$
 $if(sansfont)$
- % custom: sans font for headings
-\usepackage{sectsty}
-	\allsectionsfont{\sffamily\bfseries\raggedright}
- % custom: for titles
-\usepackage{titling}
-\renewcommand{\maketitlehooka}{\sffamily}
+  % custom: sans font for headings (using sectsty)
+  \allsectionsfont{\sffamily\bfseries\raggedright}
+  % custom: for titles
+  \usepackage{titling}
+  \renewcommand{\maketitlehooka}{\sffamily}
 $endif$
 $endif$
 $if(beamer)$
