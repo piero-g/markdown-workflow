@@ -136,9 +136,11 @@ $if(abstract)$
 <!-- Abstract -->
 <section id="abstract">
 <h1 class="abstract">$localization.abstract$</h1>
+$for(abstract)$
 <div property="description">
 $abstract$
 </div>
+$endfor$
 </section>
 $endif$
 $if(keywords)$
