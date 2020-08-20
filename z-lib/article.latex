@@ -1,4 +1,5 @@
-\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode$for(hyperrefoptions)$,$hyperrefoptions$$endfor$}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
 $if(colorlinks)$
 % custom: no * to svgnames, causes some colors not to be recognized
@@ -403,6 +404,8 @@ $endif$
   \let\End\end
 }
 
+% custom: define \linethickness
+\renewcommand{\linethickness}{0.3pt}
 % custom: draft mark with date
 $if(draft)$
 \usepackage[firstpage]{draftwatermark}
@@ -553,8 +556,10 @@ $if(othertitle)$
 $if(localization.abstract)$\renewcommand{\abstractname}{$localization.abstract$}$endif$$endif$
 \begin{abstract}
 $if(othertitle)$\par\noindent\textbf{$othertitle$}\medskip$endif$
+$for(abstract)$
 $if(indent)$\par\noindent $else$\setlength{\parindent}{0pt}
 \par\noindent $endif$$abstract$
+$sep$\begin{center}\vspace{-.5em}\rule{0.5\linewidth}{\linethickness}\end{center}$endfor$
 % custom: keywords in abstract
 $if(keywords)$\vspace{1mm}\\ \textbf{$localization.keywords$}: $for(keywords)$$keywords$$sep$; $endfor$.$endif$
 \end{abstract}
