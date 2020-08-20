@@ -659,6 +659,27 @@ $else$
 $endif$
 
 $endif$
+$-- custom: end article author box --$
+$if(closingauthorbox)$
+$if(authorspagebreak)$ % custom: put authors in a second page
+\newpage
+$else$
+\vspace{2em} % ia safe spacing if lots of authors
+\vspace*{\fill} % push to the bottom
+$endif$
+\renewenvironment{abstract}
+ {\par\noindent\textbf{\abstractname}\ \ignorespaces}
+ {\par\medskip}
+$for(author)$ % custom: author block with email, orcid and bio
+\begin{samepage}
+\renewcommand{\abstractname}{$author.name$$if(author.affiliation)$:$endif$}
+\begin{abstract} % was \sffamily
+\small $for(author.affiliation)$$author.affiliation$$sep$; $endfor$
+$if(author.orcid)$ \\ \aiOrcid~\url{$author.orcid$}$endif$$if(author.corresp)$\\ {\scriptsize\faEnvelope}~$author.email$$if(author.url)$;  {\scriptsize\faExternalLink}~\url{$author.url$}$endif$$else$$if(author.url)$\\ {\scriptsize\faExternalLink}~\url{$author.url$}$endif$$endif$$if(author.bio)$ \\ $author.bio$$endif$
+\end{abstract}
+\end{samepage}
+$endfor$
+$endif$
 $for(include-after)$
 $include-after$
 
