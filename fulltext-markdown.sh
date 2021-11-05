@@ -64,8 +64,9 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts from
 
 	EXT1=docx
 	EXT2=odt
+	EXT3=tex
 	# check if there are valid files
-	EXT=(`find ./ -maxdepth 1 -regextype posix-extended -regex '.*\.(docx|odt)$'`)
+	EXT=(`find ./ -maxdepth 1 -regextype posix-extended -regex '.*\.(docx|odt|tex)$'`)
 	if [ ${#EXT[@]} -gt 0 ]; then
 		: # valid files, ok
 	else
@@ -75,7 +76,7 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts from
 	fi
 
 	# convert valid files
-	for manuscript in *{docx,odt} ; do
+	for manuscript in *{docx,odt,tex} ; do
 		if [ "${manuscript}" != "${manuscript%.${EXT1}}" ]; then
 			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript}: trying to convert it in Markdown..." >> "$workingDir/$eventslog"
 			# actual conversion with Pandoc
@@ -96,6 +97,19 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts from
 				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
 				# archive the processed manuscript - TEST: cp instead of mv
 				cp "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT2}}-$(date +"%Y-%m-%dT%H:%M:%S").${EXT2}"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript} archived" >> "$workingDir/$eventslog"
+			else
+				# pandoc returned errors, print a warning and don't archive
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ... [WARN] pandoc failed in converting ${manuscript} to Markdown!" >> "$workingDir/$eventslog"
+				echo WARN=true >> $tempvar
+			fi
+		elif [ "${manuscript}" != "${manuscript%.${EXT3}}" ]; then
+			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript}: trying to convert it in Markdown..." >> "$workingDir/$eventslog"
+			# actual conversion with Pandoc
+			if pandoc --wrap=none --atx-headers -o "$tempdir/${manuscript%.${EXT3}}.md" "$manuscript" ; then
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
+				# archive the processed manuscript
+				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT3}}-$(date +"%Y-%m-%dT%H:%M:%S").${EXT3}"
 				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript} archived" >> "$workingDir/$eventslog"
 			else
 				# pandoc returned errors, print a warning and don't archive
@@ -138,7 +152,10 @@ shopt -s nullglob # Sets nullglob
 
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Renaming converted manuscripts..." >> "$workingDir/$eventslog"
 	# check if files has the correct name with the following regex ("(en|it)" is optional to distinguish multiple galleys
-	goodname="([0-9]+-?([a-zA-Z]{2,3})?)-[0-9]+-[0-9]+-[A-Z]{2}\.md"
+	# OJS2:
+	#goodname="([0-9]+-?([a-zA-Z]{2,3})?)-[0-9]+-[0-9]+-[A-Z]{2}\.md"
+	# OJS3:
+	goodname="([0-9]+-?([a-zA-Z]{2,3})?)-[A-Za-z 0-9]+-[0-9]+-[0-9]+-[0-9]+-[0-9]{8}\.md"
 	for oldname in *.md; do
 		if [[ $oldname =~ $goodname ]]; then
 			# rename keeping only relevant part and transforming to lowercase
