@@ -151,15 +151,29 @@ shopt -s nullglob # Sets nullglob
 	done
 
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Renaming converted manuscripts..." >> "$workingDir/$eventslog"
-	# check if files has the correct name with the following regex ("(en|it)" is optional to distinguish multiple galleys
+	# check if files has the correct name, accepted are:
+	# - OJS2 or OJS3 naming convention (they will be converted as IdNumber)
+	# - IdNumber-some ascii text
+	# - some ascii text
 	# OJS2:
-	#goodname="([0-9]+-?([a-zA-Z]{2,3})?)-[0-9]+-[0-9]+-[A-Z]{2}\.md"
+	ojs2name="([0-9]+)-[0-9]+-[0-9]+-[A-Z]{2}\.md"
 	# OJS3:
-	goodname="([0-9]+-?([a-zA-Z]{2,3})?)-[A-Za-z 0-9]+-[0-9]+-[0-9]+-[0-9]+-[0-9]{8}\.md"
+	ojs3name="([0-9]+)-[A-Za-z 0-9]+-[0-9]+-[0-9]+-[0-9]+-[0-9]{8}\.md"
+	goodname="([0-9]+) *- *([A-Za-z 0-9_-]+)\.md"
 	for oldname in *.md; do
-		if [[ $oldname =~ $goodname ]]; then
+		if [[ $oldname =~ $ojs2name ]]; then
 			# rename keeping only relevant part and transforming to lowercase
-			cleanname=$(echo "$oldname" | sed -r "s/$goodname/\1.md/" | tr "[:upper:]" "[:lower:]")
+			cleanname=$(echo "$oldname" | sed -r "s/$ojs2name/\1.md/" | tr "[:upper:]" "[:lower:]")
+			mv "$oldname" "$cleanname"
+			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname renamed as $cleanname" >> "$workingDir/$eventslog"
+		elif [[ $oldname =~ $ojs3name ]]; then
+			# rename keeping only relevant part and transforming to lowercase
+			cleanname=$(echo "$oldname" | sed -r "s/$ojs3name/\1.md/" | tr "[:upper:]" "[:lower:]")
+			mv "$oldname" "$cleanname"
+			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname renamed as $cleanname" >> "$workingDir/$eventslog"
+		elif [[ $oldname =~ $goodname ]]; then
+			# rename keeping only relevant part and transforming to lowercase
+			cleanname=$(echo "$oldname" | sed -r "s/$goodname/\1-\2.md/" | tr "[:upper:]" "[:lower:]")
 			mv "$oldname" "$cleanname"
 			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname renamed as $cleanname" >> "$workingDir/$eventslog"
 		else
@@ -184,9 +198,16 @@ shopt -s nullglob # Sets nullglob
 	# folders for media files
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Creating folders for media files in ./1-layout" >> "$workingDir/$eventslog"
 	for f in *.md; do
-		fname=$(echo $f | sed -r "s/\.md//")
-		if [ ! -d "$workingDir/1-layout/$fname-media" ]; then
-			mkdir "$workingDir/1-layout/$fname-media"
+		cleanname="([0-9]+)(-[a-z0-9_-]+)?\.md"
+		if [[ $f =~ $cleanname ]]; then
+			# file name with ID, use only ID for media folder
+			name="${f%.md}"
+			mediaFolder="${name%%-*}-media"
+		else
+			mediaFolder=$(echo $f | sed -r "s/\.md//")
+		fi
+		if [ ! -d "$workingDir/1-layout/$mediaFolder" ]; then
+			mkdir "$workingDir/1-layout/$mediaFolder"
 		else
 			RERUN=true
 			#printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ./archive/$dir/ already there" >> "$workingDir/$eventslog"
