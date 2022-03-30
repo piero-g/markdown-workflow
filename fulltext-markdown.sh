@@ -173,12 +173,12 @@ shopt -s nullglob # Sets nullglob
 			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname renamed as $cleanname" >> "$workingDir/$eventslog"
 		elif [[ $oldname =~ $goodname ]]; then
 			# rename keeping only relevant part and transforming to lowercase
-			cleanname=$(echo "$oldname" | sed -r "s/$goodname/\1-\2.md/" | tr "[:upper:]" "[:lower:]")
+			cleanname=$(echo "$oldname" | sed -r "s/$goodname/\1-\2.md/" | tr "[:upper:]" "[:lower:]" | tr "[:blank:]" "_")
 			mv "$oldname" "$cleanname"
 			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname renamed as $cleanname" >> "$workingDir/$eventslog"
 		else
 			# safer filenames to lowercase and replacing spaces with underscore
-			safename=$(echo "$oldname" | sed -r "s/$goodname/\1.md/" | tr "[:upper:]" "[:lower:]" | tr "[:blank:]" "_")
+			safename=$(echo "$oldname" | tr "[:upper:]" "[:lower:]" | tr "[:blank:]" "_")
 			if [[ $oldname =~ $safename ]]; then
 				: # all ok, does nothing
 			else
