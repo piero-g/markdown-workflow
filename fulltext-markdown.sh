@@ -161,26 +161,30 @@ shopt -s nullglob # Sets nullglob
 	ojs3name="([0-9]+)-[A-Za-z 0-9]+-[0-9]+-[0-9]+-[0-9]+-[0-9]{8}\.md"
 	goodname="([0-9]+) *- *([A-Za-z 0-9_-]+)\.md"
 	for oldname in *.md; do
-		if [[ $oldname =~ $ojs2name ]]; then
+		if [[ "$oldname" =~ "$ojs2name" ]]; then
 			# rename keeping only relevant part and transforming to lowercase
 			cleanname=$(echo "$oldname" | sed -r "s/$ojs2name/\1.md/" | tr "[:upper:]" "[:lower:]")
 			mv "$oldname" "$cleanname"
 			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname renamed as $cleanname" >> "$workingDir/$eventslog"
-		elif [[ $oldname =~ $ojs3name ]]; then
+		elif [[ "$oldname" =~ "$ojs3name" ]]; then
 			# rename keeping only relevant part and transforming to lowercase
 			cleanname=$(echo "$oldname" | sed -r "s/$ojs3name/\1.md/" | tr "[:upper:]" "[:lower:]")
 			mv "$oldname" "$cleanname"
 			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname renamed as $cleanname" >> "$workingDir/$eventslog"
-		elif [[ $oldname =~ $goodname ]]; then
+		elif [[ "$oldname" =~ "$goodname" ]]; then
 			# rename keeping only relevant part and transforming to lowercase
 			cleanname=$(echo "$oldname" | sed -r "s/$goodname/\1-\2.md/" | tr "[:upper:]" "[:lower:]" | tr "[:blank:]" "_")
-			mv "$oldname" "$cleanname"
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname renamed as $cleanname" >> "$workingDir/$eventslog"
+			if [[ "$oldname" == "$cleanname" ]]; then
+				echo "$oldname does not need to be renamed"
+			else
+				mv "$oldname" "$cleanname"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname renamed as $cleanname" >> "$workingDir/$eventslog"
+			fi
 		else
 			# safer filenames to lowercase and replacing spaces with underscore
 			safename=$(echo "$oldname" | tr "[:upper:]" "[:lower:]" | tr "[:blank:]" "_")
-			if [[ $oldname =~ $safename ]]; then
-				: # all ok, does nothing
+			if [[ "$oldname" =~ "$safename" ]]; then
+				echo "$oldname does not need to be renamed"
 			else
 				mv "$oldname" "$safename"
 				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] $oldname has an unexpected name, converted in a safer one!" >> "$workingDir/$eventslog"
@@ -244,7 +248,7 @@ shopt -s nullglob # Sets nullglob
 			cp "$editing" "$workingDir/1-layout/"
 		else
 			echo "NOTICE: move ${editing} in ./layout/ with datestamp, another file was already there!"
-			cp "${editing}" "$workingDir/1-layout/${editing}-$(date +"%Y-%m-%dT%H:%M:%S")"
+			cp "${editing}" "$workingDir/1-layout/${editing%.md}-$(date +"%Y-%m-%dT%H:%M:%S").md"
 		fi
 		mv "$editing" "$workingDir/archive/editing-ready/${editing%.md}-$(date +"%Y-%m-%dT%H:%M:%S").md"
 		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $editing is ready" >> "$workingDir/$eventslog"
