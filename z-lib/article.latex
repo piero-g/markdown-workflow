@@ -1,4 +1,5 @@
-\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode$for(hyperrefoptions)$,$hyperrefoptions$$endfor$}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
 $if(colorlinks)$
 % custom: no * to svgnames, causes some colors not to be recognized
@@ -182,22 +183,28 @@ $endif$
 % custom: to improve separations
 \widowpenalty=1000
 \clubpenalty=1000
+% custom: invoke sectsty, we are going to use it 95% of the time
+\usepackage{sectsty}
+$if(dottednumsect)$
+% custom dot in section numbers (using sectsty)
+\makeatletter
+\def\@seccntformat#1{\csname the#1\endcsname.\quad}
+\makeatother
+$endif$
 % custom: Title Font for headings and titles (\titlefont is set above)
 $if(titlefont)$
-  % custom: title font for headings
-  \usepackage{sectsty}
-    \allsectionsfont{\titlefont\bfseries\raggedright}
+  % custom: title font for headings (using sectsty)
+  \allsectionsfont{\titlefont\bfseries\raggedright}
   % custom: for titles
   \usepackage{titling}
   \renewcommand{\maketitlehooka}{\titlefont}
 $else$
 $if(sansfont)$
- % custom: sans font for headings
-\usepackage{sectsty}
-	\allsectionsfont{\sffamily\bfseries\raggedright}
- % custom: for titles
-\usepackage{titling}
-\renewcommand{\maketitlehooka}{\sffamily}
+  % custom: sans font for headings (using sectsty)
+  \allsectionsfont{\sffamily\bfseries\raggedright}
+  % custom: for titles
+  \usepackage{titling}
+  \renewcommand{\maketitlehooka}{\sffamily}
 $endif$
 $endif$
 $if(beamer)$
@@ -334,8 +341,13 @@ $else$
 \pagenumbering{Roman}
   $endif$
 $endif$
+$if(page.startpdf)$
+% if pages are in roman we still need an arabic start page for PDF
+\setcounter{page}{$page.startpdf$}
+$else$
 $if(page.start)$
 \setcounter{page}{$page.start$}
+$endif$
 $endif$
 
 % custom: footer and header (except first page)
@@ -347,7 +359,7 @@ $endif$
 $if(shorttitle)$
 \lhead{\small\sffamily $shorttitle$}
 $else$
-\lhead{\small\sffamily \truncate{9cm}{$title$}}
+\lhead{\small\sffamily \truncate{$if(titletruncate)$$titletruncate$$else$9cm$endif$}{$title$}}
 $endif$
 % right reader
 $if(journal.abbrev-title)$
@@ -391,6 +403,19 @@ $endif$
   \let\Begin\begin
   \let\End\end
 }
+
+% custom: define \linethickness
+\renewcommand{\linethickness}{0.3pt}
+% custom: draft mark with date
+$if(draft)$
+\usepackage[firstpage]{draftwatermark}
+\SetWatermarkText{\shortstack{draft \\ {\LARGE\today}}}
+$if(linenumbers)$
+% custom: in draft mode add line numbers (pagewise, count every 5 lines)
+\usepackage[pagewise, modulo]{lineno}
+\linenumbers
+$endif$
+$endif$
 
 % set default figure placement to htbp
 \makeatletter
@@ -438,9 +463,19 @@ $for(bibliography)$
 \addbibresource{$bibliography$}
 $endfor$
 $endif$
+% update 2020
+$if(csl-refs)$
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newenvironment{cslreferences}%
+  {$if(csl-hanging-indent)$\setlength{\parindent}{0pt}%
+  \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces$endif$}%
+  {\par}%
+  \setlength{\parskip}{8pt plus 2pt minus 1pt}
+$endif$
 
 $if(title)$
-\title{$title$$for(thanks)$\thanks{$thanks$}$sep$~~$endfor$$if(correction)$$if(correction.notice)$$else$$if(thanks)$~~$endif$\thanks{$correction.text$}$endif$$endif$}
+\title{$if(blocktitle)$$blocktitle$$else$$title$$endif$$for(thanks)$\thanks{$thanks$}$sep$~~$endfor$$if(correction)$$if(correction.notice)$$else$$if(thanks)$~~$endif$\thanks{$correction.text$}$endif$$endif$}
 $endif$
 $if(subtitle)$
 \providecommand{\subtitle}[1]{}
@@ -479,17 +514,6 @@ $for(hyphenation)$
 $endfor$
 $endif$
 
-% custom: draft mark with date
-$if(draft)$
-\usepackage[firstpage]{draftwatermark}
-\SetWatermarkText{\shortstack{draft \\ {\LARGE\today}}}
-$if(linenumbers)$
-% custom: in draft mode add line numbers (pagewise, count every 5 lines)
-\usepackage[pagewise, modulo]{lineno}
-\linenumbers
-$endif$
-$endif$
-
 $if(beamer)$
 $if(titlegraphic)$
 \titlegraphic{\includegraphics{$titlegraphic$}}
@@ -509,7 +533,7 @@ $-- custom: first page header and footer --$
 \fancypagestyle{plain}{%
   \fancyhf{}%
   % right header: journal title (extended) and eISSN
-  \rhead{\small\sffamily $journal.title$$if(issuedisplay)$. $issuedisplay$$endif$$if(journal.eissn)$ \\ ISSN~$journal.eissn$$endif$$if(extrarowheader)$ \\ \url{$journal.url$}$else$$if(editor)$ \\ \url{$journal.url$}$endif$$endif$}
+  \rhead{\small\sffamily $journal.title$$if(issuedisplay)$. $issuedisplay$$if(issuetitle)$ \\ $issuetitle$$endif$$endif$$if(journal.eissn)$ \\ ISSN~$journal.eissn$$endif$$if(extrarowheader)$ \\ \url{$journal.url$}$else$$if(editor)$ \\ \url{$journal.url$}$endif$$endif$}
   % left header: section, peer-reviewed plus DOI or journal url
   $if(article.section)$
   \lhead{\small\sffamily $article.section$$if(article.peer-review)$ -- \emph{$localization.peer-reviewed$}$endif$
@@ -532,8 +556,10 @@ $if(othertitle)$
 $if(localization.abstract)$\renewcommand{\abstractname}{$localization.abstract$}$endif$$endif$
 \begin{abstract}
 $if(othertitle)$\par\noindent\textbf{$othertitle$}\medskip$endif$
+$for(abstract)$
 $if(indent)$\par\noindent $else$\setlength{\parindent}{0pt}
 \par\noindent $endif$$abstract$
+$sep$\begin{center}\vspace{-.5em}\rule{0.5\linewidth}{\linethickness}\end{center}$endfor$
 % custom: keywords in abstract
 $if(keywords)$\vspace{1mm}\\ \textbf{$localization.keywords$}: $for(keywords)$$keywords$$sep$; $endfor$.$endif$
 \end{abstract}
@@ -601,7 +627,11 @@ $endif$
 $endif$ % custom: - end if(nopdftoc)
 % custom: space from title or separate title page
 $if(notitlepage)$
+$if(titlepagespace)$
+\vspace{$titlepagespace$}
+$else$
 \vspace{5cm}
+$endif$
 $else$
 \newpage
 $endif$
@@ -637,6 +667,27 @@ $else$
 \printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
 $endif$
 
+$endif$
+$-- custom: end article author box --$
+$if(closingauthorbox)$
+$if(authorspagebreak)$ % custom: put authors in a second page
+\newpage
+$else$
+\vspace{2em} % ia safe spacing if lots of authors
+\vspace*{\fill} % push to the bottom
+$endif$
+\renewenvironment{abstract}
+ {\par\noindent\textbf{\abstractname}\ \ignorespaces}
+ {\par\medskip}
+$for(author)$ % custom: author block with email, orcid and bio
+\begin{samepage}
+\renewcommand{\abstractname}{$author.name$$if(author.affiliation)$:$endif$}
+\begin{abstract} % was \sffamily
+\small $for(author.affiliation)$$author.affiliation$$sep$; $endfor$
+$if(author.orcid)$ \\ \aiOrcid~\url{$author.orcid$}$endif$$if(author.corresp)$\\ {\scriptsize\faEnvelope}~$author.email$$if(author.url)$;  {\scriptsize\faExternalLink}~\url{$author.url$}$endif$$else$$if(author.url)$\\ {\scriptsize\faExternalLink}~\url{$author.url$}$endif$$endif$$if(author.bio)$ \\ $author.bio$$endif$
+\end{abstract}
+\end{samepage}
+$endfor$
 $endif$
 $for(include-after)$
 $include-after$

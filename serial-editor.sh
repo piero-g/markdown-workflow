@@ -139,9 +139,11 @@ edityaml() {
 }
 
 # Do you want to run editing on a specific article?
-if [ -z ${1+x} ]; then
-	# no specific file, run on each file within the directory
+if [ -z ${@+x} ]; then
+	# no file specified, run on each file within the directory
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting editing of manuscripts in ./1-layout..." >> "$eventslog"
+	# also store a flag
+	echo ALL=true >> $tempvar
 	( # start subshell
 		if cd ./1-layout ; then
 			echo "Starting editing..."
@@ -161,42 +163,166 @@ if [ -z ${1+x} ]; then
 			exit 77
 		fi
 
-		# convert valid files
-		for markdown in ./*.md; do
+		if [ $pageCount ] || [ $pageSequence ]; then
+			: # skip edityaml
+		else
+			# convert valid files
+			for markdown in ./*.md; do
 
-			manuscript=${markdown#.\/}
-			# launch editing
-			edityaml
+				manuscript="${markdown#.\/}"
+				# launch editing
+				edityaml
 
-		done
+			done
+		fi
 	) # end subshell
 
 else # we have a parameter: convert only specified file
 
-	manuscript=${1#.\/1-layout\/};
-
-	if [[ $manuscript == *.md ]]; then
-		: # valid files, ok
-	else
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] The specified $manuscript has not a valid extension, exiting now" >> "$eventslog"
-		echo "WARNING: $manuscript is not valid!"
+	if [ $pageCount ] || [ $pageSequence ]; then
+		echo "WARNING: the option selected won't run on specific files, aborting!"
 		exit 1
 	fi
+	for parameter in $@; do
 
-	( # start subshell
-		if cd ./1-layout ; then
-			echo "Starting editing..."
+		manuscript="$( echo "$parameter" | sed -r 's/^\.?\/?1\-layout\///' )"
+
+		if [[ $manuscript == *.md ]]; then
+			: # valid files, ok
 		else
-			echo "WARNING: ./1-layout directory not found!"
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
-			exit 77
+			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] The specified $manuscript has not a valid extension, exiting now" >> "$eventslog"
+			echo "WARNING: $manuscript is not valid!"
+			exit 1
 		fi
 
-		edityaml
+		( # start subshell
+			if cd ./1-layout ; then
+				echo "Starting editing..."
+			else
+				echo "WARNING: ./1-layout directory not found!"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
+				exit 77
+			fi
 
-	) # end subshell
+			edityaml
+
+		) # end subshell
+	done
 
 
 fi
+
+###
+# COUNTING FUNCTION
+# page counter, it will only count pages of PDF on the entire "2-publication" folder
+###
+countpages() {
+	echo -e "\nnumber of pages for ${manuscript}..."
+	# actual conversion with Pandoc
+	pdfinfo "${manuscript}" | grep Pages
+}
+
+if [ $pageCount ]; then
+	# do not run setpage on a single file (variable check)
+	. $tempvar
+	if [ $ALL ]; then
+		# no file specified, proceed
+		( # start subshell
+			if cd ./2-publication ; then
+				for manuscript in *pdf ; do
+					# counter function
+					countpages
+				done
+			else
+				echo "WARNING: ./2-publication directory not found!"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./2-publication directory not found! Aborting." >> "$eventslog"
+				exit 77
+			fi
+		) # end subshell
+	else
+		echo "WARNING: the page sequence can only be applied to the full issue, I will exit"
+		exit 1
+	fi
+
+	# countpages has priority, so we have to exit now
+	# remove working files
+	rm $tempvar
+	exit 1
+else
+	:
+fi
+
+
+###
+# PAGE SEQUENCE
+# page sequence, it will run on the entire "1-layout" folder
+###
+
+setstartpage() {
+	sed -r -i.start.bak -e '0,/^(\s+start:)\s+[0-9] *#?(.*)$/s//\1 '${arry[1]}' #\2/' ${arry[0]}
+	diff ${arry[0]} ${arry[0]}.start.bak
+}
+setendpage() {
+	sed -r -i.end.bak -e '0,/^(\s+end:)\s+[0-9] *#?(.*)$/s//\1 '${arry[2]}' #\2/' ${arry[0]}
+	diff ${arry[0]} ${arry[0]}.end.bak
+}
+
+# parse TSV and take care for correct paring of file name and values
+parsepages() {
+	echo "set page ${pageSequence}!"
+	# parse TSV
+	sed 1d ${pageSequence} | while IFS=$'\t' read -r -a arry
+	do
+		echo -e "\n" ${arry[0]} "is the filename..."
+		echo "..." ${arry[1]} "is its startPage"
+		echo "..." ${arry[2]} "is its endPage"
+		( # start subshell
+			if cd ./1-layout ; then
+				:
+			else
+				echo "WARNING: ./1-layout directory not found!"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
+				exit 77
+			fi
+			if [[ -f ${arry[0]} ]] && [[ ${arry[0]} == *.md ]]; then
+				# we have the file, proceed
+				setstartpage
+				setendpage
+			else
+				echo "Warning:" ${arry[0]} "not found, skipping!"
+			fi
+		) # end subshell
+		sleep 2
+	done
+
+
+}
+
+# check input source if pageSequence
+if [ $pageSequence ]; then
+	# do not run setpage on a single file (variable check)
+	. $tempvar
+	if [ $ALL ]; then
+		# no file specified, proceed
+		# check that the input is a TSV
+		if [[ (-f ${pageSequence}) && (${pageSequence} == *.tsv) ]]; then
+			echo "ok, it's a TSV!"
+			parsepages
+		else
+			echo "I can't find a file named ${pageSequence} or its not a TSV, abort!"
+			exit 1
+		fi
+	else
+		echo "WARNING: the page sequence can only be applied to the full issue, I will exit"
+		exit 1
+	fi
+else
+	:
+fi
+
+# remove working files
+rm $tempvar
+# we should remove also .bak files
+
 
 echo "We are done here!"

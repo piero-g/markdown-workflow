@@ -102,24 +102,24 @@ mkdir -p $workingDir/archive/layout-versions/$today
 # conversion functions
 converttohtml() {
 	# HTML conversion with Pandoc  --self-contained
-	pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" -N --toc --filter=pandoc-citeproc --email-obfuscation=references --section-divs --self-contained --template="$workingDir/z-lib/article.html5" --write=html5 --default-image-extension=.low.jpg -o "$workingDir/2-publication/${manuscript%.md}.html"
+	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" -N --toc --filter=pandoc-citeproc --email-obfuscation=references --section-divs --self-contained --template="$workingDir/z-lib/article.html5" --write=html5 --default-image-extension=.low.jpg -o "$workingDir/2-publication/${manuscript%.md}.html"
 }
 converttopdf() {
 	# PDF conversion with Pandoc # -N --toc
-	pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" -N --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.latex" --pdf-engine=xelatex --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.pdf"
+	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" -N --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.latex" --pdf-engine=xelatex --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.pdf"
 	# LaTeX
-	pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" -N --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.latex" --pdf-engine=xelatex --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.tex"
+	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" -N --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.latex" --pdf-engine=xelatex --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.tex"
 }
 converttoxml() {
 	# JATS XML
-	pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" -N --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.jats" --write=jats --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.jats.xml"
+	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" -N --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.jats" --write=jats --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.jats.xml"
 	# TEI XML
-	#pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" --toc -N --filter=pandoc-citeproc --template="$workingDir/z-lib/article.tei" --write=tei -s -o "$workingDir/2-publication/${manuscript%.md}.tei.xml"
+	#pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" --toc -N --filter=pandoc-citeproc --template="$workingDir/z-lib/article.tei" --write=tei -s -o "$workingDir/2-publication/${manuscript%.md}.tei.xml"
 }
 # this is just a test
 converttoword() {
 	# DOCX format # --reference-doc="$workingDir/z-lib/article.docx"
-	pandoc "${manuscript}" "$workingDir/z-lib/issue.yaml" "$workingDir/z-lib/journal.yaml" -N --toc --filter=pandoc-citeproc  -w docx+styles  -s -o "$workingDir/2-publication/${manuscript%.md}.docx"
+	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" -N --toc --filter=pandoc-citeproc  -w docx+styles  -s -o "$workingDir/2-publication/${manuscript%.md}.docx"
 }
 # generic function that calls the specific conversions
 converttoformats() {

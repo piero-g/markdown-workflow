@@ -43,6 +43,11 @@ $endif$
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
+$if(draft)$
+  <style type="text/css">
+      h1.title::after{content: "[draft]"; color: rgba(255,0,0,0.25); position: fixed; font-size: 4em; pointer-events: none; left: 50%; top: 50%; transform: rotate(-45deg) translate(-50%, -50%);}
+  </style>
+$endif$
 $for(header-includes)$
   $header-includes$
 $endfor$
@@ -131,9 +136,11 @@ $if(abstract)$
 <!-- Abstract -->
 <section id="abstract">
 <h1 class="abstract">$localization.abstract$</h1>
+$for(abstract)$
 <div property="description">
 $abstract$
 </div>
+$endfor$
 </section>
 $endif$
 $if(keywords)$

@@ -64,8 +64,9 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts from
 
 	EXT1=docx
 	EXT2=odt
+	EXT3=tex
 	# check if there are valid files
-	EXT=(`find ./ -maxdepth 1 -regextype posix-extended -regex '.*\.(docx|odt)$'`)
+	EXT=(`find ./ -maxdepth 1 -regextype posix-extended -regex '.*\.(docx|odt|tex)$'`)
 	if [ ${#EXT[@]} -gt 0 ]; then
 		: # valid files, ok
 	else
@@ -75,7 +76,7 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts from
 	fi
 
 	# convert valid files
-	for manuscript in *{docx,odt} ; do
+	for manuscript in *{docx,odt,tex} ; do
 		if [ "${manuscript}" != "${manuscript%.${EXT1}}" ]; then
 			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript}: trying to convert it in Markdown..." >> "$workingDir/$eventslog"
 			# actual conversion with Pandoc
@@ -96,6 +97,19 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts from
 				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
 				# archive the processed manuscript - TEST: cp instead of mv
 				cp "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT2}}-$(date +"%Y-%m-%dT%H:%M:%S").${EXT2}"
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript} archived" >> "$workingDir/$eventslog"
+			else
+				# pandoc returned errors, print a warning and don't archive
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ... [WARN] pandoc failed in converting ${manuscript} to Markdown!" >> "$workingDir/$eventslog"
+				echo WARN=true >> $tempvar
+			fi
+		elif [ "${manuscript}" != "${manuscript%.${EXT3}}" ]; then
+			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript}: trying to convert it in Markdown..." >> "$workingDir/$eventslog"
+			# actual conversion with Pandoc
+			if pandoc --wrap=none --atx-headers -o "$tempdir/${manuscript%.${EXT3}}.md" "$manuscript" ; then
+				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
+				# archive the processed manuscript
+				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT3}}-$(date +"%Y-%m-%dT%H:%M:%S").${EXT3}"
 				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript} archived" >> "$workingDir/$eventslog"
 			else
 				# pandoc returned errors, print a warning and don't archive
@@ -137,17 +151,34 @@ shopt -s nullglob # Sets nullglob
 	done
 
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Renaming converted manuscripts..." >> "$workingDir/$eventslog"
-	# check if files has the correct name with the following regex ("(en|it)" is optional to distinguish multiple galleys
-	goodname="([0-9]+-?([a-zA-Z]{2,3})?)-[0-9]+-[0-9]+-[A-Z]{2}\.md"
+	# check if files has the correct name, accepted are:
+	# - OJS2 or OJS3 naming convention (they will be converted as IdNumber)
+	# - IdNumber-some ascii text
+	# - some ascii text
+	# OJS2:
+	ojs2name="([0-9]+)-[0-9]+-[0-9]+-[A-Z]{2}\.md"
+	# OJS3:
+	ojs3name="([0-9]+)-[A-Za-z 0-9]+-[0-9]+-[0-9]+-[0-9]+-[0-9]{8}\.md"
+	goodname="([0-9]+) *- *([A-Za-z 0-9_-]+)\.md"
 	for oldname in *.md; do
-		if [[ $oldname =~ $goodname ]]; then
+		if [[ $oldname =~ $ojs2name ]]; then
 			# rename keeping only relevant part and transforming to lowercase
-			cleanname=$(echo "$oldname" | sed -r "s/$goodname/\1.md/" | tr "[:upper:]" "[:lower:]")
+			cleanname=$(echo "$oldname" | sed -r "s/$ojs2name/\1.md/" | tr "[:upper:]" "[:lower:]")
+			mv "$oldname" "$cleanname"
+			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname renamed as $cleanname" >> "$workingDir/$eventslog"
+		elif [[ $oldname =~ $ojs3name ]]; then
+			# rename keeping only relevant part and transforming to lowercase
+			cleanname=$(echo "$oldname" | sed -r "s/$ojs3name/\1.md/" | tr "[:upper:]" "[:lower:]")
+			mv "$oldname" "$cleanname"
+			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname renamed as $cleanname" >> "$workingDir/$eventslog"
+		elif [[ $oldname =~ $goodname ]]; then
+			# rename keeping only relevant part and transforming to lowercase
+			cleanname=$(echo "$oldname" | sed -r "s/$goodname/\1-\2.md/" | tr "[:upper:]" "[:lower:]" | tr "[:blank:]" "_")
 			mv "$oldname" "$cleanname"
 			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname renamed as $cleanname" >> "$workingDir/$eventslog"
 		else
 			# safer filenames to lowercase and replacing spaces with underscore
-			safename=$(echo "$oldname" | sed -r "s/$goodname/\1.md/" | tr "[:upper:]" "[:lower:]" | tr "[:blank:]" "_")
+			safename=$(echo "$oldname" | tr "[:upper:]" "[:lower:]" | tr "[:blank:]" "_")
 			if [[ $oldname =~ $safename ]]; then
 				: # all ok, does nothing
 			else
@@ -167,9 +198,16 @@ shopt -s nullglob # Sets nullglob
 	# folders for media files
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Creating folders for media files in ./1-layout" >> "$workingDir/$eventslog"
 	for f in *.md; do
-		fname=$(echo $f | sed -r "s/\.md//")
-		if [ ! -d "$workingDir/1-layout/$fname-media" ]; then
-			mkdir "$workingDir/1-layout/$fname-media"
+		cleanname="([0-9]+)(-[a-z0-9_-]+)?\.md"
+		if [[ $f =~ $cleanname ]]; then
+			# file name with ID, use only ID for media folder
+			name="${f%.md}"
+			mediaFolder="${name%%-*}-media"
+		else
+			mediaFolder=$(echo $f | sed -r "s/\.md//")
+		fi
+		if [ ! -d "$workingDir/1-layout/$mediaFolder" ]; then
+			mkdir "$workingDir/1-layout/$mediaFolder"
 		else
 			RERUN=true
 			#printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ./archive/$dir/ already there" >> "$workingDir/$eventslog"
@@ -202,7 +240,12 @@ shopt -s nullglob # Sets nullglob
 	# archive editing-ready manuscripts in ./archive/editing-ready
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Manuscripts are ready, archiving to ./archived/editing-ready/ and moving to ./1-layout/..." >> "$workingDir/$eventslog"
 	for editing in *.md; do
-		cp "$editing" "$workingDir/1-layout/"
+		if [ ! -e "$workingDir/1-layout/${editing}" ]; then
+			cp "$editing" "$workingDir/1-layout/"
+		else
+			echo "NOTICE: move ${editing} in ./layout/ with datestamp, another file was already there!"
+			cp "${editing}" "$workingDir/1-layout/${editing}-$(date +"%Y-%m-%dT%H:%M:%S")"
+		fi
 		mv "$editing" "$workingDir/archive/editing-ready/${editing%.md}-$(date +"%Y-%m-%dT%H:%M:%S").md"
 		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   $editing is ready" >> "$workingDir/$eventslog"
 	done

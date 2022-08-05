@@ -33,7 +33,7 @@ mkdir -p ./archive/{media,final-version/{z-lib,self-contained,publication}}
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure, if not ready" >> "$workingDir/$eventslog"
 
 # now a temporary folder
-tempdir=`mktemp -d $workingDir/tmp.XXXXXXXXXXXX`
+tempdir=`mktemp -d "$workingDir/tmp.XXXXXXXXXXXX"`
 
 ######
 # 2. preparing "self-contained" layout files
@@ -41,12 +41,12 @@ tempdir=`mktemp -d $workingDir/tmp.XXXXXXXXXXXX`
 
 echo "Preparing \"self contained\" layout files"
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Copying layout files to a temporary directory" >> "$workingDir/$eventslog"
-cp -a "./1-layout/*.md" $tempdir
+cp -a "$workingDir/1-layout/"*.md "$tempdir"
 
 ( # start subshell
-	cd $tempdir
+	cd "$tempdir"
 	for layout in *.md ; do
-		printf "\n" >> "${layout}"
+		printf "\n\n" >> "${layout}"
 		cat "$workingDir/z-lib/issue.yaml" >> "${layout}"
 		wait
 		cat "$workingDir/z-lib/journal.yaml" >> "${layout}"
@@ -63,9 +63,9 @@ cp -a "./1-layout/*.md" $tempdir
 # publication directory
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving publication files..." >> "$workingDir/$eventslog"
 ( # start subshell
-	cd ./2-publication/
+	cd "$workingDir/2-publication/"
 	for galley in *.{pdf,html,xml,tex} ; do
-		mv "${galley}" -t $workingDir/archive/final-version/publication/
+		mv "${galley}" -t "$workingDir/archive/final-version/publication/"
 		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ...publication file ${galley} archived" >> "$workingDir/$eventslog"
 	done
 ) # end subshell
@@ -73,32 +73,32 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving publication files..." >> "$wo
 # layout directory
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving layout files..." >> "$workingDir/$eventslog"
 ( # start subshell
-	cd ./1-layout/
+	cd "$workingDir/1-layout/"
 	for layout in *.md ; do
-		mv "${layout}" -t $workingDir/archive/final-version/
+		mv "${layout}" -t "$workingDir/archive/final-version/"
 		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ...final version of layout file for ${layout%.md} archived" >> "$workingDir/$eventslog"
 	done
 ) # end subshell
 
 # z-lib directory
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving ./z-lib/ folder" >> "$workingDir/$eventslog"
-cp -a "./z-lib/*" ./archive/final-version/z-lib/
+cp -a "$workingDir/z-lib/"* "$workingDir/archive/final-version/z-lib/"
 
 # media directories
-if [ ! -d ./1-layout/*-media ] ; then
+if [ ! -d "$workingDir/1-layout/"*-media ] ; then
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] No media directories found in layout" >> "$workingDir/$eventslog"
 else
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving media folders" >> "$workingDir/$eventslog"
-	mv ./1-layout/*-media -t ./archive/media/
+	mv "$workingDir/1-layout/"*-media -t "$workingDir/archive/media/"
 fi
 
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving scripts" >> "$workingDir/$eventslog"
 # copy the current scripts
-cp -a {img-compress,fulltext-markdown,markdown-galleys,serial-editor}.sh -t ./archive/
+cp -a {img-compress,fulltext-markdown,markdown-galleys,serial-editor}.sh -t "$workingDir/archive/"
 
 # check if any file is left behind in ./$tempdir
 ( # start subshell
-cd $tempdir
+cd "$tempdir"
 	for garbage in * .*; do
 		[ -f "$garbage" ] || continue
 		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] ${garbage} should not be here" >> "$workingDir/$eventslog"
@@ -108,7 +108,7 @@ cd $tempdir
 		echo "WARNING: the temporary directory won't be deleted, something is wrong!"
 	else
 		cd ..
-		rm -d $tempdir
+		rm -d "$tempdir"
 	fi
 ) # end subshell
 
@@ -117,7 +117,7 @@ cd $tempdir
 # 4. finalize archive
 ######
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] This log is going into the archive too, bye bye!" >> "$workingDir/$eventslog"
-mv $eventslog -t ./archive/
+mv $eventslog -t "$workingDir/archive/"
 
 echo "Working directory should be clean"
 echo "Please, check for anything left over and if needed put it into the ./archive folder!"
