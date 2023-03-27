@@ -217,9 +217,8 @@ fi
 # page counter, it will only count pages of PDF on the entire "2-publication" folder
 ###
 countpages() {
-	echo -e "\nnumber of pages for ${manuscript}..."
-	# actual conversion with Pandoc
-	pdfinfo "${manuscript}" | grep Pages
+	pagespdf=$(pdfinfo "${manuscript}" | grep "Pages:" | sed 's/Pages:          //')
+	echo -e "${manuscript%.pdf}\t${pagespdf}"
 }
 
 if [ $pageCount ]; then
@@ -259,12 +258,12 @@ fi
 ###
 
 setstartpage() {
-	sed -r -i.start.bak -e '0,/^(\s+start:)\s+[0-9] *#?(.*)$/s//\1 '${arry[1]}' #\2/' ${arry[0]}
-	diff ${arry[0]} ${arry[0]}.start.bak
+	sed -r -i.start.bak -e '0,/^(\s+start:)\s+[0-9] *#?(.*)$/s//\1 '$startPage' #\2/' $filename
+	diff $filename $filename.start.bak
 }
 setendpage() {
-	sed -r -i.end.bak -e '0,/^(\s+end:)\s+[0-9] *#?(.*)$/s//\1 '${arry[2]}' #\2/' ${arry[0]}
-	diff ${arry[0]} ${arry[0]}.end.bak
+	sed -r -i.end.bak -e '0,/^(\s+end:)\s+[0-9] *#?(.*)$/s//\1 '$endPage' #\2/' $filename
+	diff $filename $filename.end.bak
 }
 
 # parse TSV and take care for correct paring of file name and values
@@ -273,9 +272,15 @@ parsepages() {
 	# parse TSV
 	sed 1d ${pageSequence} | while IFS=$'\t' read -r -a arry
 	do
-		echo -e "\n" ${arry[0]} "is the filename..."
-		echo "..." ${arry[1]} "is its startPage"
-		echo "..." ${arry[2]} "is its endPage"
+		${arry[0]}=$fileid
+		${arry[1]}=$startPage
+		${arry[2]}=$endPage
+		echo -e "\n"$fileid" is the file ID..."
+		filenamepath=$(find "${workingDir}/1-layout/" -maxdepth 1 -type f -name "$fileid*")
+		filename=${filenamepath##*/}
+		echo -e "\n"$filename" is the filename..."
+		echo "..." $startPage "is its startPage"
+		echo "..." $endPage "is its endPage"
 		( # start subshell
 			if cd ./1-layout ; then
 				:
@@ -284,12 +289,12 @@ parsepages() {
 				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
 				exit 77
 			fi
-			if [[ -f ${arry[0]} ]] && [[ ${arry[0]} == *.md ]]; then
+			if [[ -f $filename ]] && [[ $filename == *.md ]]; then
 				# we have the file, proceed
 				setstartpage
 				setendpage
 			else
-				echo "Warning:" ${arry[0]} "not found, skipping!"
+				echo "Warning:" $filename "not found, skipping!"
 			fi
 		) # end subshell
 		sleep 2
