@@ -154,8 +154,8 @@ backupimage() {
 		printf "${image} archived in ./orig/" >> "$imagelog"
 	else
 		echo "backup ${image} in ./orig/ with datestamp, an image was already there"
-		cp "${image}" "./orig/$(date +"%Y-%m-%dT%H:%M:%S")-${image}"
-		printf "${image} archived in ./orig/ as $(date +"%Y-%m-%dT%H:%M:%S")-${image}" >> "$imagelog"
+		cp "${image}" "./orig/$(date +"%Y-%m-%dT%H-%M-%S")-${image}"
+		printf "${image} archived in ./orig/ as $(date +"%Y-%m-%d %H:%M:%S")-${image}" >> "$imagelog"
 	fi
 }
 

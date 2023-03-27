@@ -126,7 +126,7 @@ edityaml() {
 
 	echo -e "\n\tediting YAML in ${manuscript%.md}..."
 	# archive a copy before editing the manuscript
-	cp "$manuscript" "$workingDir/archive/layout-versions/$today/${manuscript%.md}-$(date +"%Y-%m-%dT%H:%M:%S").md"
+	cp "$manuscript" "$workingDir/archive/layout-versions/$today/${manuscript%.md}-$(date +"%Y-%m-%dT%H-%M-%S").md"
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   copy of ${manuscript%.md} archived" >> "$workingDir/$eventslog"
 
 	if [ $u ]; then
