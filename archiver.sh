@@ -85,7 +85,7 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving ./z-lib/ folder" >> "$working
 cp -a "$workingDir/z-lib/"* "$workingDir/archive/final-version/z-lib/"
 
 # media directories
-if [ ! -d "$workingDir/1-layout/"*-media ] ; then
+if [ ! -d "$workingDir/1-layout/"*{-,_}media ] ; then
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] No media directories found in layout" >> "$workingDir/$eventslog"
 else
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving media folders" >> "$workingDir/$eventslog"
@@ -94,7 +94,7 @@ fi
 
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving scripts" >> "$workingDir/$eventslog"
 # copy the current scripts
-cp -a {img-compress,fulltext-markdown,markdown-galleys,serial-editor}.sh -t "$workingDir/archive/"
+cp -a {img-compress,fulltext-markdown,markdown-galleys,serial-editor,status}.sh -t "$workingDir/archive/"
 
 # check if any file is left behind in ./$tempdir
 ( # start subshell

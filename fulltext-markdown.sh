@@ -206,7 +206,7 @@ shopt -s nullglob # Sets nullglob
 		if [[ $f =~ $cleanname ]]; then
 			# file name with ID, use only ID for media folder
 			name="${f%.md}"
-			mediaFolder="${name%%-*}-media"
+			mediaFolder="${name%%-*}_media"
 		else
 			mediaFolder=$(echo $f | sed -r "s/\.md//")
 		fi
