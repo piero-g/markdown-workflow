@@ -258,12 +258,12 @@ fi
 ###
 
 setstartpage() {
-	sed -r -i.start.bak -e '0,/^(\s+start:)\s+[0-9] *#?(.*)$/s//\1 '$startPage' #\2/' $filename
-	diff $filename $filename.start.bak
+	sed -r -i.start.bak -e '0,/^(\s+start:)\s+[0-9] *#?(.*)$/s//\1 '$startPage' #\2/' "$filename"
+	diff "$filename" "$filename.start.bak"
 }
 setendpage() {
-	sed -r -i.end.bak -e '0,/^(\s+end:)\s+[0-9] *#?(.*)$/s//\1 '$endPage' #\2/' $filename
-	diff $filename $filename.end.bak
+	sed -r -i.end.bak -e '0,/^(\s+end:)\s+[0-9] *#?(.*)$/s//\1 '$endPage' #\2/' "$filename"
+	diff "$filename" "$filename.end.bak"
 }
 
 # parse TSV and take care for correct paring of file name and values
@@ -272,12 +272,12 @@ parsepages() {
 	# parse TSV
 	sed 1d ${pageSequence} | while IFS=$'\t' read -r -a arry
 	do
-		${arry[0]}=$fileid
-		${arry[1]}=$startPage
-		${arry[2]}=$endPage
+		fileid="${arry[0]}"
+		startPage="${arry[1]}"
+		endPage="${arry[2]}"
 		echo -e "\n"$fileid" is the file ID..."
 		filenamepath=$(find "${workingDir}/1-layout/" -maxdepth 1 -type f -name "$fileid*")
-		filename=${filenamepath##*/}
+		filename="${filenamepath##*/}"
 		echo -e "\n"$filename" is the filename..."
 		echo "..." $startPage "is its startPage"
 		echo "..." $endPage "is its endPage"
