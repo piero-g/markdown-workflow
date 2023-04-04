@@ -93,33 +93,45 @@ else
 fi
 
 ######
+# 2.1 check if sections will be numbered (default) or unnumbered
+#     see `./z-lib/journal.conf` for unnumbered_sections (true or false)
+#     parameter evalued by `./z-lib/events-logger.sh`
+######
+if [ $unnumbered_sections ] && [ $unnumbered_sections == true ]; then
+	echo "sections will be unnumbered (default is numbered)"
+	sectionNum=""
+else
+	sectionNum="-N"
+fi
+
+######
 # 3. conversion, change extension, not filename; then archive manuscript
 ######
 
 # prepare daily subdirectory for layout-versions archiving
-mkdir -p $workingDir/archive/layout-versions/$today
+mkdir -p "$workingDir/archive/layout-versions/$today"
 
 # conversion functions
 converttohtml() {
 	# HTML conversion with Pandoc  --self-contained
-	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" -N --toc --filter=pandoc-citeproc --email-obfuscation=references --section-divs --self-contained --template="$workingDir/z-lib/article.html5" --write=html5 --default-image-extension=.low.jpg -o "$workingDir/2-publication/${manuscript%.md}.html"
+	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" ${sectionNum} --toc --filter=pandoc-citeproc --email-obfuscation=references --section-divs --self-contained --template="$workingDir/z-lib/article.html5" --write=html5 --default-image-extension=.low.jpg -o "$workingDir/2-publication/${manuscript%.md}.html"
 }
 converttopdf() {
 	# PDF conversion with Pandoc # -N --toc
-	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" -N --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.latex" --pdf-engine=xelatex --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.pdf"
+	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" ${sectionNum} --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.latex" --pdf-engine=xelatex --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.pdf"
 	# LaTeX
-	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" -N --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.latex" --pdf-engine=xelatex --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.tex"
+	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" ${sectionNum} --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.latex" --pdf-engine=xelatex --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.tex"
 }
 converttoxml() {
 	# JATS XML
-	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" -N --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.jats" --write=jats --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.jats.xml"
+	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" ${sectionNum} --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.jats" --write=jats --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.jats.xml"
 	# TEI XML
-	#pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" --toc -N --filter=pandoc-citeproc --template="$workingDir/z-lib/article.tei" --write=tei -s -o "$workingDir/2-publication/${manuscript%.md}.tei.xml"
+	#pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" --toc ${sectionNum} --filter=pandoc-citeproc --template="$workingDir/z-lib/article.tei" --write=tei -s -o "$workingDir/2-publication/${manuscript%.md}.tei.xml"
 }
 # this is just a test
 converttoword() {
 	# DOCX format # --reference-doc="$workingDir/z-lib/article.docx"
-	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" -N --toc --filter=pandoc-citeproc  -w docx+styles  -s -o "$workingDir/2-publication/${manuscript%.md}.docx"
+	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" ${sectionNum} --toc --filter=pandoc-citeproc  -w docx+styles  -s -o "$workingDir/2-publication/${manuscript%.md}.docx"
 }
 # generic function that calls the specific conversions
 converttoformats() {
