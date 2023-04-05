@@ -53,23 +53,15 @@ PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@
 today=$(date +"%Y-%m-%d")
 eventslog="../../$today-events.log"
 if [ ! -e "$eventslog" ]; then
-	echo "I am currently in $PWD and I couldn't find ${eventslog}: it is the right place? This command won't be logged"
+	echo "I am currently in $PWD and I couldn't find ${eventslog}:"
+	echo "is it the right place?"
+	echo "This command won't be logged in the daily events log"
 else
 	echo "Today's events log does exist"
 	printf "\n\n######\n\n" >> "$eventslog" # add separator
 	printf "[$(date +"%Y-%m-%d %H:%M:%S")] img-compress.sh started running in $PWD\n" >> "$eventslog"
 	printf "[$(date +"%Y-%m-%d %H:%M:%S")] current command options: $PARSED\n" >> "$eventslog"
 	printf "\n\n######\n\n" >> "$eventslog" # add separator
-fi
-
-# a local log can be useful too
-imagelog="images-events.log"
-if [ ! -e "$imagelog" ]; then
-	touch "$imagelog" && echo "Creating images events log"
-	printf "[$(date +"%Y-%m-%d %H:%M:%S")] img-compress.sh is running with this options: $PARSED\n" >> "$imagelog"
-else
-	echo "Images events log does exist"
-	printf "[$(date +"%Y-%m-%d %H:%M:%S")] img-compress.sh is running with this options: $PARSED\n" >> "$imagelog"
 fi
 
 if [[ $? -ne 0 ]]; then
@@ -120,6 +112,16 @@ while true; do
 			;;
 	esac
 done
+
+# a local log can be useful too
+imagelog="images-events.log"
+if [ ! -e "$imagelog" ]; then
+	touch "$imagelog" && echo "Creating images events log"
+	printf "[$(date +"%Y-%m-%d %H:%M:%S")] img-compress.sh is running with this options: $PARSED\n" >> "$imagelog"
+else
+	echo "Images events log does exist"
+	printf "[$(date +"%Y-%m-%d %H:%M:%S")] img-compress.sh is running with this options: $PARSED\n" >> "$imagelog"
+fi
 
 ####
 # functions
