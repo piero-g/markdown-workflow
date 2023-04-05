@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Convert each image in corresponding ./layout/NNNN-media/ folder scaling it to
+# Convert each image in corresponding ./layout/NNNN_media/ folder scaling it to
 # the given maximum width and height.
 # Two versions are created: a 300dpi version for PDF, a low resolution version for HTML
 # Future desiderata are: compression via TinyPNG API, renaming etc
@@ -125,11 +125,11 @@ done
 # functions
 ####
 
-# print size, resolution (density) and colorspace of an image
+# print type, size, resolution (density) and colorspace of an image
 identifyimage() {
-	identify -format '%f:\n  size    %[width]x%[height]\n  density %[x]x%[y] %[units]\n  colorSp %[colorspace]\n\n' "${image}"
+	identify -format '%f:\n  type    %m\n  size    %[width]x%[height]\n  density %[x]x%[y] %[units]\n  colorSp %[colorspace]\n\n' "${image}"
 	if [ $log ]; then
-		identify -format '%f:\n  size    %[width]x%[height]\n  density %[x]x%[y] %[units]\n  colorSp %[colorspace]\n\n' "${image}" >> "$imagelog"
+		identify -format '%f:\n  type    %m\n  size    %[width]x%[height]\n  density %[x]x%[y] %[units]\n  colorSp %[colorspace]\n\n' "${image}" >> "$imagelog"
 	else
 		:
 	fi
