@@ -85,11 +85,11 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving ./z-lib/ folder" >> "$working
 cp -a "$workingDir/z-lib/"* "$workingDir/archive/final-version/z-lib/"
 
 # media directories
-if [ ! -d "$workingDir/1-layout/"*{-,_}media ] ; then
+if [ ! -d "$workingDir/1-layout/"*-media ] && [ ! -d "$workingDir/1-layout/"*_media ]; then
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] No media directories found in layout" >> "$workingDir/$eventslog"
 else
 	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving media folders" >> "$workingDir/$eventslog"
-	mv "$workingDir/1-layout/"*-media -t "$workingDir/archive/media/"
+	mv "$workingDir/1-layout/"*-media "$workingDir/1-layout/"*_media -t "$workingDir/archive/media/"
 fi
 
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Archiving scripts" >> "$workingDir/$eventslog"
