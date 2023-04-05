@@ -44,8 +44,8 @@ else
 	:
 fi
 
-OPTIONS=ilpDd:
-LONGOPTIONS=identify,log,preserve,density,dpi:
+OPTIONS=ilpDd:Lw:
+LONGOPTIONS=identify,log,preserve,density,dpi:,lowres,widthlow:
 
 PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
 
@@ -98,6 +98,23 @@ while true; do
 				DENSITY="$2"
 			else
 				echo "ERROR: --dpi must be an integer."
+				exit 1
+			fi
+			shift 2
+			;;
+		-L|--lowres)
+			lowresOnly=y
+			shift
+			;;
+		-w|--widthlow)
+			if [ "$2" -eq "$2" ] 2>/dev/null
+			then
+				# set a different resolution for low-res images
+				lowwidth="$2"
+				# set a very high parameter, since it will be managed by the width
+				lowheight=1200
+			else
+				echo "ERROR: --widthlow must be an integer."
 				exit 1
 			fi
 			shift 2
@@ -259,6 +276,12 @@ else # we have a parameter: convert only specified file
 				else
 					echo "${image}: setting density to $DENSITY"
 					convert -units PixelsPerInch ${image} -density $DENSITY ${image}
+				fi
+			elif [ $lowresOnly ]; then
+				# generate only low-res version
+				if [ "${image}" != "${image%.${EXTJPG}}" ]; then
+					convert ${image} -resize ${lowwidth}x${lowheight}\> ${image%.${EXTJPG}}.low.jpg
+					echo "generated low-res version for ${image} with width: $lowwidth"
 				fi
 			else
 				identifyimage
