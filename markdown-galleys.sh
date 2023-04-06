@@ -210,7 +210,7 @@ if [ $NOOPT ] || [ -z ${@+x} ]; then
 
 		# convert valid files
 		for markdown in ./*.md; do
-			manuscript=${markdown#.\/};
+			manuscript="${markdown#.\/}"
 			# launch conversion
 			converttoformats
 
@@ -218,7 +218,7 @@ if [ $NOOPT ] || [ -z ${@+x} ]; then
 	) # end subshell
 
 else # we have a parameter: convert only specified file
-	for parameter in $@; do
+	for parameter in "$@"; do
 		echo -e "\nparameter is set to '$parameter'";
 		manuscript="$( echo "$parameter" | sed -r 's/^\.?\/?1\-layout\///' )"
 

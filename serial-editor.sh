@@ -183,7 +183,7 @@ else # we have a parameter: convert only specified file
 		echo "WARNING: the option selected won't run on specific files, aborting!"
 		exit 1
 	fi
-	for parameter in $@; do
+	for parameter in "$@"; do
 
 		manuscript="$( echo "$parameter" | sed -r 's/^\.?\/?1\-layout\///' )"
 

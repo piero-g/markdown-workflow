@@ -263,7 +263,7 @@ if [ -z ${@+x} ]; then
 	done
 
 else # we have a parameter: convert only specified file
-	for parameter in $@; do
+	for parameter in "$@"; do
 		echo -e "\nparameter is set to '$parameter'";
 		image=${parameter}
 		if [[ $image =~ \.(jpeg|jpg|png|tiff|tif)$ ]]; then
