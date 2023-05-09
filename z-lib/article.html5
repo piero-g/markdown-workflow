@@ -65,7 +65,7 @@ $if(title)$
 <div property="isPartOf" typeof="PublicationVolume">
 <meta property="volumeNumber" content="$volume$" />
 <meta property="datePublished" content="$year$" />
-<p property="isPartOf" typeof="Periodical"><span property="name" resource="$journal.url$" content="$journal.title$">$journal.title$</span>$if(issuedisplay)$. $issuedisplay$$endif$
+<p property="isPartOf" typeof="Periodical"><span property="name" resource="$journal.url$" content="$journal.title$">$journal.title$</span>$if(issuedisplay)$. $issuedisplay$$if(issuepagination)$$if(page.end)$, $page.start$&ndash;$page.end$$else$$page.start$$endif$$endif$$endif$
 $if(journal.eissn)$<br />ISSN <span property="issn">$journal.eissn$</span>$endif$
 </p>
 </div>
@@ -86,10 +86,11 @@ $if(article.doi)$
 <a href="https://doi.org/$article.doi$" property="value">https://doi.org/$article.doi$</a></p>
 $endif$
 $if(article.id)$
+$if(issuepagination)$$else$
 <p property="identifier" typeof="PropertyValue">
 <meta property="propertyID" content="publisher-id" />
 Art. <span property="value">#$article.id$</span></p>
-$endif$
+$endif$$endif$
 $if(issuepagination)$
 <meta property="pageStart" content="$if(page.prefix)$$page.prefix$ $endif$$page.start$" />
 $if(page.end)$
@@ -153,9 +154,7 @@ $if(acknowledgements)$
 <!-- Acknowledgements -->
 <section id="acknowledgements">
 <h1 class="acknowledgements">$localization.acknowledgements$</h1>
-<div>
 $acknowledgements$
-</div>
 </section>
 $endif$
 $if(thanks)$

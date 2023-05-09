@@ -1,5 +1,4 @@
-% Options for packages loaded elsewhere
-\PassOptionsToPackage{unicode$for(hyperrefoptions)$,$hyperrefoptions$$endfor$}{hyperref}
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
 \PassOptionsToPackage{hyphens}{url}
 $if(colorlinks)$
 % custom: no * to svgnames, causes some colors not to be recognized
@@ -330,6 +329,9 @@ $-- Various customizations --$
 \usepackage{academicons}
 \usepackage{fontawesome}
 
+% custom: ORCID color
+\definecolor{orcid}{HTML}{A2D03E}
+
 % custom: dates
 \usepackage[useregional]{datetime2}
 
@@ -374,18 +376,23 @@ $else$
 \lfoot{\small\sffamily \url{$journal.url$}}
 $endif$
 % right footer (ID (if issuepagination false) + page (with optional prefix))
-\rfoot{\small\sffamily $if(article.id)$$if(issuepagination)$$else$Art.~\#$article.id$ \\ p.$endif$$endif$$if(page.prefix)$ $page.prefix$$endif$ $if(draft)$\color{red} $endif$\thepage}
+\rfoot{\small\sffamily $if(article.id)$$if(issuepagination)$$else$Art.~\#$article.id$ \\ p.$endif$$endif$$if(page.prefix)$ $page.prefix$$endif$ $if(draft)$\color{red}$endif$\thepage}
 % custom: TEST for more behaved footnotes
 \usepackage{etoolbox}
 % no superscript footnote marks, by egreg from https://tex.stackexchange.com/a/96400
 \makeatletter
-\newcommand{\nosupmark@makefnmark}{\@thefnmark.}
+\newcommand{\nosupmark@makefnmark}{\@thefnmark}
 \pretocmd{\@makefntext}{\let\@makefnmark\nosupmark@makefnmark}{}{}
 
 % custom: footnotes in first page similar to normal ones
-\patchcmd\maketitle{\renewcommand\thefootnote{\@alph\c@footnote}}{\AdaptNote\thanks\multthanks}{}{}
-\patchcmd\maketitle{%
-  \def\@makefnmark{\rlap{\@textsuperscript{\normalfont\@thefnmark}}}}{}{}{}
+%\patchcmd\maketitle{\renewcommand\thefootnote{\@alph\c@footnote}}{\AdaptNote\thanks\multthanks}{}{}
+%\patchcmd\maketitle{%
+%  \def\@makefnmark{\rlap{\nosupmark{\normalfont\@thefnmark}}}}{}{}{} % era \@textsuperscript al posto di \nosupmark
+%%% By egreg from https://tex.stackexchange.com/a/136750
+%%% We don't want to redefine \@makefntext
+\patchcmd\maketitle{\@makefntext}{\@@@ddt}{}{}
+%%% We don't want to have \rlap around the footnote mark
+\patchcmd\maketitle{\rlap}{\mbox}{}{}
 \makeatother
 $if(thanksmarkseries)$
 % custom: footnotes in first page (thanks) not using fnsymbol (depends on \usepackage{titling})
@@ -415,6 +422,37 @@ $if(linenumbers)$
 \usepackage[pagewise, modulo]{lineno}
 \linenumbers
 $endif$
+$endif$
+
+% custom TEST: non hyphenation in email!
+\usepackage{hyphenat}
+
+% custom: better placement for figures
+\usepackage[section]{placeins}
+
+% custom TEST: larger space with authors (thanks to titling)
+%
+$if(institute)$
+\preauthor{\begin{center}
+  \large
+  \def\arraystretch{1.3}%
+  \begin{tabular}[t]{c}}
+\postauthor{\end{tabular}\par\end{center}
+  \begin{center}
+  {\footnotesize
+  \begin{tabular}[t]{c l}
+    $for(institute)$
+    $if(institute.index)$
+    \textsuperscript{$institute.index$} & $institute.name$
+    $elseif(institute.name)$ % we assume all authors share the same affiliation
+    $institute.name$
+    $else$ % we assume there is only one author
+    $for(author)$
+    $if(author.affiliation)$$author.affiliation$$endif$$endfor$
+    $endif$$sep$ \\
+    $endfor$
+  \end{tabular}}
+\end{center}}
 $endif$
 
 % set default figure placement to htbp
@@ -474,20 +512,27 @@ $if(csl-refs)$
   \setlength{\parskip}{8pt plus 2pt minus 1pt}
 $endif$
 
+% TEST institutions
+\usepackage{setspace}
+
 $if(title)$
-\title{$if(blocktitle)$$blocktitle$$else$$title$$endif$$for(thanks)$\thanks{$thanks$}$sep$~~$endfor$$if(correction)$$if(correction.notice)$$else$$if(thanks)$~~$endif$\thanks{$correction.text$}$endif$$endif$}
+\title{$if(blocktitle)$$blocktitle$$else$$title$$endif$$for(thanks)$\thanks{$thanks$}$sep$~~~$endfor$$if(correction)$$if(correction.notice)$$else$$if(thanks)$~~~$endif$\thanks{$correction.text$}$endif$$endif$}
 $endif$
 $if(subtitle)$
 \providecommand{\subtitle}[1]{}
 \subtitle{$subtitle$}
 $endif$
 $if(author)$ % custom: affiliation only if "affiliationonly" is true, else boxed version below abstract
-\author{$for(author)$$author.name$$if(affiliationonly)$$if(author.affiliation)$\thanks{$for(author.affiliation)$$author.affiliation$$sep$; $endfor$$if(author.corresp)$; {\scriptsize\faEnvelope}~$author.email$$endif$$if(author.orcid)$; \aiOrcid~\url{$author.orcid$}$endif$}$else$$if(author.corresp)$\thanks{{\scriptsize\faEnvelope}~$author.email$$if(author.orcid)$; \aiOrcid~\url{$author.orcid$}$endif$}$endif$$endif$$endif$$sep$ \and $endfor$}
+$if(institute)$ % TEST: derived from https://github.com/pandoc-scholar
+\author{$for(author)$$author.name$$if(author.corresp)$\thanks{\raggedright\nohyphens{{\scriptsize\faEnvelope}~$author.email$}}$endif$$if(author.orcid)$\textsuperscript{\href{$author.orcid$}{\color{orcid}{\aiOrcid}}}$endif$$if(author.institute_id)$\textsuperscript{\thinspace $for(author.institute_id)$$author.institute_id$$sep$,~$endfor$}$endif$$sep$ \and $endfor$}
+$else$
+\author{$for(author)$$author.name$$if(affiliationonly)$$if(author.affiliation)$\thanks{\raggedright $for(author.affiliation)$$author.affiliation$$sep$; $endfor$$if(author.corresp)$; \nohyphens{{\scriptsize\faEnvelope}~$author.email$}$endif$$if(author.orcid)$; \aiOrcid~\url{$author.orcid$}$endif$}$else$$if(author.corresp)$\thanks{{\scriptsize\faEnvelope}~$author.email$$if(author.orcid)$; \aiOrcid~\url{$author.orcid$}$endif$}$endif$$endif$$endif$$sep$ \and $endfor$}
 $endif$
-$if(institute)$
-\providecommand{\institute}[1]{}
-\institute{$for(institute)$$institute$$sep$ \and $endfor$}
-$endif$
+% custom: remove due to new author behaviour
+%$if(institute)$
+%\providecommand{\institute}[1]{}
+%\institute{$for(institute)$$institute$$sep$ \and $endfor$}
+%$endif$
 % custom: dates
 $if(date)$ % normal publication date (simple text)
 \date{\normalsize $date$}
@@ -542,7 +587,7 @@ $-- custom: first page header and footer --$
   $if(article.doi)$\lhead{\small\sffamily \url{$journal.url$} \\ \url{https://doi.org/$article.doi$}}$endif$
   $endif$
   % right footer (ID + page (with optional prefix))
-  \rfoot{\small\sffamily $if(article.id)$Art.~\#$article.id$ \\ p.$endif$$if(page.prefix)$ $page.prefix$$endif$ $if(draft)$\color{red} $endif$\thepage}
+  \rfoot{\small\sffamily $if(issuepagination)$$else$$if(article.id)$Art.~\#$article.id$ \\ p.$endif$$endif$$if(page.prefix)$ $page.prefix$$endif$ $if(draft)$\color{red} $endif$\thepage}
   $if(copyright)$
   % left footer: copyright block
   \lfoot{\small\sffamily Copyright \copyright~$if(copyright.year)$$copyright.year$$endif$ $if(copyright.holder)$$copyright.holder$$endif$ \\ $if(copyright.text)$$copyright.text$ \\$endif$ $if(copyright.link)$\url{$copyright.link$}$endif$}
@@ -565,7 +610,7 @@ $if(keywords)$\vspace{1mm}\\ \textbf{$localization.keywords$}: $for(keywords)$$k
 \end{abstract}
 $endif$
 $if(acknowledgements)$ % custom: acknowledgements
-\vspace{1.5em}
+\vspace{$if(ackspace)$$ackspace$$else$1.5em$endif$}
 \renewcommand{\abstractname}{$localization.acknowledgements$}
 \begin{abstract}
 $if(indent)$\par\noindent $else$\setlength{\parindent}{0pt}
@@ -635,6 +680,11 @@ $endif$
 $else$
 \newpage
 $endif$
+% custom TEST: fnmark with full point
+% it's here to avoid breaking \thanks
+\makeatletter
+\renewcommand{\nosupmark@makefnmark}{\@thefnmark.}
+\makeatother
 $body$
 
 $if(natbib)$
@@ -672,6 +722,9 @@ $-- custom: end article author box --$
 $if(closingauthorbox)$
 $if(authorspagebreak)$ % custom: put authors in a second page
 \newpage
+$elseif(customboxspacing)$
+\vspace{$customboxspacing$}
+\vspace*{\fill} % push to the bottom
 $else$
 \vspace{2em} % ia safe spacing if lots of authors
 \vspace*{\fill} % push to the bottom
@@ -681,13 +734,13 @@ $endif$
  {\par\medskip}
 $for(author)$ % custom: author block with email, orcid and bio
 \begin{samepage}
-\renewcommand{\abstractname}{$author.name$$if(author.affiliation)$:$endif$}
+\renewcommand{\abstractname}{$author.name$}
 \begin{abstract} % was \sffamily
-\small $for(author.affiliation)$$author.affiliation$$sep$; $endfor$
+$if(author.affiliation)$-- $endif$\small $for(author.affiliation)$$author.affiliation$$sep$; $endfor$
 $if(author.orcid)$ \\ \aiOrcid~\url{$author.orcid$}$endif$$if(author.corresp)$\\ {\scriptsize\faEnvelope}~$author.email$$if(author.url)$;  {\scriptsize\faExternalLink}~\url{$author.url$}$endif$$else$$if(author.url)$\\ {\scriptsize\faExternalLink}~\url{$author.url$}$endif$$endif$$if(author.bio)$ \\ $author.bio$$endif$
 \end{abstract}
 \end{samepage}
-$endfor$
+$sep$$if(authorsep)$\vspace{$authorsep$}$endif$$endfor$
 $endif$
 $for(include-after)$
 $include-after$
