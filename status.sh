@@ -27,11 +27,11 @@ echo "Checking working directory status..."
 # 0-original
 echo -e "\n\n######\n"
 if [ -d 0-original ]; then
-	if [ $(ls -A 0-original) ]; then
-	echo "content of 0-original:"
-	echo
-	# print list of files
-	ls -AgGht 0-original | cut -d ' ' -f 3-
+	if [[ $(ls -A 0-original) ]]; then
+		echo "content of 0-original:"
+		echo
+		# print list of files
+		ls -AgGht 0-original | cut -d ' ' -f 3-
 	else
 		echo "0-original is empty"
 	fi

@@ -28,7 +28,7 @@ trap '[ "$?" -ne 77 ] || exit 77' ERR
 # 1. create directory structure for working and archiving, if not already there
 ######
 
-mkdir -p ./archive/{media,final-version/{z-lib,self-contained,publication}}
+mkdir -p "$workingDir"/archive/{media,final-version/{z-lib,self-contained,publication}}
 # creating only the directories pertaining this part of the workflow
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure, if not ready" >> "$workingDir/$eventslog"
 
