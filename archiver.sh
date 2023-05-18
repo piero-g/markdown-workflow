@@ -18,11 +18,34 @@ else
 	echo "Something went wrong with event logger, aborting! (is ./z-lib/ in its place?)"
 	exit 1
 fi
-printf "[$(date +"%Y-%m-%d %H:%M:%S")] archive.sh started running, logging events" >> "$workingDir/$eventslog"
 
 # trap for exiting while in subshell
 set -E
 trap '[ "$?" -ne 77 ] || exit 77' ERR
+
+# help
+function printHelp() {
+	cat <<EOF
+
+This script is to archive the working directory after the issue is published.
+It will also create a self-contained version of MD articles with metadata and
+settings. It takes no arguments.
+It will prompt you to check for any leftovers (check ./archive/!), and for the
+name of the zipped archive.
+
+Please note that the ./archive/ itself wont be emptied.
+
+EOF
+}
+
+if [[ $# -eq 0 ]] ; then
+	# no given arguments (correct!)
+	printf "[$(date +"%Y-%m-%d %H:%M:%S")] archive.sh started running, logging events" >> "$workingDir/$eventslog"
+else
+	printHelp
+	exit 0
+fi
+
 
 ######
 # 1. create directory structure for working and archiving, if not already there
@@ -34,6 +57,7 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure, if n
 
 # now a temporary folder
 tempdir=`mktemp -d "$workingDir/tmp.XXXXXXXXXXXX"`
+
 
 ######
 # 2. preparing "self-contained" layout files
@@ -55,6 +79,7 @@ cp -a "$workingDir/1-layout/"*.md "$tempdir"
 		mv "${layout}" "$workingDir/archive/final-version/self-contained/${layout}"
 	done
 ) # end subshell
+
 
 ######
 # 3. archive everything

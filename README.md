@@ -1,6 +1,8 @@
 
 # A Pandoc-Based Layout Workflow for Scholarly Journals
 
+_**Work in progress** (see also testing branch)_
+
 This is a simple workflow for scholarly journals, for managing the preparation of multiple publication formats. It is based on the awesome [pandoc](http://pandoc.org) and, instead of messing around with XML, it relies on the pairing of markdown (for full-text) and YAML (for metadata).
 
 The workflow is based on two conversions:
@@ -122,7 +124,7 @@ The resulting file formats are:
 - (needs testing) TEI XML ([_Text Encoding Initiative_](http://www.tei-c.org/index.xml))
 - (experimental) DOCX
 
-Several other file formats are possible due to the power of pandoc!
+Several other file formats are possible thanks to the power of pandoc!
 
 
 ## Demo

@@ -21,16 +21,40 @@ else
 	exit 1
 fi
 
-printf "[$(date +"%Y-%m-%d %H:%M:%S")] fulltext-markdown.sh started running, logging events" >> "$workingDir/$eventslog"
-
 # trap for exiting while in subshell
 set -E
 trap '[ "$?" -ne 77 ] || exit 77' ERR
+
+# help
+function printHelp() {
+	cat <<EOF
+
+This script converts ODT, DOCX, and TEX file to markdown format.
+It looks for files in the directory 0-original/ and it writes new MD files to
+1-layout/.
+
+It requires no argument.
+It will archive original manuscripts (see archive/).
+For suggested naming convention, see the documentation
+  (ToDo: write documentation)
+
+EOF
+}
+
+if [[ $# -eq 0 ]] ; then
+	# no given arguments (correct!)
+	printf "[$(date +"%Y-%m-%d %H:%M:%S")] fulltext-markdown.sh started running, logging events" >> "$workingDir/$eventslog"
+else
+	printHelp
+	exit 0
+fi
+
 
 ######
 # 1. create directory structure for working and archiving, if not already there
 ######
 mkdir -p "$workingDir"/{archive/{original-version,first-conversion,editing-ready},1-layout}
+
 # creating only the directories pertaining to this part of the workflow
 printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure, if not ready" >> "$workingDir/$eventslog"
 
@@ -39,6 +63,7 @@ tempdir=`mktemp -d "$workingDir/tmp.XXXXXXXXXXXX"`
 
 # temporary file for storing variables
 tempvar=`mktemp "$workingDir/tmp-values.XXXXXXXXX.sh"`
+
 
 ######
 # 2. conversion, change extension, not filename; then archive manuscript
@@ -58,6 +83,7 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts from
 		else
 			echo "WARNING: ./0-original directory not found!"
 			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./0-original directory not found! Aborting." >> "$workingDir/$eventslog"
+			printHelp
 			exit 77
 		fi
 	fi
@@ -72,6 +98,7 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts from
 	else
 		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] No valid files found in ./0-original, exiting now" >> "$workingDir/$eventslog"
 		echo "WARNING: no valid files!"
+		printHelp
 		exit 77
 	fi
 
@@ -95,8 +122,8 @@ printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts from
 			# actual conversion with Pandoc
 			if pandoc --wrap=none --atx-headers -o "$tempdir/${manuscript%.${EXT2}}.md" "$manuscript" ; then
 				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
-				# archive the processed manuscript - TEST: cp instead of mv
-				cp "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT2}}-$(date +"%Y-%m-%dT%H-%M-%S").${EXT2}"
+				# archive the processed manuscript
+				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT2}}-$(date +"%Y-%m-%dT%H-%M-%S").${EXT2}"
 				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript} archived" >> "$workingDir/$eventslog"
 			else
 				# pandoc returned errors, print a warning and don't archive

@@ -16,10 +16,32 @@ else
 	echo "Something went wrong with event logger, aborting! (is ./z-lib/ in its place?)"
 	exit 1
 fi
-printf "[$(date +"%Y-%m-%d %H:%M:%S")] status.sh started running, logging events" >> "$eventslog"
 
+# help
+function printHelp() {
+	cat <<EOF
 
-echo "Checking working directory status..."
+This script is to quickly check if the files in the working directory
+have been updated. It will stamp a list of files for:
+
+0-original/
+1-layout/
+2-publication/ [only the two most recent PDFs!]
+
+It takes no arguments.
+
+EOF
+}
+
+if [[ $# -eq 0 ]] ; then
+	# no given arguments (correct!)
+	printf "[$(date +"%Y-%m-%d %H:%M:%S")] status.sh started running, logging events" >> "$eventslog"
+	echo "Checking working directory status..."
+else
+	printHelp
+	exit 0
+fi
+
 
 #####
 # 1. print status on working directories
