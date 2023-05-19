@@ -35,7 +35,7 @@ EOF
 
 if [[ $# -eq 0 ]] ; then
 	# no given arguments (correct!)
-	printf "[$(date +"%Y-%m-%d %H:%M:%S")] status.sh started running, logging events" >> "$eventslog"
+	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] status.sh started running, logging events" >> "$eventslog"
 	echo "Checking working directory status..."
 else
 	printHelp

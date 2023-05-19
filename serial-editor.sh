@@ -16,7 +16,7 @@ else
 	echo "Something went wrong with event logger, aborting! (is ./z-lib/ in its place?)"
 	exit 1
 fi
-printf "[$(date +"%Y-%m-%d %H:%M:%S")] serial-editor.sh started running, logging events" >> "$eventslog"
+printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] serial-editor.sh started running, logging events" >> "$eventslog"
 
 # trap for exiting while in subshell
 set -E
@@ -40,7 +40,7 @@ LONGOPTIONS=undraft,publication:,countpages,pagesequence:
 
 PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
 
-printf "[$(date +"%Y-%m-%d %H:%M:%S")] current command options: $PARSED\n" >> "$eventslog"
+printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] current command options: $PARSED\n" >> "$eventslog"
 
 if [[ $? -ne 0 ]]; then
 	# e.g. $? == 1
@@ -98,7 +98,7 @@ fi
 
 mkdir -p ./archive/layout-versions
 # creating only the directories pertaining this part of the workflow
-printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure, if not ready" >> "$eventslog"
+printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure, if not ready" >> "$eventslog"
 
 ######
 # 2. conversion, change extension, not filename; then archive manuscript
@@ -127,7 +127,7 @@ edityaml() {
 	echo -e "\n\tediting YAML in ${manuscript%.md}..."
 	# archive a copy before editing the manuscript
 	cp "$manuscript" "$workingDir/archive/layout-versions/$today/${manuscript%.md}-$(date +"%Y-%m-%dT%H-%M-%S").md"
-	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   copy of ${manuscript%.md} archived" >> "$workingDir/$eventslog"
+	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   copy of ${manuscript%.md} archived" >> "$workingDir/$eventslog"
 
 	if [ $u ]; then
 		undraft
@@ -141,7 +141,7 @@ edityaml() {
 # Do you want to run editing on a specific article?
 if [ -z ${@+x} ]; then
 	# no file specified, run on each file within the directory
-	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting editing of manuscripts in ./1-layout..." >> "$eventslog"
+	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting editing of manuscripts in ./1-layout..." >> "$eventslog"
 	# also store a flag
 	echo ALL=true >> $tempvar
 	( # start subshell
@@ -149,7 +149,7 @@ if [ -z ${@+x} ]; then
 			echo "Starting editing..."
 		else
 			echo "WARNING: ./1-layout directory not found!"
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
+			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
 			exit 77
 		fi
 
@@ -158,7 +158,7 @@ if [ -z ${@+x} ]; then
 		if [ ${#EXT[@]} -gt 0 ]; then
 			: # valid files, ok
 		else
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] No valid files found in ./1-layout, exiting now" >> "../$eventslog"
+			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] No valid files found in ./1-layout, exiting now" >> "../$eventslog"
 			echo "WARNING: no valid files!"
 			exit 77
 		fi
@@ -190,7 +190,7 @@ else # we have a parameter: convert only specified file
 		if [[ $manuscript == *.md ]]; then
 			: # valid files, ok
 		else
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] The specified $manuscript has not a valid extension, exiting now" >> "$eventslog"
+			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] The specified $manuscript has not a valid extension, exiting now" >> "$eventslog"
 			echo "WARNING: $manuscript is not valid!"
 			exit 1
 		fi
@@ -200,7 +200,7 @@ else # we have a parameter: convert only specified file
 				echo "Starting editing..."
 			else
 				echo "WARNING: ./1-layout directory not found!"
-				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
+				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
 				exit 77
 			fi
 
@@ -234,7 +234,7 @@ if [ $pageCount ]; then
 				done
 			else
 				echo "WARNING: ./2-publication directory not found!"
-				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./2-publication directory not found! Aborting." >> "$eventslog"
+				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./2-publication directory not found! Aborting." >> "$eventslog"
 				exit 77
 			fi
 		) # end subshell
@@ -286,7 +286,7 @@ parsepages() {
 				:
 			else
 				echo "WARNING: ./1-layout directory not found!"
-				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
+				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
 				exit 77
 			fi
 			if [[ -f $filename ]] && [[ $filename == *.md ]]; then

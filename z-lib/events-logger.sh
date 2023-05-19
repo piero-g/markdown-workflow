@@ -43,11 +43,11 @@ if [ ! -e "$eventslog" ]; then
 		# incremental backup of the whole working directory outside the synced directory
 		echo "Running daily backup of the working directory..."
 		rsync -av ./ "${backup_path%/}/$journal_shortname/$today/"
-		printf "backup\t$(date +"%Y-%m-%d %H:%M:%S")\n" >> ${backup_path%/}/$journal_shortname-backup.log
+		printf '%b\n' "backup\t$(date +"%Y-%m-%d %H:%M:%S")" >> ${backup_path%/}/$journal_shortname-backup.log
 	fi
 
 	touch "$eventslog" && echo "Creating today's events log"
 else
 	echo "Today's events log does exist"
-	printf "\n\n######\n\n" >> "$eventslog" # add separator
+	printf '%b\n' "\n######\n" >> "$eventslog" # add separator
 fi

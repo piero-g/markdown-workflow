@@ -58,10 +58,10 @@ if [ ! -e "$eventslog" ]; then
 	echo "This command won't be logged in the daily events log"
 else
 	echo "Today's events log does exist"
-	printf "\n\n######\n\n" >> "$eventslog" # add separator
-	printf "[$(date +"%Y-%m-%d %H:%M:%S")] img-compress.sh started running in $PWD\n" >> "$eventslog"
-	printf "[$(date +"%Y-%m-%d %H:%M:%S")] current command options: $PARSED\n" >> "$eventslog"
-	printf "\n\n######\n\n" >> "$eventslog" # add separator
+	printf '%b\n' "\n######\n" >> "$eventslog" # add separator
+	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] img-compress.sh started running in $PWD" >> "$eventslog"
+	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] current command options: $PARSED" >> "$eventslog"
+	printf '%b\n' "\n######\n" >> "$eventslog" # add separator
 fi
 
 if [[ $? -ne 0 ]]; then
@@ -134,10 +134,10 @@ done
 imagelog="images-events.log"
 if [ ! -e "$imagelog" ]; then
 	touch "$imagelog" && echo "Creating images events log"
-	printf "[$(date +"%Y-%m-%d %H:%M:%S")] img-compress.sh is running with this options: $PARSED\n" >> "$imagelog"
+	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] img-compress.sh is running with this options: $PARSED" >> "$imagelog"
 else
 	echo "Images events log does exist"
-	printf "[$(date +"%Y-%m-%d %H:%M:%S")] img-compress.sh is running with this options: $PARSED\n" >> "$imagelog"
+	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] img-compress.sh is running with this options: $PARSED" >> "$imagelog"
 fi
 
 ####
@@ -159,7 +159,7 @@ changedensity() {
 	echo "${image}: setting density to $DENSITY"
 	convert -units PixelsPerInch ${image} -density $DENSITY ${image}
 	if [ $log ]; then
-		printf "Density of ${image} is now set to $DENSITY" >> "$imagelog"
+		printf '%b\n' "Density of ${image} is now set to $DENSITY" >> "$imagelog"
 	else
 		:
 	fi
@@ -170,11 +170,11 @@ backupimage() {
 	if [ ! -e "./orig/${image}" ]; then
 		echo "backup ${image} in ./orig/"
 		cp "${image}" "./orig/${image}"
-		printf "${image} archived in ./orig/" >> "$imagelog"
+		printf '%b\n' "${image} archived in ./orig/" >> "$imagelog"
 	else
 		echo "backup ${image} in ./orig/ with datestamp, an image was already there"
 		cp "${image}" "./orig/$(date +"%Y-%m-%dT%H-%M-%S")-${image}"
-		printf "${image} archived in ./orig/ as $(date +"%Y-%m-%d %H:%M:%S")-${image}" >> "$imagelog"
+		printf '%b\n' "${image} archived in ./orig/ as $(date +"%Y-%m-%d %H:%M:%S")-${image}" >> "$imagelog"
 	fi
 }
 
@@ -225,7 +225,7 @@ convertimage() {
 # Do you want to edit a specific image?
 if [ -z ${@+x} ]; then
 	# no file specified, run on each file within the directory
-	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting editing of manuscripts in ./1-layout..." >> "$eventslog"
+	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting editing of manuscripts in ./1-layout..." >> "$eventslog"
 
 	if [ $identify ] || [ $densityOnly ]; then
 		:
@@ -235,7 +235,7 @@ if [ -z ${@+x} ]; then
 		read confirm
 		if echo "$confirm" | grep -iq "^[yY]$" ; then
 			echo -e "\nConverting all images with appropriate extension!\n"
-			printf "Performing the conversion on all images\n" >> "$imagelog"
+			printf '%b\n' "Performing the conversion on all images" >> "$imagelog"
 		else
 			echo "Exiting now!"
 			exit 1

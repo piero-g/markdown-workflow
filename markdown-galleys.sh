@@ -19,7 +19,7 @@ else
 	echo "Something went wrong with event logger, aborting! (is ./z-lib/ in its place?)"
 	exit 1
 fi
-printf "[$(date +"%Y-%m-%d %H:%M:%S")] markdown-galleys.sh started running, logging events" >> "$workingDir/$eventslog"
+printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] markdown-galleys.sh started running, logging events" >> "$workingDir/$eventslog"
 
 # trap for exiting while in subshell
 set -E
@@ -32,7 +32,7 @@ trap '[ "$?" -ne 77 ] || exit 77' ERR
 
 mkdir -p $workingDir/{archive/layout-versions,2-publication}
 # creating only the directories pertaining this part of the workflow
-printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure, if not ready" >> "$workingDir/$eventslog"
+printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure, if not ready" >> "$workingDir/$eventslog"
 
 ######
 # 2. parse options and parameters, if getopt isn't too old
@@ -136,7 +136,7 @@ converttoword() {
 # generic function that calls the specific conversions
 converttoformats() {
 	echo -e "\n\tconverting ${manuscript%.md}..."
-	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript%.md}, trying to convert it" >> "$workingDir/$eventslog"
+	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript%.md}, trying to convert it" >> "$workingDir/$eventslog"
 
 	# if backup don't run any conversion
 	if [ $b ]; then
@@ -145,14 +145,14 @@ converttoformats() {
 		else
 			echo -e "\tbackup only"
 		fi
-		printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   backup only!" >> "$workingDir/$eventslog"
+		printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   backup only!" >> "$workingDir/$eventslog"
 	else
 		# no backup, proceed with conversions
 		if [ $p ] || [ $h ] || [ $x ] || [ $w ]; then
 			echo -e "\tconverting only to the specified formats"
 		else
 			echo -e "\tno options given, preparing all formats"
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   no options given, preparing all formats" >> "$workingDir/$eventslog"
+			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   no options given, preparing all formats" >> "$workingDir/$eventslog"
 			converttohtml
 			converttopdf
 			converttoxml
@@ -178,23 +178,23 @@ converttoformats() {
 
 	# archive the processed manuscript
 	cp "$manuscript" "$workingDir/archive/layout-versions/$today/${manuscript%.md}-$(date +"%Y-%m-%dT%H-%M-%S").md"
-	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   copy of ${manuscript%.md} archived" >> "$workingDir/$eventslog"
+	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   copy of ${manuscript%.md} archived" >> "$workingDir/$eventslog"
 }
 
 # log the specified command options
-printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] command options: $PARSED" >> "$workingDir/$eventslog"
+printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] command options: $PARSED" >> "$workingDir/$eventslog"
 
 # Do you want to run conversion on a specific article?
 if [ $NOOPT ] || [ -z ${@+x} ]; then
 	echo -e "\tno file specified"
 
-	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts in ./1-layout..." >> "$workingDir/$eventslog"
+	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts in ./1-layout..." >> "$workingDir/$eventslog"
 	( # start subshell
 		if cd ./1-layout ; then
 			echo "Starting conversions..."
 		else
 			echo "WARNING: ./1-layout directory not found!"
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$workingDir/$eventslog"
+			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$workingDir/$eventslog"
 			exit 77
 		fi
 
@@ -203,7 +203,7 @@ if [ $NOOPT ] || [ -z ${@+x} ]; then
 		if [ ${#EXT[@]} -gt 0 ]; then
 			: # valid files, ok
 		else
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] No valid files found in ./1-layout, exiting now" >> "$workingDir/$eventslog"
+			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] No valid files found in ./1-layout, exiting now" >> "$workingDir/$eventslog"
 			echo "WARNING: no valid files!"
 			exit 77
 		fi
@@ -227,7 +227,7 @@ else # we have a parameter: convert only specified file
 				echo "Starting conversions..."
 			else
 				echo "WARNING: ./1-layout directory not found!"
-				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$workingDir/$eventslog"
+				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$workingDir/$eventslog"
 				exit 77
 			fi
 
