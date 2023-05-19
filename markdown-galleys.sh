@@ -40,57 +40,82 @@ printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure,
 
 getopt --test > /dev/null
 if [[ $? -ne 4 ]]; then
-		echo "I’m sorry, getopt --test failed in this environment, options will be ignored!"
-		NOOPT=true
-else
-	# getopt is updated, parse options
-	OPTIONS=phxwbo:
-	LONGOPTIONS=pdf,html,xml,word,backup,output:
-
-	PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
-	if [[ $? -ne 0 ]]; then
-			# e.g. $? == 1
-			#  then getopt has complained about wrong arguments to stdout
-			exit 2
-	fi
-	# read getopt’s output this way to handle the quoting right:
-	eval set -- "$PARSED"
-
-	# now enjoy the options in order and nicely split until we see --
-	while true; do
-		case "$1" in
-			-p|--pdf)
-				p=y
-				shift
-				;;
-			-h|--html)
-				h=y
-				shift
-				;;
-			-x|--xml)
-				x=y
-				shift
-				;;
-			-w|--word)
-				w=y
-				shift
-				;;
-			-b|--backup)
-				b=y
-				shift
-				;;
-			--)
-				shift
-				break
-				;;
-			*)
-				echo "Programming error"
-				exit 3
-				;;
-		esac
-	done
-
+	echo "I’m sorry, `getopt --test` failed in this environment."
+	exit 1
 fi
+
+OPTIONS=pHxwbh
+LONGOPTIONS=pdf,html,xml,word,backup,help
+
+PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
+if [[ $? -ne 0 ]]; then
+		# e.g. $? == 1
+		#  then getopt has complained about wrong arguments to stdout
+		exit 2
+fi
+
+# help
+function printHelp() {
+  cat <<EOF
+
+This script performs the main conversions, from markdown files in 1-layout
+to galley formats in 2-publication.
+It will run on all .md files in 1-layout/, if no arguments are specified
+(arguments must include the folder name)
+
+The following options are supported:
+-h, --help      display this message and exit
+-p, --pdf       convert only in PDF
+-H, --html      convert only in HTML
+-x, --xml       convert only in JATS XML
+-w, --word      convert only in DOCX
+                  (useful for additional copyediting or antiplagiarism)
+-b, --backup    don't convert, just backup in ./archive/layout-versions/
+
+EOF
+}
+
+# read getopt’s output this way to handle the quoting right:
+eval set -- "$PARSED"
+
+# now enjoy the options in order and nicely split until we see --
+while true; do
+	case "$1" in
+		-h|--help)
+			printHelp
+			exit 1
+			;;
+		-p|--pdf)
+			p=y
+			shift
+			;;
+		-H|--html)
+			h=y
+			shift
+			;;
+		-x|--xml)
+			x=y
+			shift
+			;;
+		-w|--word)
+			w=y
+			shift
+			;;
+		-b|--backup)
+			b=y
+			shift
+			;;
+		--)
+			shift
+			break
+			;;
+		*)
+			echo "Programming error"
+			exit 3
+			;;
+	esac
+done
+
 
 ######
 # 2.1 check if sections will be numbered (default) or unnumbered
@@ -103,6 +128,7 @@ if [ $unnumbered_sections ] && [ $unnumbered_sections == true ]; then
 else
 	sectionNum="-N"
 fi
+
 
 ######
 # 3. conversion, change extension, not filename; then archive manuscript
@@ -185,7 +211,7 @@ converttoformats() {
 printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] command options: $PARSED" >> "$workingDir/$eventslog"
 
 # Do you want to run conversion on a specific article?
-if [ $NOOPT ] || [ -z ${@+x} ]; then
+if [ -z ${@+x} ]; then
 	echo -e "\tno file specified"
 
 	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts in ./1-layout..." >> "$workingDir/$eventslog"

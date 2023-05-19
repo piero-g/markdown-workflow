@@ -35,8 +35,8 @@ if [[ $? -ne 4 ]]; then
 	exit 1
 fi
 
-OPTIONS=up:cs:
-LONGOPTIONS=undraft,publication:,countpages,pagesequence:
+OPTIONS=up:cs:h
+LONGOPTIONS=undraft,publication:,countpages,pagesequence:,help
 
 PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
 
@@ -47,12 +47,37 @@ if [[ $? -ne 0 ]]; then
 	#  then getopt has complained about wrong arguments to stdout
 	exit 2
 fi
+
+# help
+function printHelp() {
+  cat <<EOF
+
+This script performs some serial edits to the YAML part of markdown files.
+Each option should be launched separately.
+
+The following options are supported:
+-h, --help          display this message and exit
+-u, --undraft       change "draft: true" to "false"
+-p, --publication   set the given publication date
+                      (specified in YYYY-MM-DD format)
+-c, --countpages    count the pages for each PDF in 2-publication/
+                      the output can be copied and pasted as a TSV
+-s, --pagesequence  reads a TSV with id/filename, starting page, ending page
+                      and writes those data to page.start and page.end
+
+EOF
+}
+
 # read getopt’s output this way to handle the quoting right:
 eval set -- "$PARSED"
 
 # now enjoy the options in order and nicely split until we see --
 while true; do
 	case "$1" in
+		-h|--help)
+			printHelp
+			exit 1
+			;;
 		-u|--undraft)
 			u=y
 			shift
@@ -181,6 +206,7 @@ else # we have a parameter: convert only specified file
 
 	if [ $pageCount ] || [ $pageSequence ]; then
 		echo "WARNING: the option selected won't run on specific files, aborting!"
+		printHelp
 		exit 1
 	fi
 	for parameter in "$@"; do
@@ -240,6 +266,7 @@ if [ $pageCount ]; then
 		) # end subshell
 	else
 		echo "WARNING: the page sequence can only be applied to the full issue, I will exit"
+		printHelp
 		exit 1
 	fi
 
@@ -315,10 +342,12 @@ if [ $pageSequence ]; then
 			parsepages
 		else
 			echo "I can't find a file named ${pageSequence} or its not a TSV, abort!"
+			printHelp
 			exit 1
 		fi
 	else
 		echo "WARNING: the page sequence can only be applied to the full issue, I will exit"
+		printHelp
 		exit 1
 	fi
 else

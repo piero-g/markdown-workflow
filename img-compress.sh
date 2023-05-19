@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# Convert each image in corresponding ./layout/NNNN_media/ folder scaling it to
+# Convert each image in corresponding ./layout/media_NNNN/ folder scaling it to
 # the given maximum width and height.
 # Two versions are created: a 300dpi version for PDF, a low resolution version for HTML
-# Future desiderata are: compression via TinyPNG API, renaming etc
+# Future desiderata are: compression via TinyPNG API, renaming, orientation fix etc
 #
 # Author: Piero Grandesso
 # https://github.com/piero-g/markdown-workflow
@@ -44,8 +44,8 @@ else
 	:
 fi
 
-OPTIONS=ilpDd:Lw:
-LONGOPTIONS=identify,log,preserve,density,dpi:,lowres,widthlow:
+OPTIONS=ilpDd:Lw:h
+LONGOPTIONS=identify,log,preserve,density,dpi:,lowres,widthlow:,help
 
 PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
 
@@ -69,12 +69,43 @@ if [[ $? -ne 0 ]]; then
 		#  then getopt has complained about wrong arguments to stdout
 		exit 2
 fi
+
+# help
+function printHelp() {
+  cat <<EOF
+
+This script must run inside each media folder, it will prepare the files.
+The first conversion run should always be on all the images.
+later you may perform actions on one or more images.
+Accepted formats are jpg, png, tif.
+
+The following options are supported:
+-h, --help          display this message and exit
+-i, --identify      print type, size, resolution (density) and colorspace
+-l, --log           save --identify or --density to imagelog
+-p, --preserve      don't convert PNG to JPG
+-D, --density       set only the given density to images, don't convert
+                      (use it with --dpi)
+-d, --dpi           set a different density parameter for images
+                      (default: 300)
+-L, --lowres        don't convert image, just recreate the low-res version
+-w, --widthlow      set a custom width for low-res version, useful with
+                      --lowres and to alter width and height
+                      (default: 800 with max height: 500px)
+
+EOF
+}
+
 # read getopt’s output this way to handle the quoting right:
 eval set -- "$PARSED"
 
 # now enjoy the options in order and nicely split until we see --
 while true; do
 	case "$1" in
+		-h|--help)
+			printHelp
+			exit 1
+			;;
 		-i|--identify)
 			identify=y
 			shift
@@ -98,6 +129,7 @@ while true; do
 				DENSITY="$2"
 			else
 				echo "ERROR: --dpi must be an integer."
+				printHelp
 				exit 1
 			fi
 			shift 2
@@ -115,6 +147,7 @@ while true; do
 				lowheight=1200
 			else
 				echo "ERROR: --widthlow must be an integer."
+				printHelp
 				exit 1
 			fi
 			shift 2
@@ -291,6 +324,7 @@ else # we have a parameter: convert only specified file
 
 		else
 			echo "WARNING: $image is not valid!"
+			printHelp
 			exit 1
 		fi
 	done
