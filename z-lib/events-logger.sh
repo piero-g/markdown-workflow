@@ -1,3 +1,15 @@
+#!/bin/bash
+#
+# A single script meant to be invoked by other scripts.
+# It is used to:
+# - check if scripts are exec in the workingDirectory
+# - load config (if any)
+# - backup the whole workingDirectory (if set)
+# - manage daily events.log
+#
+# Author: Piero Grandesso
+# https://github.com/piero-g/markdown-workflow
+#
 #####
 # config file
 #####

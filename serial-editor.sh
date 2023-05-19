@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# YAML mass edit?
+# A script to perform mass edit on articles' YAML
+# (and maybe other useful things)
 #
 # Author: Piero Grandesso
 # https://github.com/piero-g/markdown-workflow

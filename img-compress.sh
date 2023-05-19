@@ -1,9 +1,12 @@
 #!/bin/bash
 #
-# Convert each image in corresponding ./layout/media_NNNN/ folder scaling it to
-# the given maximum width and height.
-# Two versions are created: a 300dpi version for PDF, a low resolution version for HTML
-# Future desiderata are: compression via TinyPNG API, renaming, orientation fix etc
+# Convert each image in corresponding ./layout/media_NNNN/ folder scaling it
+# to the given maximum width and height.
+# Two versions are created: a 300dpi version for PDF, a low resolution version
+# for HTML
+#
+# Future desiderata are: compression via TinyPNG API, renaming,
+# orientation fix etc
 #
 # Author: Piero Grandesso
 # https://github.com/piero-g/markdown-workflow

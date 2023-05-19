@@ -1,6 +1,8 @@
 #!/bin/bash
 #
-# Convert each article from markdown ("./1-layout/" directory) to the final publication files (galleys), and save in "./2-publication/" directory. Al the events are logged.
+# Convert each article from markdown ("./1-layout/" directory) to the final
+# publication files (galleys), and save in "./2-publication/" directory.
+# All the events are logged.
 # Also archive a backup copy of the markdown version and log all the events
 #
 # Author: Piero Grandesso

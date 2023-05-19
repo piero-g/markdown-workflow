@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# Archive the working directory, creating also a "self-contained" version of layout files, with issue and journal settings appended
+# Archive the working directory, creating also a "self-contained" version
+# of layout files, with issue and journal settings appended
 #
 # Author: Piero Grandesso
 # https://github.com/piero-g/markdown-workflow

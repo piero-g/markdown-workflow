@@ -1,7 +1,9 @@
 #!/bin/bash
 #
-# Convert each article manuscript (in ODT or DOCX) in markdown, and save in "./1-layout/" directory.
-# Also archive a backup copy of the results, log all the events and rename converted files
+# Convert each article manuscript (in ODT or DOCX) in markdown, and save
+# in "./1-layout/" directory.
+# Also archive a backup copy of the results, log all the events and rename
+# converted files
 # Please provide the manuscript in "./0-original/"
 #
 # Author: Piero Grandesso
