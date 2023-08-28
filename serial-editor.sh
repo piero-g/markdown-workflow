@@ -36,8 +36,8 @@ if [[ $? -ne 4 ]]; then
 	exit 1
 fi
 
-OPTIONS=up:cs:h
-LONGOPTIONS=undraft,publication:,countpages,pagesequence:,help
+OPTIONS=up:cs:rh
+LONGOPTIONS=undraft,publication:,countpages,pagesequence:,references,help
 
 PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
 
@@ -65,6 +65,7 @@ The following options are supported:
                       the output can be copied and pasted as a TSV
 -s, --pagesequence  reads a TSV with id/filename, starting page, ending page
                       and writes those data to page.start and page.end
+-r, --references    extract from HTMLs in "2-publication" the reference list
 
 EOF
 }
@@ -94,6 +95,10 @@ while true; do
 		-s|--pagesequence)
 			pageSequence="$2"
 			shift 2
+			;;
+		-r|--references)
+			extractReferences=y
+			shift
 			;;
 		--)
 			shift
@@ -189,7 +194,7 @@ if [ -z ${@+x} ]; then
 			exit 77
 		fi
 
-		if [ $pageCount ] || [ $pageSequence ]; then
+		if [ $pageCount ] || [ $pageSequence ] || [ $extractReferences ]; then
 			: # skip edityaml
 		else
 			# convert valid files
@@ -205,7 +210,7 @@ if [ -z ${@+x} ]; then
 
 else # we have a parameter: convert only specified file
 
-	if [ $pageCount ] || [ $pageSequence ]; then
+	if [ $pageCount ] || [ $pageSequence ] || [ $extractReferences ]; then
 		echo "WARNING: the option selected won't run on specific files, aborting!"
 		printHelp
 		exit 1
@@ -354,6 +359,47 @@ if [ $pageSequence ]; then
 else
 	:
 fi
+
+
+###
+# EXTRACT REFERENCES
+# extract references from HTML files in "2-publication"
+###
+referencesExtraction() {
+	xmllint --html --xpath '//section[@id = "references"]/p' "$article" > "references/${article%\.html}"-references.txt 2>/dev/null
+}
+cleanReferences() {
+	# replace any newline with a space
+	tr '\n' ' ' < "${refslist}" > "${refslist}-tmp" && mv "${refslist}-tmp" "${refslist}"
+	# remove <p> tags and add newlines
+	sed -i -e 's/<p>//g' -e 's#</p> #\n\n#g' "${refslist}"
+	# clean URI
+	sed -i -E 's#<a href=".+" class="uri">(.+)</a>#\1#g'  "${refslist}"
+}
+if [ $extractReferences ]; then
+	# do not run setpage on a single file (variable check)
+	. $tempvar
+	if [ $ALL ]; then
+		# no file specified, proceed
+		( # start subshell
+			if cd ./2-publication ; then
+
+				mkdir -p references
+
+				for article in *.html; do
+					referencesExtraction
+				done
+
+				if cd ./references ; then
+					for refslist in *-references.txt ; do
+						cleanReferences
+					done
+				fi
+			fi
+		) # end subshell
+	fi
+fi
+
 
 # remove working files
 rm $tempvar
