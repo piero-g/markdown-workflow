@@ -3,16 +3,16 @@
 
 _**Work in progress** (see also testing branch)_
 
-This is a simple workflow for scholarly journals, for managing the preparation of multiple publication formats. It is based on the awesome [pandoc](http://pandoc.org) and, instead of messing around with XML, it relies on the pairing of markdown (for full-text) and YAML (for metadata).
+This is a simple multiple-format layout workflow for scholarly journals. It is based on the awesome [pandoc](https://pandoc.org) and, instead of messing around with XML, it relies on the pairing of markdown (for full-text) and YAML (for metadata).
 
 The workflow is based on two conversions:
 
-1. manuscripts from DOCX/ODT to markdown
-2. manuscripts in markdown + YAML to galleys files (publication formats: HTML, PDF, XML, see [output](#output)) in one take
+1. manuscripts from DOCX/ODT/TEX to markdown+YAML
+2. manuscripts in markdown+YAML to galleys files (publication formats: HTML, PDF, XML, see [output](#output)) in one take
 
-This is meant to happen on a shared folder, so that a single computer could be prepared for the proper conversions, while editors could work on their own machines.
+The whole workflow is meant to happen on a shared folder, so that a single computer could be prepared for the proper conversions, while layout editors could work on their own machines.
 
-Further considerations and a more in-depth description of the workflow are [available in this post](http://pierog.it/en/2018/03/markdown-workflow/).
+Further considerations and a more in-depth description of the workflow are [available in this post](http://pierog.it/en/2018/03/markdown-workflow/) (currently outdated).
 
 
 ## Disclaimer
@@ -26,10 +26,10 @@ _This is also my first approach to bash scripting._
 
 ## Dependencies
 
-- [pandoc](http://pandoc.org/), version >2.0
-- [TeX Live](https://www.tug.org/texlive/), tested with version 2017
-- a Unix shell, for running scripts
-- (optional) [ImageMagick](http://imagemagick.org/) is used for images optimization
+- [pandoc](https://pandoc.org/), version >3.0
+- [TeX Live](https://www.tug.org/texlive/), currently working with TeX Live 2020 (and transitioning to TeX Live 2023)
+- a Bash shell, for running scripts
+- (optional) [ImageMagick](https://imagemagick.org/) is used for images optimization (currently using ImageMagick 6.9)
 
 Editors will only need a text editor in order to edit the markdown versions of the papers.
 
@@ -53,22 +53,36 @@ The `./z-lib/` directory contains the template to generate the publication forma
 
 ## Workflow
 
-1. Manuscripts ready for layout (in DOCX or ODT file format) will be placed by editors in a directory named `./0-original/`.
-2. The first conversion of manuscripts into markdown is carried from shell with `./fulltext-markdown.sh`. Converted manuscripts will be placed in the `./1-layout/` directory; an empty YAML for article-level metadata is prepended to each file.
+1. Copyedited manuscripts that are ready for layout preparation (in DOCX, ODT or TEX file format) will be placed by editors in the directory named `./0-original/`.
+2. The first conversion of manuscripts into markdown is carried from shell with [`./fulltext-markdown.sh`](#fulltext-markdown). Converted manuscripts will be placed in the `./1-layout/` directory; an empty YAML for article-level metadata is prepended to each file.
 3. Editors will then work in the `./1-layout/` directory, inserting metadata and other settings for each article, using YAML syntax. Editors will also fix the markdown syntax of each full-text
-4. When needed, the second conversion of manuscripts from markdown into publication formats is possible from shell, with `./markdown-galleys.sh`. Generated files will be available in the `./2-publication/` directory.
+4. When needed, the second conversion of manuscripts from markdown into publication formats is possible from shell, with [`./markdown-galleys.sh`](#markdown-galleys-options). Generated files will be available in the `./2-publication/` directory.
 
 The last two steps shall be repeated until happy with the results.
 
-### markdown-galleys options
+
+### fulltext-markdown
+
+This script converts ODT, DOCX, and TEX file to markdown format.
+It looks for files in the directory `./0-original/` and it writes new MD files to `./1-layout/`.
+
+It requires no argument.
+It will archive original manuscripts (see [`./archive/`](#backup-and-archive)).
+
+For suggested naming convention, see the documentation.  
+_(ToDo: write documentation)_
+
+
+### markdown-galleys
 
 Currently the script for the conversion from markdown to publication files supports some options:
 
-- `-h` or `--html` for the conversion to html format
-- `-p` or `--pdf` for the conversion to pdf and TeX formats
-- `-x` or `--xml` for the conversion to xml formats
-- `-w` or `--word` for the conversion to docx format -- experimental
-- `-b` or `--backup` will backup the current markdown files (find them in the archive), without any actual conversion
+- `-h`, `--help`: display this message and exit
+- `-H`, `--html`: convert only to HTML format
+- `-p`, `--pdf`: convert only to PDF and TeX formats
+- `-x`, `--xml`: convert only to JATS XML formats
+- `-w`, `--word`: convert only to DOCX format -- experimental (useful for additional copyediting or antiplagiarism)
+- `-b`, `--backup` will backup the current markdown files (find them in [./archive/layout-versions/](#backup-and-archive)), without any actual conversion
 
 Options can be combined; if no option is specified, the script will generate all formats (with the exception of the word format, that is available only when the `--word` option is given). The `--backup` option will exclude any other option.
 
@@ -77,7 +91,7 @@ You can also specify the path of the files to be converted (one ore more); else 
 Example:
 
 ```sh
-$ ./markdown-galleys.sh -ph ./1-layout/demo-article.md
+$ ./markdown-galleys.sh -pH ./1-layout/demo-article.md
 ```
 
 ### Images
@@ -85,6 +99,48 @@ $ ./markdown-galleys.sh -ph ./1-layout/demo-article.md
 The first conversion will create subdirectories for media files inside `./1-layout/`. Media files may be processed using the shell, with `./img-compress.sh` (it must be launched inside the media directory). Each image will be scaled to optimal dimensions at 300DPI; a low resolution version, to be used in the HTML file, will also be generated.
 
 Since the `--default-image-extension` of pandoc, editors should link images within the markdown file without extension --- except if it is different from the default (JPG) --- so that the low resolution version will be used when necessary.
+
+The `./img-compress.sh` script must run inside each media folder, it will prepare the files.
+
+The first conversion run should always be on all the images.
+later you may perform actions on one or more images.
+Accepted formats are jpg, png, tif.
+
+The following options are supported:
+
+- `-h`, `--help`: display this message and exit
+- `-i`, `--identify`: print type, size, resolution (density) and colorspace
+- `-l`, `--log`: save --identify or --density to imagelog
+- `-p`, `--preserve`: don't convert PNG to JPG
+- `-D`, `--density`: set only the given density to images, don't convert (use it with --dpi)
+- `-d`, `--dpi`: set a different density parameter for images (default: 300)
+- `-L`, `--lowres`: don't convert image, just recreate the low-res version
+- `-w`, `--widthlow`: set a custom width for low-res version, useful with --lowres and to alter width and height (default: 800 with max height: 500px)
+
+
+### Serial-editor
+
+This script performs some serial edits to the YAML part of markdown files.
+Each option should be launched separately.
+
+The following options are supported:
+- `-h`, `--help`: display this message and exit
+- `-u`, `--undraft`: change "draft: true" to "false"
+- `-p`, `--publication`: set the given publication date (specified in YYYY-MM-DD format)
+- `-c`, `--countpages`: count the pages for each PDF in `./2-publication/`. The output can be copied and pasted as a TSV
+- `-s`, `--pagesequence`: reads a TSV with id/filename, starting page, ending page and writes those data to `page.start` and `page.end`
+
+### Status check
+
+This script is to quickly check if the files in the working directory
+have been updated. It will stamp a list of files for:
+
+0-original/  
+1-layout/  
+2-publication/ [only the two most recent PDFs!]
+
+It takes no arguments.
+
 
 ### Backup and archive
 
@@ -102,6 +158,16 @@ backup_path=/home/name/Backup/
 ```
 
 The backup path must be absolute and will be combined with the `journal_shortname`; thus in this example the daily backup will happen in `~/Backup/demo/`. Please _double check_ your backup path before enabling this feature.
+
+#### Archiving the working directory
+
+This script is to archive the working directory after the issue is published.
+
+It will also create a self-contained version of MD articles with metadata and settings. It takes no arguments.
+
+It will prompt you to check for any leftovers (check `./archive/`!), and for the name of the zipped archive.
+
+Please note that the ./archive/ itself wont be emptied.
 
 
 ## Output
