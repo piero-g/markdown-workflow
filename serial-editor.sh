@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# YAML mass edit?
+# A script to perform mass edit on articles' YAML
+# (and maybe other useful things)
 #
 # Author: Piero Grandesso
 # https://github.com/piero-g/markdown-workflow
@@ -16,7 +17,7 @@ else
 	echo "Something went wrong with event logger, aborting! (is ./z-lib/ in its place?)"
 	exit 1
 fi
-printf "[$(date +"%Y-%m-%d %H:%M:%S")] serial-editor.sh started running, logging events" >> "$eventslog"
+printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] serial-editor.sh started running, logging events" >> "$eventslog"
 
 # trap for exiting while in subshell
 set -E
@@ -35,24 +36,50 @@ if [[ $? -ne 4 ]]; then
 	exit 1
 fi
 
-OPTIONS=up:cs:
-LONGOPTIONS=undraft,publication:,countpages,pagesequence:
+OPTIONS=up:cs:rh
+LONGOPTIONS=undraft,publication:,countpages,pagesequence:,references,help
 
 PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
 
-printf "[$(date +"%Y-%m-%d %H:%M:%S")] current command options: $PARSED\n" >> "$eventslog"
+printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] current command options: $PARSED\n" >> "$eventslog"
 
 if [[ $? -ne 0 ]]; then
 	# e.g. $? == 1
 	#  then getopt has complained about wrong arguments to stdout
 	exit 2
 fi
+
+# help
+function printHelp() {
+  cat <<EOF
+
+This script performs some serial edits to the YAML part of markdown files.
+Each option should be launched separately.
+
+The following options are supported:
+-h, --help          display this message and exit
+-u, --undraft       change "draft: true" to "false"
+-p, --publication   set the given publication date
+                      (specified in YYYY-MM-DD format)
+-c, --countpages    count the pages for each PDF in 2-publication/
+                      the output can be copied and pasted as a TSV
+-s, --pagesequence  reads a TSV with id/filename, starting page, ending page
+                      and writes those data to page.start and page.end
+-r, --references    extract from HTMLs in "2-publication" the reference list
+
+EOF
+}
+
 # read getopt’s output this way to handle the quoting right:
 eval set -- "$PARSED"
 
 # now enjoy the options in order and nicely split until we see --
 while true; do
 	case "$1" in
+		-h|--help)
+			printHelp
+			exit 1
+			;;
 		-u|--undraft)
 			u=y
 			shift
@@ -68,6 +95,10 @@ while true; do
 		-s|--pagesequence)
 			pageSequence="$2"
 			shift 2
+			;;
+		-r|--references)
+			extractReferences=y
+			shift
 			;;
 		--)
 			shift
@@ -98,7 +129,7 @@ fi
 
 mkdir -p ./archive/layout-versions
 # creating only the directories pertaining this part of the workflow
-printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure, if not ready" >> "$eventslog"
+printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure, if not ready" >> "$eventslog"
 
 ######
 # 2. conversion, change extension, not filename; then archive manuscript
@@ -126,8 +157,8 @@ edityaml() {
 
 	echo -e "\n\tediting YAML in ${manuscript%.md}..."
 	# archive a copy before editing the manuscript
-	cp "$manuscript" "$workingDir/archive/layout-versions/$today/${manuscript%.md}-$(date +"%Y-%m-%dT%H:%M:%S").md"
-	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   copy of ${manuscript%.md} archived" >> "$workingDir/$eventslog"
+	cp "$manuscript" "$workingDir/archive/layout-versions/$today/${manuscript%.md}-$(date +"%Y-%m-%dT%H-%M-%S").md"
+	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   copy of ${manuscript%.md} archived" >> "$workingDir/$eventslog"
 
 	if [ $u ]; then
 		undraft
@@ -141,7 +172,7 @@ edityaml() {
 # Do you want to run editing on a specific article?
 if [ -z ${@+x} ]; then
 	# no file specified, run on each file within the directory
-	printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] Starting editing of manuscripts in ./1-layout..." >> "$eventslog"
+	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting editing of manuscripts in ./1-layout..." >> "$eventslog"
 	# also store a flag
 	echo ALL=true >> $tempvar
 	( # start subshell
@@ -149,7 +180,7 @@ if [ -z ${@+x} ]; then
 			echo "Starting editing..."
 		else
 			echo "WARNING: ./1-layout directory not found!"
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
+			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
 			exit 77
 		fi
 
@@ -158,12 +189,12 @@ if [ -z ${@+x} ]; then
 		if [ ${#EXT[@]} -gt 0 ]; then
 			: # valid files, ok
 		else
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] No valid files found in ./1-layout, exiting now" >> "../$eventslog"
+			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] No valid files found in ./1-layout, exiting now" >> "../$eventslog"
 			echo "WARNING: no valid files!"
 			exit 77
 		fi
 
-		if [ $pageCount ] || [ $pageSequence ]; then
+		if [ $pageCount ] || [ $pageSequence ] || [ $extractReferences ]; then
 			: # skip edityaml
 		else
 			# convert valid files
@@ -179,18 +210,19 @@ if [ -z ${@+x} ]; then
 
 else # we have a parameter: convert only specified file
 
-	if [ $pageCount ] || [ $pageSequence ]; then
+	if [ $pageCount ] || [ $pageSequence ] || [ $extractReferences ]; then
 		echo "WARNING: the option selected won't run on specific files, aborting!"
+		printHelp
 		exit 1
 	fi
-	for parameter in $@; do
+	for parameter in "$@"; do
 
 		manuscript="$( echo "$parameter" | sed -r 's/^\.?\/?1\-layout\///' )"
 
 		if [[ $manuscript == *.md ]]; then
 			: # valid files, ok
 		else
-			printf "\n[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] The specified $manuscript has not a valid extension, exiting now" >> "$eventslog"
+			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] The specified $manuscript has not a valid extension, exiting now" >> "$eventslog"
 			echo "WARNING: $manuscript is not valid!"
 			exit 1
 		fi
@@ -200,7 +232,7 @@ else # we have a parameter: convert only specified file
 				echo "Starting editing..."
 			else
 				echo "WARNING: ./1-layout directory not found!"
-				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
+				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
 				exit 77
 			fi
 
@@ -217,9 +249,8 @@ fi
 # page counter, it will only count pages of PDF on the entire "2-publication" folder
 ###
 countpages() {
-	echo -e "\nnumber of pages for ${manuscript}..."
-	# actual conversion with Pandoc
-	pdfinfo "${manuscript}" | grep Pages
+	pagespdf=$(pdfinfo "${manuscript}" | grep "Pages:" | sed 's/Pages:          //')
+	echo -e "${manuscript%.pdf}\t${pagespdf}"
 }
 
 if [ $pageCount ]; then
@@ -235,12 +266,13 @@ if [ $pageCount ]; then
 				done
 			else
 				echo "WARNING: ./2-publication directory not found!"
-				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./2-publication directory not found! Aborting." >> "$eventslog"
+				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./2-publication directory not found! Aborting." >> "$eventslog"
 				exit 77
 			fi
 		) # end subshell
 	else
 		echo "WARNING: the page sequence can only be applied to the full issue, I will exit"
+		printHelp
 		exit 1
 	fi
 
@@ -259,12 +291,12 @@ fi
 ###
 
 setstartpage() {
-	sed -r -i.start.bak -e '0,/^(\s+start:)\s+[0-9] *#?(.*)$/s//\1 '${arry[1]}' #\2/' ${arry[0]}
-	diff ${arry[0]} ${arry[0]}.start.bak
+	sed -r -i.start.bak -e '0,/^(\s+start:)\s+[0-9] *#?(.*)$/s//\1 '$startPage' #\2/' "$filename"
+	diff "$filename" "$filename.start.bak"
 }
 setendpage() {
-	sed -r -i.end.bak -e '0,/^(\s+end:)\s+[0-9] *#?(.*)$/s//\1 '${arry[2]}' #\2/' ${arry[0]}
-	diff ${arry[0]} ${arry[0]}.end.bak
+	sed -r -i.end.bak -e '0,/^(\s+end:)\s+[0-9] *#?(.*)$/s//\1 '$endPage' #\2/' "$filename"
+	diff "$filename" "$filename.end.bak"
 }
 
 # parse TSV and take care for correct paring of file name and values
@@ -273,23 +305,29 @@ parsepages() {
 	# parse TSV
 	sed 1d ${pageSequence} | while IFS=$'\t' read -r -a arry
 	do
-		echo -e "\n" ${arry[0]} "is the filename..."
-		echo "..." ${arry[1]} "is its startPage"
-		echo "..." ${arry[2]} "is its endPage"
+		fileid="${arry[0]}"
+		startPage="${arry[1]}"
+		endPage="${arry[2]}"
+		echo -e "\n"$fileid" is the file ID..."
+		filenamepath=$(find "${workingDir}/1-layout/" -maxdepth 1 -type f -name "$fileid*")
+		filename="${filenamepath##*/}"
+		echo -e "\n"$filename" is the filename..."
+		echo "..." $startPage "is its startPage"
+		echo "..." $endPage "is its endPage"
 		( # start subshell
 			if cd ./1-layout ; then
 				:
 			else
 				echo "WARNING: ./1-layout directory not found!"
-				printf "\n[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
+				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
 				exit 77
 			fi
-			if [[ -f ${arry[0]} ]] && [[ ${arry[0]} == *.md ]]; then
+			if [[ -f $filename ]] && [[ $filename == *.md ]]; then
 				# we have the file, proceed
 				setstartpage
 				setendpage
 			else
-				echo "Warning:" ${arry[0]} "not found, skipping!"
+				echo "Warning:" $filename "not found, skipping!"
 			fi
 		) # end subshell
 		sleep 2
@@ -310,15 +348,58 @@ if [ $pageSequence ]; then
 			parsepages
 		else
 			echo "I can't find a file named ${pageSequence} or its not a TSV, abort!"
+			printHelp
 			exit 1
 		fi
 	else
 		echo "WARNING: the page sequence can only be applied to the full issue, I will exit"
+		printHelp
 		exit 1
 	fi
 else
 	:
 fi
+
+
+###
+# EXTRACT REFERENCES
+# extract references from HTML files in "2-publication"
+###
+referencesExtraction() {
+	xmllint --html --xpath '//section[@id = "references"]/p' "$article" > "references/${article%\.html}"-references.txt 2>/dev/null
+}
+cleanReferences() {
+	# replace any newline with a space
+	tr '\n' ' ' < "${refslist}" > "${refslist}-tmp" && mv "${refslist}-tmp" "${refslist}"
+	# remove <p> tags and add newlines
+	sed -i -e 's/<p>//g' -e 's#</p> #\n\n#g' "${refslist}"
+	# clean URI
+	sed -i -E 's#<a href=".+" class="uri">(.+)</a>#\1#g'  "${refslist}"
+}
+if [ $extractReferences ]; then
+	# do not run setpage on a single file (variable check)
+	. $tempvar
+	if [ $ALL ]; then
+		# no file specified, proceed
+		( # start subshell
+			if cd ./2-publication ; then
+
+				mkdir -p references
+
+				for article in *.html; do
+					referencesExtraction
+				done
+
+				if cd ./references ; then
+					for refslist in *-references.txt ; do
+						cleanReferences
+					done
+				fi
+			fi
+		) # end subshell
+	fi
+fi
+
 
 # remove working files
 rm $tempvar

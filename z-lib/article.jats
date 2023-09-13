@@ -2,12 +2,12 @@
 $if(xml-stylesheet)$
 <?xml-stylesheet type="text/xsl" href="$xml-stylesheet$"?>
 $endif$
-<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.0 20120330//EN"
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.2 20190208//EN"
                   "JATS-journalpublishing1.dtd">
 $if(article.type)$
-<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" dtd-version="1.0" article-type="$article.type$">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" dtd-version="1.2" article-type="$article.type$">
 $else$
-<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" dtd-version="1.0" article-type="other">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" dtd-version="1.2" article-type="other">
 $endif$
 <front>
 <journal-meta>
@@ -20,6 +20,13 @@ $endif$
 $if(journal.pmc)$
 <journal-id journal-id-type="pmc">$journal.pmc$</journal-id>
 $endif$
+$-- Fallback: an empty journal-id in case none is available.
+$if(journal.publisher-id)$
+$elseif(journal.nlm-ta)$
+$elseif(journal.pmc)$
+$else$
+<journal-id></journal-id>
+$endif$
 <journal-title-group>
 $if(journal.title)$
 <journal-title>$journal.title$</journal-title>
@@ -29,10 +36,16 @@ $if(journal.abbrev-title)$
 $endif$
 </journal-title-group>
 $if(journal.pissn)$
-<issn pub-type="ppub">$journal.pissn$</issn>
+<issn publication-format="print">$journal.pissn$</issn>
 $endif$
 $if(journal.eissn)$
-<issn pub-type="epub">$journal.eissn$</issn>
+<issn publication-format="electronic">$journal.eissn$</issn>
+$endif$
+$-- At least one issn element is required; use empty issn as fallback
+$if(journal.pissn)$
+$elseif(journal.eissn)$
+$else$
+<issn></issn>
 $endif$
 <publisher>
 <publisher-name>$journal.publisher-name$</publisher-name>
@@ -44,10 +57,8 @@ $endif$
 <article-meta>
 $if(article.publisher-id)$
 <article-id pub-id-type="publisher-id">$article.publisher-id$</article-id>
-$else$$-- custom --$
-  $if(article.id)$
-<article-id pub-id-type="publisher-id">$article.id$</article-id>
-  $endif$
+$elseif(article.id)$$-- custom --$
+<article-id pub-id-type="publisher-id">$journal.publisher-id$-$article.id$</article-id>
 $endif$
 $if(article.doi)$
 <article-id pub-id-type="doi">$article.doi$</article-id>
@@ -78,6 +89,9 @@ $endif$
 $if(title)$
 <title-group>
 <article-title>$title$</article-title>
+$if(subtitle)$
+<subtitle>${subtitle}</subtitle>
+$endif$
 $if(othertitle)$$-- custom othertitle --$
 <trans-title-group>
 <trans-title>$othertitle$</trans-title>
@@ -87,38 +101,51 @@ $endif$
 $endif$
 $if(author)$
 <contrib-group>
-$for(author)$
-<contrib contrib-type="author"$if(author.corresp)$ corresp="yes"$endif$>
+$for(author)$$-- custom author.corresp --$
+<contrib contrib-type="author"$if(author.cor-id)$ corresp="yes"$elseif(author.corresp)$ corresp="yes"$endif$>
 $if(author.orcid)$
 <contrib-id contrib-id-type="orcid">$author.orcid$</contrib-id>
 $endif$
-<name>
 $if(author.surname)$
-<surname>$author.surname$</surname>
-<given-names>$author.given-name$</given-names>
-$else$$-- custom --$
-  $if(author.name)$
-<string-name>$author.name$</string-name>
-  $else$
-<string-name>$author$</string-name>
+<name>
+<surname>$if(author.non-dropping-particle)$${author.non-dropping-particle} $endif$$author.surname$</surname>$-- custom author.given-name(s) --$
+<given-names>$if(author.given-name)$$author.given-name$$else$$author.given-names$$if(author.dropping-particle)$ ${author.dropping-particle}$endif$</given-names>
+$if(author.prefix)$
+<prefix>${author.suffix}</prefix>
 $endif$
+$if(author.suffix)$
+<suffix>${author.suffix}</suffix>
 $endif$
 </name>
+$elseif(author.name)$
+<string-name>$author.name$</string-name>
+$else$
+<string-name>$author$</string-name>
+$endif$
 $if(author.email)$
 <email>$author.email$</email>
 $endif$
-$if(author.affiliation)$$-- custom affiliation --$
-  $for(author.affiliation)$
+$-- if affiliations are listed separately, then create links. Otherwise
+$-- include them here.
+$-- custom --$
+$if(author.affiliation)$
+$for(author.affiliation)$
 <aff>$author.affiliation$</aff>
-  $endfor$
-$endif$
-$if(author.aff-id)$
-<xref ref-type="aff" rid="aff-$contrib.aff-id$"/>
+$--TODO: manage institute --$
+$-- <xref ref-type="aff" rid="aff-$author.affiliation$"/>--$
+$endfor$
+$else$
+$for(author.affiliation)$
+${ it:affiliations.jats() }
+$endfor$
 $endif$
 $if(author.cor-id)$
 <xref ref-type="corresp" rid="cor-$author.cor-id$"><sup>*</sup></xref>
 $endif$
 </contrib>
+$endfor$
+$for(affiliation)$
+${ it:affiliations.jats() }
 $endfor$
 </contrib-group>
 $endif$
@@ -150,14 +177,13 @@ $if(editor)$
 </contrib-group>
 $endif$
 $if(date)$
+$-- TODO: https://stackoverflow.com/a/72666646 --$
 $if(date.iso-8601)$
-<pub-date pub-type="epub" iso-8601-date="$date.iso-8601$">
+<pub-date publication-format="electronic" iso-8601-date="$date.iso-8601$">
+$elseif(date-meta)$
+<pub-date publication-format="electronic" iso-8601-date="$date-meta$">
 $else$
-$if(date-meta)$
-<pub-date pub-type="epub" iso-8601-date="$date-meta$">
-$else$
-<pub-date pub-type="epub">
-$endif$
+<pub-date publication-format="electronic">
 $endif$
 $if(date.day)$
 <day>$pub-date.day$</day>
@@ -173,7 +199,7 @@ $endif$
 </pub-date>
 $else$$-- custom dates --$
 $if(dates.published)$
-<pub-date pub-type="epub" iso-8601-date="$dates.published$" />
+<pub-date publication-format="electronic" iso-8601-date="$dates.published$" />
 $endif$
 $endif$
 <pub-history>
@@ -202,26 +228,23 @@ $endif$$endif$
 
 $if(article.volume)$
 <volume>$article.volume$</volume>
-$else$$if(volume)$$-- custom volume + issue identifiers --$
+$elseif(volume)$$-- custom volume + issue identifiers --$
 <volume>$volume$</volume>
-      $endif$
 $endif$
 $if(article.issue)$
 <issue>$article.issue$</issue>
-$else$$if(issue)$
+$elseif(issue)$
 <issue>$issue$</issue>
-      $endif$
 $endif$
 $if(article.fpage)$
 <fpage>$article.fpage$</fpage>
-$else$$if(page.start)$$-- custom pagination --$
-<fpage$if(issuepagination)$$if(page.prefix)$ seq="$page.prefix$"$endif$$else$$if(article.id)$ seq="$article.id$"$endif$$endif$>$page.start$</fpage>
-$if(page.end)$
-<lpage>$page.end$</lpage>
-$endif$$endif$
+$elseif(page.start)$$-- custom pagination --$
+<fpage$if(issuepagination)$$if(page.prefix)$ seq="$page.prefix$"$endif$$elseif(article.id)$ seq="$article.id$"$endif$>$page.start$</fpage>
 $endif$
 $if(article.lpage)$
 <lpage>$article.lpage$</lpage>
+$elseif(page.end)$
+<lpage$if(issuepagination)$$if(page.prefix)$ seq="$page.prefix$"$endif$$elseif(article.id)$ seq="$article.id$"$endif$>$page.end$</lpage>
 $endif$
 $if(article.elocation-id)$
 <elocation-id>$article.elocation-id$</elocation-id>
@@ -232,21 +255,35 @@ $if(history)$
 $endif$
 $if(copyright)$
 <permissions>
-$if(copyright.statement)$
+$for(copyright.statement)$
 <copyright-statement>$copyright.statement$</copyright-statement>
-$endif$
-$if(copyright.year)$
+$endfor$
+$for(copyright.year)$
 <copyright-year>$copyright.year$</copyright-year>
-$endif$
-$if(copyright.holder)$
+$endfor$
+$for(copyright.holder)$
 <copyright-holder>$copyright.holder$</copyright-holder>
-$endif$
+$endfor$
 $if(copyright.text)$
 <license license-type="$copyright.type$" xlink:href="$copyright.link$">
 <license-p>$copyright.text$</license-p>
 </license>
+$for(license)$
+<license$if(it.type)$ license-type="${it.type}"$endif$>
+$if(it.link)$
+<ali:license_ref xmlns:ali="http://www.niso.org/schemas/ali/1.0/">${it.link}</ali:license_ref>
+$endif$
+<license-p>$if(it.text)$${it.text}$else$${it}$endif$</license-p>
+</license>
+$endfor$
 </permissions>
 $endif$
+$endif$
+$-- TODO: manage multiple abstract --$
+$if(abstract)$
+<abstract>
+$abstract$
+</abstract>
 $endif$
 $if(correction.notice)$
 <related-article ext-link-type="doi" related-article-type="$if(correction.retraction)$retracted-article$else$corrected-article$endif$" xlink:href="$correction.reference$" />
