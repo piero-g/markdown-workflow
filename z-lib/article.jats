@@ -182,6 +182,8 @@ $if(date.iso-8601)$
 <pub-date publication-format="electronic" iso-8601-date="$date.iso-8601$">
 $elseif(date-meta)$
 <pub-date publication-format="electronic" iso-8601-date="$date-meta$">
+$elseif(dates.published)$$-- custom dates --$
+<pub-date publication-format="electronic" iso-8601-date="$dates.published$" >
 $else$
 <pub-date publication-format="electronic">
 $endif$
@@ -195,19 +197,13 @@ $if(date.year)$
 <year>$pub-date.year$</year>
 $else$
 <string-date>$date$</string-date>
-$endif$
 </pub-date>
-$else$$-- custom dates --$
-$if(dates.published)$
-<pub-date publication-format="electronic" iso-8601-date="$dates.published$" />
 $endif$
-$endif$
-<pub-history>
 $if(dates.submitted)$
+<pub-history>
   <event>
     <date date-type="received" iso-8601-date="$dates.submitted$" />
   </event>
-$endif$
 $for(dates.revised)$
   <event>
     <date date-type="rev-recd" iso-8601-date="$dates.revised$" />
@@ -224,6 +220,13 @@ $if(correction)$$if(correction.notice)$$else$
     <event-desc>$correction.text$</event-desc>
   </event>
 $endif$$endif$
+$elseif(correction)$$if(correction.notice)$$else$
+  <event>
+    <date date-type="$if(correction.retraction)$retracted$else$corrected$endif$" iso-8601-date="$correction.date$" />
+    <event-desc>$correction.text$</event-desc>
+  </event>
+$endif$$endif$
+$endif$$-- closing date.submitted --$
 </pub-history>
 
 $if(article.volume)$
