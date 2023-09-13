@@ -152,7 +152,7 @@ converttopdf() {
 }
 converttoxml() {
 	# JATS XML
-	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" ${sectionNum} --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.jats" --write=jats --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.jats.xml"
+	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" ${sectionNum} --toc --filter=pandoc-citeproc --template="$workingDir/z-lib/article.jats" --write=jats --wrap=none --default-image-extension=.jpg -s -o "$workingDir/2-publication/${manuscript%.md}.jats.xml"
 	# TEI XML
 	#pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" --toc ${sectionNum} --filter=pandoc-citeproc --template="$workingDir/z-lib/article.tei" --write=tei -s -o "$workingDir/2-publication/${manuscript%.md}.tei.xml"
 }
