@@ -9,6 +9,14 @@
 # Author: Piero Grandesso
 # https://github.com/piero-g/markdown-workflow
 #
+# Todo:
+# rework as a complete loop
+# add media-extract
+# add several fixes via sed, like:
+# - remove mark `\[([^\]]*)\]\{\.mark\}`
+# - fix `\...` and `\"`
+#
+
 
 #####
 # 0. events log and other checks
@@ -109,7 +117,7 @@ printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts
 		if [ "${manuscript}" != "${manuscript%.${EXT1}}" ]; then
 			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript}: trying to convert it in Markdown..." >> "$workingDir/$eventslog"
 			# actual conversion with Pandoc
-			if pandoc --wrap=none --atx-headers -o "$tempdir/${manuscript%.${EXT1}}.md" "$manuscript" ; then
+			if pandoc --wrap=none --markdown-headings=atx -o "$tempdir/${manuscript%.${EXT1}}.md" "$manuscript" ; then
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
 				# archive the processed manuscript
 				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT1}}-$(date +"%Y-%m-%dT%H-%M-%S").${EXT1}"
@@ -122,7 +130,7 @@ printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts
 		elif [ "${manuscript}" != "${manuscript%.${EXT2}}" ]; then
 			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript}: trying to convert it in Markdown..." >> "$workingDir/$eventslog"
 			# actual conversion with Pandoc
-			if pandoc --wrap=none --atx-headers -o "$tempdir/${manuscript%.${EXT2}}.md" "$manuscript" ; then
+			if pandoc --wrap=none --markdown-headings=atx -o "$tempdir/${manuscript%.${EXT2}}.md" "$manuscript" ; then
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
 				# archive the processed manuscript
 				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT2}}-$(date +"%Y-%m-%dT%H-%M-%S").${EXT2}"
@@ -135,7 +143,7 @@ printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts
 		elif [ "${manuscript}" != "${manuscript%.${EXT3}}" ]; then
 			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript}: trying to convert it in Markdown..." >> "$workingDir/$eventslog"
 			# actual conversion with Pandoc
-			if pandoc --wrap=none --atx-headers -o "$tempdir/${manuscript%.${EXT3}}.md" "$manuscript" ; then
+			if pandoc --wrap=none --markdown-headings=atx -o "$tempdir/${manuscript%.${EXT3}}.md" "$manuscript" ; then
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
 				# archive the processed manuscript
 				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT3}}-$(date +"%Y-%m-%dT%H-%M-%S").${EXT3}"
