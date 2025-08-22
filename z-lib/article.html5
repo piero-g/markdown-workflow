@@ -65,7 +65,7 @@ $if(title)$
 <div property="isPartOf" typeof="PublicationVolume">
 <meta property="volumeNumber" content="$volume$" />
 <meta property="datePublished" content="$year$" />
-<p property="isPartOf" typeof="Periodical"><span property="name" resource="$journal.url$" content="$journal.title$">$journal.title$</span>$if(issuedisplay)$. $issuedisplay$$if(issuepagination)$$if(page.end)$, $page.start$&ndash;$page.end$$else$$page.start$$endif$$endif$$endif$
+<p property="isPartOf" typeof="Periodical"><span property="name" resource="$journal.url$" content="$journal.title$">$journal.title$</span>$if(issuedisplay)$. $issuedisplay$$if(issuepagination)$, $if(page.prefix)$$page.prefix$$if(page.end)$$page.start$&nbsp;&ndash;&nbsp;$page.prefix$$page.end$$else$$page.start$$endif$$else$$if(page.end)$$page.start$&ndash;$page.end$$else$$page.start$$endif$$endif$$endif$$endif$
 $if(journal.eissn)$<br />ISSN <span property="issn">$journal.eissn$</span>$endif$
 </p>
 </div>
@@ -92,9 +92,9 @@ $if(issuepagination)$$else$
 Art. <span property="value">#$article.id$</span></p>
 $endif$$endif$
 $if(issuepagination)$
-<meta property="pageStart" content="$if(page.prefix)$$page.prefix$ $endif$$page.start$" />
+<meta property="pageStart" content="$if(page.prefix)$$page.prefix$$endif$$page.start$" />
 $if(page.end)$
-<meta property="pageEnd" content="$if(page.prefix)$$page.prefix$ $endif$$page.end$" />
+<meta property="pageEnd" content="$if(page.prefix)$$page.prefix$$endif$$page.end$" />
 $endif$
 $endif$
 </div>
