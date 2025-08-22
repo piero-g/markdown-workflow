@@ -474,6 +474,11 @@ $if(linenumbers)$
 $endif$
 $endif$
 
+% custom: sffont for tables! (if sanstables)
+$if(sanstables)$
+\AtBeginEnvironment{longtable}{\sffamily}
+$endif$
+
 % custom: avoid hyphenation in email!
 \usepackage{hyphenat}
 
@@ -485,7 +490,7 @@ $if(institute)$
   \def\arraystretch{1.3}%
   \begin{tabular}[t]{c}}
 \postauthor{\end{tabular}\par\end{center}
-  \begin{center}
+  \begin{center}$if(institutesf)$ \begin{sffamily}$endif$
   {\footnotesize
   \begin{tabular}[t]{c l}
     $for(institute)$
@@ -499,7 +504,7 @@ $if(institute)$
     $endif$$sep$ \\
     $endfor$
   \end{tabular}}
-\end{center}}
+  $if(institutesf)$\end{sffamily} $endif$\end{center}}
 $endif$
 
 $if(csl-refs)$
