@@ -26,10 +26,12 @@ _This is also my first approach to bash scripting._
 
 ## Dependencies
 
-- [pandoc](https://pandoc.org/), version >3.0
-- [TeX Live](https://www.tug.org/texlive/), currently working with TeX Live 2020 (and transitioning to TeX Live 2023)
-- a Bash shell, for running scripts
-- (optional) [ImageMagick](https://imagemagick.org/) is used for images optimization (currently using ImageMagick 6.9)
+_Tested with:_
+
+- [pandoc](https://pandoc.org/), version 3.1
+- [TeX Live](https://www.tug.org/texlive/), currently working with TeX Live 2023
+- a Bash shell (5.2), for running scripts
+- (optional) [ImageMagick](https://legacy.imagemagick.org) is used for images optimization (currently using ImageMagick 6.9.12)
 
 Editors will only need a text editor in order to edit the markdown versions of the papers.
 

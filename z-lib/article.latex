@@ -1,16 +1,41 @@
-\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode$for(hyperrefoptions)$,$hyperrefoptions$$endfor$}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
 $if(colorlinks)$
-% custom: no * to svgnames, causes some colors not to be recognized
-\PassOptionsToPackage{dvipsnames,svgnames,x11names*}{xcolor}
-$endif$$if(dir)$$if(latex-dir-rtl)$
-\PassOptionsToPackage{RTLdocument}{bidi}
-$endif$$endif$%
-\documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$babel-lang$,$endif$$if(papersize)$$papersize$paper,$endif$$if(beamer)$ignorenonframetext,$if(handout)$handout,$endif$$if(aspectratio)$aspectratio=$aspectratio$,$endif$$endif$$for(classoption)$$classoption$$sep$,$endfor$]{$documentclass$}
+% custom WARN: no more * on x11names 
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+$endif$
+$if(CJKmainfont)$
+\PassOptionsToPackage{space}{xeCJK}
+$endif$
+%
+\documentclass[
+$if(fontsize)$
+  $fontsize$,
+$endif$
+$if(papersize)$
+  $papersize$paper,
+$endif$
+$if(lang)$
+  $babel-lang$,
+$endif$
+$if(beamer)$
+  ignorenonframetext,
+$if(handout)$
+  handout,
+$endif$
+$if(aspectratio)$
+  aspectratio=$aspectratio$,
+$endif$
+$endif$
+$for(classoption)$
+  $classoption$$sep$,
+$endfor$
+]{$documentclass$}
 $if(beamer)$
 $if(background-image)$
 \usebackgroundtemplate{%
-\includegraphics[width=\paperwidth]{$background-image$}%
+  \includegraphics[width=\paperwidth]{$background-image$}%
 }
 $endif$
 \usepackage{pgfpages}
@@ -21,81 +46,74 @@ $endif$
 $for(beameroption)$
 \setbeameroption{$beameroption$}
 $endfor$
+% Prevent slide breaks in the middle of a paragraph
+\widowpenalties 1 10000
+\raggedbottom
+$if(section-titles)$
+\setbeamertemplate{part page}{
+  \centering
+  \begin{beamercolorbox}[sep=16pt,center]{part title}
+    \usebeamerfont{part title}\insertpart\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{section page}{
+  \centering
+  \begin{beamercolorbox}[sep=12pt,center]{part title}
+    \usebeamerfont{section title}\insertsection\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{subsection page}{
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center]{part title}
+    \usebeamerfont{subsection title}\insertsubsection\par
+  \end{beamercolorbox}
+}
+\AtBeginPart{
+  \frame{\partpage}
+}
+\AtBeginSection{
+  \ifbibliography
+  \else
+    \frame{\sectionpage}
+  \fi
+}
+\AtBeginSubsection{
+  \frame{\subsectionpage}
+}
+$endif$
 $endif$
 $if(beamerarticle)$
 \usepackage{beamerarticle} % needs to be loaded first
 $endif$
-$if(fontfamily)$
-\usepackage[$for(fontfamilyoptions)$$fontfamilyoptions$$sep$,$endfor$]{$fontfamily$}
-$else$
-\usepackage{lmodern}
-$endif$
-$if(linestretch)$
+\usepackage{amsmath,amssymb}
+%$-- custom test to fix linespacing $if(linestretch)$
 \usepackage{setspace}
-\setstretch{$linestretch$}
-$endif$
-\usepackage{amssymb,amsmath}
-\usepackage{ifxetex,ifluatex}
-\usepackage{fixltx2e} % provides \textsubscript
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+\singlespacing
+%$--$endif$
+\usepackage{iftex}
+\ifPDFTeX
   \usepackage[$if(fontenc)$$fontenc$$else$T1$endif$]{fontenc}
   \usepackage[utf8]{inputenc}
-  \usepackage{textcomp} % provides euro and other symbols
-\else % if luatex or xelatex
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
 $if(mathspec)$
-  \ifxetex
-    \usepackage{mathspec}
+  \ifXeTeX
+    \usepackage{mathspec} % this also loads fontspec
   \else
-    \usepackage{unicode-math}
+    \usepackage{unicode-math} % this also loads fontspec
   \fi
 $else$
-  \usepackage{unicode-math}
+  \usepackage{unicode-math} % this also loads fontspec
 $endif$
-  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
-$for(fontfamilies)$
-  \newfontfamily{$fontfamilies.name$}[$fontfamilies.options$]{$fontfamilies.font$}
-$endfor$
-$if(mainfont)$
-    \setmainfont[$for(mainfontoptions)$$mainfontoptions$$sep$,$endfor$]{$mainfont$}
-$endif$
-$if(sansfont)$
-    \setsansfont[$for(sansfontoptions)$$sansfontoptions$$sep$,$endfor$]{$sansfont$}
-$endif$
-$if(monofont)$
-    \setmonofont[Mapping=tex-ansi$if(monofontoptions)$,$for(monofontoptions)$$monofontoptions$$sep$,$endfor$$endif$]{$monofont$}
-$endif$
-$if(titlefont)$ % custom: specific font for titles
-    \newfontfamily{\titlefont}[$for(titlefontoptions)$$titlefontoptions$$sep$,$endfor$]{$titlefont$}
-$endif$
-$if(mathfont)$
-$if(mathspec)$
-  \ifxetex
-    \setmathfont(Digits,Latin,Greek)[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]{$mathfont$}
-  \else
-    \setmathfont[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]{$mathfont$}
-  \fi
-$else$
-  \setmathfont[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]{$mathfont$}
-$endif$
-$endif$
-$if(CJKmainfont)$
-  \ifxetex
-    \usepackage{xeCJK}
-    \setCJKmainfont[$for(CJKoptions)$$CJKoptions$$sep$,$endfor$]{$CJKmainfont$}
-  \fi
-$endif$
-$if(luatexjapresetoptions)$
-  \ifluatex
-    \usepackage[$for(luatexjapresetoptions)$$luatexjapresetoptions$$sep$,$endfor$]{luatexja-preset}
-  \fi
-$endif$
-$if(CJKmainfont)$
-  \ifluatex
-    \usepackage[$for(luatexjafontspecoptions)$$luatexjafontspecoptions$$sep$,$endfor$]{luatexja-fontspec}
-    \setmainjfont[$for(CJKoptions)$$CJKoptions$$sep$,$endfor$]{$CJKmainfont$}
-  \fi
-$endif$
+  \defaultfontfeatures{Scale=MatchLowercase}$-- must come before Beamer theme
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1.075}$-- CUSTOM TEST: Scale=1.075 for past issues
 \fi
+$if(fontfamily)$
+$else$
+$-- Set default font before Beamer theme so the theme can override it
+\usepackage{lmodern}
+$endif$
+$-- Set Beamer theme before user font settings so they can override theme
 $if(beamer)$
 $if(theme)$
 \usetheme[$for(themeoptions)$$themeoptions$$sep$,$endfor$]{$theme$}
@@ -116,21 +134,100 @@ $if(outertheme)$
 \useoutertheme{$outertheme$}
 $endif$
 $endif$
-% use upquote if available, for straight quotes in verbatim environments
+$-- User font settings (must come after default font and Beamer theme)
+$if(fontfamily)$
+\usepackage[$for(fontfamilyoptions)$$fontfamilyoptions$$sep$,$endfor$]{$fontfamily$}
+$endif$
+\ifPDFTeX\else
+  % xetex/luatex font selection
+$if(mainfont)$
+  \setmainfont[Scale=MatchLowercase,$for(mainfontoptions)$$mainfontoptions$$sep$,$endfor$]{$mainfont$}
+$endif$
+$if(sansfont)$
+  \setsansfont[Scale=MatchLowercase,$for(sansfontoptions)$$sansfontoptions$$sep$,$endfor$]{$sansfont$}
+$endif$
+$if(monofont)$
+  \setmonofont[Scale=MatchLowercase,$for(monofontoptions)$$monofontoptions$$sep$,$endfor$]{$monofont$}
+$endif$
+% custom: titlefont
+$if(titlefont)$ % specific font for titles
+    \newfontfamily{\titlefont}[Scale=MatchLowercase,$for(titlefontoptions)$$titlefontoptions$$sep$,$endfor$]{$titlefont$}
+$endif$
+$for(fontfamilies)$
+  \newfontfamily{$fontfamilies.name$}[Scale=MatchLowercase,$for(fontfamilies.options)$$fontfamilies.options$$sep$,$endfor$]{$fontfamilies.font$}
+$endfor$
+$if(mathfont)$
+$if(mathspec)$
+  \ifXeTeX
+    \setmathfont(Digits,Latin,Greek)[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]{$mathfont$}
+  \else
+    \setmathfont[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]{$mathfont$}
+  \fi
+$else$
+  \setmathfont[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]{$mathfont$}
+$endif$
+$endif$
+$if(CJKmainfont)$
+  \ifXeTeX
+    \usepackage{xeCJK}
+    \setCJKmainfont[$for(CJKoptions)$$CJKoptions$$sep$,$endfor$]{$CJKmainfont$}
+    $if(CJKsansfont)$
+      \setCJKsansfont[$for(CJKoptions)$$CJKoptions$$sep$,$endfor$]{$CJKsansfont$}
+    $endif$
+    $if(CJKmonofont)$
+      \setCJKmonofont[$for(CJKoptions)$$CJKoptions$$sep$,$endfor$]{$CJKmonofont$}
+    $endif$
+  \fi
+$endif$
+$if(luatexjapresetoptions)$
+  \ifLuaTeX
+    \usepackage[$for(luatexjapresetoptions)$$luatexjapresetoptions$$sep$,$endfor$]{luatexja-preset}
+  \fi
+$endif$
+$if(CJKmainfont)$
+  \ifLuaTeX
+    \usepackage[$for(luatexjafontspecoptions)$$luatexjafontspecoptions$$sep$,$endfor$]{luatexja-fontspec}
+    \setmainjfont[$for(CJKoptions)$$CJKoptions$$sep$,$endfor$]{$CJKmainfont$}
+  \fi
+$endif$
+\fi
+$if(zero-width-non-joiner)$
+%% Support for zero-width non-joiner characters.
+\makeatletter
+\def\zerowidthnonjoiner{%
+  % Prevent ligatures and adjust kerning, but still support hyphenating.
+  \texorpdfstring{%
+    \TextOrMath{\nobreak\discretionary{-}{}{\kern.03em}%
+      \ifvmode\else\nobreak\hskip\z@skip\fi}{}%
+  }{}%
+}
+\makeatother
+\ifPDFTeX
+  \DeclareUnicodeCharacter{200C}{\zerowidthnonjoiner}
+\else
+  \catcode`^^^^200c=\active
+  \protected\def ^^^^200c{\zerowidthnonjoiner}
+\fi
+%% End of ZWNJ support
+$endif$
+% Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-% use microtype if available
-\IfFileExists{microtype.sty}{%
-\usepackage[$for(microtypeoptions)$$microtypeoptions$$sep$,$endfor$]{microtype}
-\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[$for(microtypeoptions)$$microtypeoptions$$sep$,$endfor$]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
 $if(indent)$
 $else$
-\IfFileExists{parskip.sty}{%
-\usepackage{parskip}
-}{% else
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt plus 2pt minus 1pt}
-}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
 $endif$
 % custom: footnotes (more below)
 \usepackage[bottom,hang,multiple,stable]{footmisc}
@@ -138,46 +235,13 @@ $endif$
 $if(verbatim-in-note)$
 \usepackage{fancyvrb}
 $endif$
-$if(colorlinks)$
 \usepackage{xcolor}
-$endif$
-\usepackage{hyperref}
-\hypersetup{
-$if(title-meta)$
-            pdftitle={$title-meta$},
-$else$ % custom
-  $if(title)$
-            pdftitle={$title$},
-  $endif$
-$endif$
-$if(author-meta)$
-            pdfauthor={$author-meta$},
-$else$ % custom
-  $if(author)$
-            pdfauthor={$for(author)$$author.name$$sep$, $endfor$},
-  $endif$
-$endif$
-$if(keywords)$
-            pdfkeywords={$for(keywords)$$keywords$$sep$, $endfor$},
-$endif$
-$if(lang)$
-            pdflang={$lang$},
-$endif$
-$if(colorlinks)$
-            colorlinks=true,
-            linkcolor=$if(linkcolor)$$linkcolor$$else$Maroon$endif$,
-            citecolor=$if(citecolor)$$citecolor$$else$Blue$endif$,
-            urlcolor=$if(urlcolor)$$urlcolor$$else$Blue$endif$,
-$else$
-            pdfborder={0 0 0},
-$endif$
-            breaklinks=true}
-\urlstyle{same}  % don't use monospace font for urls
-$if(verbatim-in-note)$
-\VerbatimFootnotes % allows verbatim text in footnotes
-$endif$
 $if(geometry)$
+$if(beamer)$
+\geometry{$for(geometry)$$geometry$$sep$,$endfor$}
+$else$
 \usepackage[$for(geometry)$$geometry$$sep$,$endfor$]{geometry}
+$endif$
 $endif$
 % custom: to improve separations
 \widowpenalty=1000
@@ -212,6 +276,8 @@ $endif$
 $if(listings)$
 \usepackage{listings}
 \newcommand{\passthrough}[1]{#1}
+\lstset{defaultdialect=[5.3]Lua}
+\lstset{defaultdialect=[x86masm]Assembler}
 $endif$
 $if(lhs)$
 \lstnewenvironment{code}{\lstset{language=Haskell,basicstyle=\small\ttfamily}}{}
@@ -220,20 +286,30 @@ $if(highlighting-macros)$
 $highlighting-macros$
 $endif$
 $if(tables)$
-\usepackage{longtable,booktabs}
+\usepackage{longtable,booktabs,array}
+$if(multirow)$
+\usepackage{multirow}
+$endif$
+\usepackage{calc} % for calculating minipage widths
 $if(beamer)$
 \usepackage{caption}
-% These lines are needed to make table captions work with longtable:
+% Make caption package work with longtable
 \makeatletter
 \def\fnum@table{\tablename~\thetable}
 \makeatother
 $else$
-% Fix footnotes in tables (requires footnote package)
-\IfFileExists{footnote.sty}{\usepackage{footnote}\makesavenoteenv{longtable}}{}
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
 $endif$
 $endif$
 $if(graphics)$
-\usepackage{graphicx,grffile}
+\usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
@@ -242,73 +318,40 @@ $if(graphics)$
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
 $endif$
-$if(beamer)$
-% Prevent slide breaks in the middle of a paragraph:
-\widowpenalties 1 10000
-\raggedbottom
-$if(section-titles)$
-\setbeamertemplate{part page}{
-\centering
-\begin{beamercolorbox}[sep=16pt,center]{part title}
-  \usebeamerfont{part title}\insertpart\par
-\end{beamercolorbox}
-}
-\setbeamertemplate{section page}{
-\centering
-\begin{beamercolorbox}[sep=12pt,center]{part title}
-  \usebeamerfont{section title}\insertsection\par
-\end{beamercolorbox}
-}
-\setbeamertemplate{subsection page}{
-\centering
-\begin{beamercolorbox}[sep=8pt,center]{part title}
-  \usebeamerfont{subsection title}\insertsubsection\par
-\end{beamercolorbox}
-}
-\AtBeginPart{
-  \frame{\partpage}
-}
-\AtBeginSection{
-  \ifbibliography
-  \else
-    \frame{\sectionpage}
-  \fi
-}
-\AtBeginSubsection{
-  \frame{\subsectionpage}
-}
-$endif$
-$endif$
-$if(links-as-notes)$
-% Make links footnotes instead of hotlinks:
-\DeclareRobustCommand{\href}[2]{#2\footnote{\url{#1}}}
+$if(svg)$
+\usepackage{svg}
 $endif$
 $if(strikeout)$
-\usepackage[normalem]{ulem}
-% avoid problems with \sout in headers with hyperref:
-\pdfstringdefDisableCommands{\renewcommand{\sout}{}}
+$-- also used for underline
+\usepackage{soul}
 $endif$
-\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setlength{\emergencystretch}{3em} % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 $if(numbersections)$
 \setcounter{secnumdepth}{$if(secnumdepth)$$secnumdepth$$else$5$endif$}
 $else$
-\setcounter{secnumdepth}{0}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+$endif$
+$if(subfigure)$
+\usepackage{subcaption}
 $endif$
 $if(beamer)$
 $else$
-$if(subparagraph)$
-$else$
-% Redefines (sub)paragraphs to behave more like sections
+$if(block-headings)$
+% Make \paragraph and \subparagraph free-standing
 \ifx\paragraph\undefined\else
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
 \fi
 \ifx\subparagraph\undefined\else
-\let\oldsubparagraph\subparagraph
-\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
 $endif$
 $endif$
@@ -322,13 +365,11 @@ $-- Various customizations --$
 \captionsetup[figure]{labelformat=empty}
 \captionsetup[table]{labelformat=empty}
 
-% custom: icons
-% fix for custom icons (fontawesome), since TeXLive 2018
+% custom: icons (and fix for fontawesome)
 \usepackage{fontspec}
 \defaultfontfeatures{Extension = .otf}
 \usepackage{academicons}
 \usepackage{fontawesome}
-
 % custom: ORCID color
 \definecolor{orcid}{HTML}{A2D03E}
 
@@ -376,8 +417,8 @@ $else$
 \lfoot{\small\sffamily \url{$journal.url$}}
 $endif$
 % right footer (ID (if issuepagination false) + page (with optional prefix))
-\rfoot{\small\sffamily $if(article.id)$$if(issuepagination)$$else$Art.~\#$article.id$ \\ p.$endif$$endif$$if(page.prefix)$ $page.prefix$$endif$ $if(draft)$\color{red}$endif$\thepage}
-% custom: TEST for more behaved footnotes
+\rfoot{\small\sffamily $if(article.id)$$if(issuepagination)$$else$Art.~\#$article.id$ \\ p.$endif$$endif$$if(page.prefix)$ $page.prefix$$endif$ $if(draft)$\color{red} $endif$\thepage}
+% custom: for more behaved footnotes
 \usepackage{etoolbox}
 % no superscript footnote marks, by egreg from https://tex.stackexchange.com/a/96400
 \makeatletter
@@ -385,22 +426,31 @@ $endif$
 \pretocmd{\@makefntext}{\let\@makefnmark\nosupmark@makefnmark}{}{}
 
 % custom: footnotes in first page similar to normal ones
-%\patchcmd\maketitle{\renewcommand\thefootnote{\@alph\c@footnote}}{\AdaptNote\thanks\multthanks}{}{}
-%\patchcmd\maketitle{%
-%  \def\@makefnmark{\rlap{\nosupmark{\normalfont\@thefnmark}}}}{}{}{} % era \@textsuperscript al posto di \nosupmark
 %%% By egreg from https://tex.stackexchange.com/a/136750
 %%% We don't want to redefine \@makefntext
 \patchcmd\maketitle{\@makefntext}{\@@@ddt}{}{}
 %%% We don't want to have \rlap around the footnote mark
 \patchcmd\maketitle{\rlap}{\mbox}{}{}
 \makeatother
-$if(thanksmarkseries)$
+$if(safersymbols)$
+\DefineFNsymbolsTM{safersymbols}{% def. from https://github.com/FrankMittelbach/fmitex-footmisc/blob/main/footmisc.dtx
+  \textasteriskcentered *
+  {\textasteriskcentered\textasteriskcentered}{**}%
+  {\textasteriskcentered\textasteriskcentered\textasteriskcentered}{***}%
+  \textsection   \mathsection
+  \textparagraph \mathparagraph
+  \textdaggerdbl \ddagger
+  \textbardbl    \|%
+  \#             \#%
+}%
+\setfnsymbol{safersymbols}
+$elseif(thanksmarkseries)$
 % custom: footnotes in first page (thanks) not using fnsymbol (depends on \usepackage{titling})
 \thanksmarkseries{$thanksmarkseries$}
-$else$$if(fnsymbol)$
+$elseif(fnsymbol)$
 % custom: different symbols set for thanks (default: lamport*)
 \setfnsymbol{$fnsymbol$}
-$endif$$endif$
+$endif$
 $if(issuecolor)$
 \definecolor{issuecolor}{HTML}{$issuecolor$}
 $endif$
@@ -410,9 +460,9 @@ $endif$
   \let\Begin\begin
   \let\End\end
 }
-
 % custom: define \linethickness
 \renewcommand{\linethickness}{0.3pt}
+
 % custom: draft mark with date
 $if(draft)$
 \usepackage[firstpage]{draftwatermark}
@@ -424,13 +474,10 @@ $if(linenumbers)$
 $endif$
 $endif$
 
-% custom TEST: non hyphenation in email!
+% custom: avoid hyphenation in email!
 \usepackage{hyphenat}
 
-% custom: better placement for figures
-\usepackage[section]{placeins}
-
-% custom TEST: larger space with authors (thanks to titling)
+% custom: larger space with authors (thanks to titling)
 %
 $if(institute)$
 \preauthor{\begin{center}
@@ -448,42 +495,70 @@ $if(institute)$
     $institute.name$
     $else$ % we assume there is only one author
     $for(author)$
-    $if(author.affiliation)$$author.affiliation$$endif$$endfor$
+    $for(author.affiliation)$$author.affiliation$$sep$ \\$endfor$$endfor$
     $endif$$sep$ \\
     $endfor$
   \end{tabular}}
 \end{center}}
 $endif$
 
-% set default figure placement to htbp
-\makeatletter
-\def\fps@figure{htbp}
-\makeatother
-
+$if(csl-refs)$
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
+  \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+$endif$
+$if(lang)$
+$-- custom: pass langs to the babel package (see below)
+\ifLuaTeX
+\usepackage[bidi=basic$if(babel-lang)$, main=$babel-lang$$endif$$for(babel-otherlangs)$, $babel-otherlangs$$endfor$]{babel}
+\else
+\usepackage[bidi=default$if(babel-lang)$, main=$babel-lang$$endif$$for(babel-otherlangs)$, $babel-otherlangs$$endfor$]{babel}
+\fi
+$-- custom: this part is commented to avoid problems when selecting specific fonts, file per file
+$--$if(babel-lang)$
+$--\babelprovide[main,import]{$babel-lang$}
+$--$if(mainfont)$
+$--\ifPDFTeX
+$--\else
+$--\babelfont[$babel-lang$]{rm}{$mainfont$}
+$--\fi
+$--$endif$
+$--$endif$
+$--$for(babel-otherlangs)$
+$--\babelprovide[import]{$babel-otherlangs$}
+$--$endfor$
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+$endif$
 $for(header-includes)$
 $header-includes$
 $endfor$
-$if(lang)$
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
-  \usepackage[shorthands=off,$for(babel-otherlangs)$$babel-otherlangs$,$endfor$main=$babel-lang$]{babel}
-$if(babel-newcommands)$
-  $babel-newcommands$
-$endif$
-\else
-  % load polyglossia as late as possible as it *could* call bidi if RTL lang (e.g. Hebrew or Arabic)
-  \usepackage{polyglossia}
-  \setmainlanguage[$polyglossia-lang.options$]{$polyglossia-lang.name$}
-$for(polyglossia-otherlangs)$
-  \setotherlanguage[$polyglossia-otherlangs.options$]{$polyglossia-otherlangs.name$}
-$endfor$
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
 \fi
-$endif$
 $if(dir)$
-\ifxetex
-  % load bidi as late as possible as it modifies e.g. graphicx
-  \usepackage{bidi}
-\fi
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+\ifPDFTeX
   \TeXXeTstate=1
   \newcommand{\RL}[1]{\beginR #1\endR}
   \newcommand{\LR}[1]{\beginL #1\endL}
@@ -501,44 +576,90 @@ $for(bibliography)$
 \addbibresource{$bibliography$}
 $endfor$
 $endif$
-% update 2020
-$if(csl-refs)$
-\newlength{\cslhangindent}
-\setlength{\cslhangindent}{1.5em}
-\newenvironment{cslreferences}%
-  {$if(csl-hanging-indent)$\setlength{\parindent}{0pt}%
-  \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces$endif$}%
-  {\par}%
-  \setlength{\parskip}{8pt plus 2pt minus 1pt}
+$if(nocite-ids)$
+\nocite{$for(nocite-ids)$$it$$sep$, $endfor$}
 $endif$
+$if(csquotes)$
+\usepackage{csquotes}
+$endif$
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{$if(urlstyle)$$urlstyle$$else$same$endif$}
+$if(links-as-notes)$
+% Make links footnotes instead of hotlinks:
+\DeclareRobustCommand{\href}[2]{#2\footnote{\url{#1}}}
+$endif$
+$if(verbatim-in-note)$
+\VerbatimFootnotes % allow verbatim text in footnotes
+$endif$
+\hypersetup{
+$if(title-meta)$
+  pdftitle={$title-meta$},
+% custom: use title
+$elseif(title)$
+  pdftitle={$title$},
+$endif$
+$if(author-meta)$
+  pdfauthor={$author-meta$},
+% custom: use author list
+$elseif(author)$
+  pdfauthor={$for(author)$$author.name$$sep$, $endfor$},
+$endif$
+$if(lang)$
+  pdflang={$lang$},
+$endif$
+$if(subject)$
+  pdfsubject={$subject$},
+$endif$
+$if(keywords)$
+  pdfkeywords={$for(keywords)$$keywords$$sep$, $endfor$},
+$endif$
+$if(colorlinks)$
+  colorlinks=true,
+  linkcolor={$if(linkcolor)$$linkcolor$$else$Maroon$endif$},
+  filecolor={$if(filecolor)$$filecolor$$else$Maroon$endif$},
+  citecolor={$if(citecolor)$$citecolor$$else$Blue$endif$},
+  urlcolor={$if(urlcolor)$$urlcolor$$else$Blue$endif$},
+$else$
+$if(boxlinks)$
+$else$
+  hidelinks,
+$endif$
+$endif$
+  pdfcreator={LaTeX via pandoc}}
 
-% TEST institutions
-\usepackage{setspace}
-
+$-- Custom Title Page --$
 $if(title)$
-\title{$if(blocktitle)$$blocktitle$$else$$title$$endif$$for(thanks)$\thanks{$thanks$}$sep$~~~$endfor$$if(correction)$$if(correction.notice)$$else$$if(thanks)$~~~$endif$\thanks{$correction.text$}$endif$$endif$}
+\title{$if(blocktitle)$$blocktitle$$else$$title$$endif$$for(thanks)$\thanks{$thanks$}$sep$~~~$endfor$$if(correction)$$if(correction.notice)$$else$$if(thanks)$~~~$endif$\thanks{$correction.text$}$endif$$endif$$if(subtitle)$\\[0.3em]$endif$}
+$-- custom: after the \thanks and before the closing braket there was: $if(subtitle)$\\[0.3em]\large{}$subtitle$$endif$
 $endif$
 $if(subtitle)$
-\providecommand{\subtitle}[1]{}
+$if(beamer)$
+$else$
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+$endif$
 \subtitle{$subtitle$}
 $endif$
-$if(author)$ % custom: affiliation only if "affiliationonly" is true, else boxed version below abstract
-$if(institute)$ % TEST: derived from https://github.com/pandoc-scholar
+% custom: institute table in title page
+$if(author)$ % affiliation only if "affiliationonly" is true, else boxed version below abstract
+$if(institute)$ % derived from https://github.com/pandoc-scholar
 \author{$for(author)$$author.name$$if(author.corresp)$\thanks{\raggedright\nohyphens{{\scriptsize\faEnvelope}~$author.email$}}$endif$$if(author.orcid)$\textsuperscript{\href{$author.orcid$}{\color{orcid}{\aiOrcid}}}$endif$$if(author.institute_id)$\textsuperscript{\thinspace $for(author.institute_id)$$author.institute_id$$sep$,~$endfor$}$endif$$sep$ \and $endfor$}
 $else$
 \author{$for(author)$$author.name$$if(affiliationonly)$$if(author.affiliation)$\thanks{\raggedright $for(author.affiliation)$$author.affiliation$$sep$; $endfor$$if(author.corresp)$; \nohyphens{{\scriptsize\faEnvelope}~$author.email$}$endif$$if(author.orcid)$; \aiOrcid~\url{$author.orcid$}$endif$}$else$$if(author.corresp)$\thanks{{\scriptsize\faEnvelope}~$author.email$$if(author.orcid)$; \aiOrcid~\url{$author.orcid$}$endif$}$endif$$endif$$endif$$sep$ \and $endfor$}
 $endif$
-% custom: remove due to new author behaviour
-%$if(institute)$
-%\providecommand{\institute}[1]{}
-%\institute{$for(institute)$$institute$$sep$ \and $endfor$}
-%$endif$
+$endif$
+
 % custom: dates
 $if(date)$ % normal publication date (simple text)
 \date{\normalsize $date$}
 $else$
 $if(dates)$ % submitted, revised, accepted, published dates, in YYYY-MM-DD
-\date{\small $if(dates.submitted)$$localization.submitted$: \DTMdate{$dates.submitted$}$if(dates.accepted)$ -- $else$$if(dates.published)$ -- $endif$$endif$$endif$$if(dates.revised)$$localization.revised$: $for(dates.revised)$\DTMdate{$dates.revised$}$sep$; $endfor$ \\ $endif$$if(dates.accepted)$$localization.accepted$: \DTMdate{$dates.accepted$}$if(dates.published)$ -- $endif$$endif$$if(dates.published)$$localization.published$: $if(draft)$\color{red} $endif$\DTMdate{$dates.published$}$endif$}
+\date{\small $if(dates.submitted)$$localization.submitted$: \DTMdate{$dates.submitted$}$if(dates.accepted)$ – $else$$if(dates.published)$ – $endif$$endif$$endif$$if(dates.revised)$$localization.revised$: $for(dates.revised)$\DTMdate{$dates.revised$}$sep$; $endfor$ \\ $endif$$if(dates.accepted)$$localization.accepted$: \DTMdate{$dates.accepted$}$if(dates.published)$ – $endif$$endif$$if(dates.published)$$localization.published$: $if(draft)$\color{red} $endif$\DTMdate{$dates.published$}$endif$}
 $endif$
 $endif$ % end custom dates
 
@@ -546,20 +667,24 @@ $-- custom: spacing for thanks (firstpage) --$
 \setlength{\thanksmarkwidth}{1.8em}
 \thanksfootextra{}{\hspace{5pt}}
 
-$-- custom: hyphenation rules --$
+$-- custom: hyphenation rules [obsolete] (cfr. https://ctan.mirror.garr.it/mirrors/ctan/macros/latex/required/babel/base/babel.pdf p.36) --$
 $if(hyphenation)$
 \newcommand{\sethyphenation}[2]{%
   \AtBeginDocument{%
     \begin{otherlanguage*}{#1}\hyphenation{#2}\end{otherlanguage*}%
   }%
 }
-$for(hyphenation)$
-\sethyphenation{$hyphenation.lang$}{$hyphenation.word$}$sep$
+$-- \sethyphenation{$hyphenation.lang$}{$hyphenation.word$}$sep$ --$
+$for(hyphenation)$ % was sethyphenation / babelhyphenation
+\babelhyphenation[$hyphenation.lang$]{$hyphenation.word$}$sep$
 
 $endfor$
 $endif$
 
 $if(beamer)$
+$if(institute)$
+\institute{$for(institute)$$institute$$sep$ \and $endfor$}
+$endif$
 $if(titlegraphic)$
 \titlegraphic{\includegraphics{$titlegraphic$}}
 $endif$
@@ -569,6 +694,9 @@ $endif$
 $endif$
 
 \begin{document}
+$if(has-frontmatter)$
+\frontmatter
+$endif$
 $if(title)$
 $if(beamer)$
 \frame{\titlepage}
@@ -578,7 +706,7 @@ $-- custom: first page header and footer --$
 \fancypagestyle{plain}{%
   \fancyhf{}%
   % right header: journal title (extended) and eISSN
-  \rhead{\small\sffamily $journal.title$$if(issuedisplay)$. $issuedisplay$$if(issuetitle)$ \\ $issuetitle$$endif$$endif$$if(journal.eissn)$ \\ ISSN~$journal.eissn$$endif$$if(extrarowheader)$ \\ \url{$journal.url$}$else$$if(editor)$ \\ \url{$journal.url$}$endif$$endif$}
+  \rhead{\small\sffamily $journal.title$$if(issuedisplay)$. $issuedisplay$$endif$$if(journal.eissn)$ \\ ISSN~$journal.eissn$$endif$$if(extrarowheader)$ \\ \url{$journal.url$}$else$$if(editor)$ \\ \url{$journal.url$}$endif$$endif$}
   % left header: section, peer-reviewed plus DOI or journal url
   $if(article.section)$
   \lhead{\small\sffamily $article.section$$if(article.peer-review)$ -- \emph{$localization.peer-reviewed$}$endif$
@@ -647,11 +775,16 @@ $include-before$
 
 $endfor$
 $if(nopdftoc)$ % custom: to opt-out to toc in pdf
-$else$
-$if(toc)$
+$elseif(toc)$
+$if(toc-title)$
+\renewcommand*\contentsname{$toc-title$}
+$endif$
 $if(beamer)$
-\begin{frame}
-\tableofcontents[hideallsubsections]
+\begin{frame}[allowframebreaks]
+$if(toc-title)$
+  \frametitle{$toc-title$}
+$endif$
+  \tableofcontents[hideallsubsections]
 \end{frame}
 $else$
 {
@@ -662,14 +795,19 @@ $endif$
 \tableofcontents
 }
 $endif$
+$if(lof)$
+\listoffigures
 $endif$
 $if(lot)$
 \listoftables
 $endif$
-$if(lof)$
-\listoffigures
-$endif$
 $endif$ % custom: - end if(nopdftoc)
+$if(linestretch)$
+\setstretch{$linestretch$}
+$endif$
+$if(has-frontmatter)$
+\mainmatter
+$endif$
 % custom: space from title or separate title page
 $if(notitlepage)$
 $if(titlepagespace)$
@@ -680,17 +818,20 @@ $endif$
 $else$
 \newpage
 $endif$
-% custom TEST: fnmark with full point
+% custom: fnmark with full point
 % it's here to avoid breaking \thanks
 \makeatletter
 \renewcommand{\nosupmark@makefnmark}{\@thefnmark.}
 \makeatother
 $body$
 
+$if(has-frontmatter)$
+\backmatter
+$endif$
 $if(natbib)$
 $if(bibliography)$
 $if(biblio-title)$
-$if(book-class)$
+$if(has-chapters)$
 \renewcommand\bibname{$biblio-title$}
 $else$
 \renewcommand\refname{$biblio-title$}
@@ -698,9 +839,9 @@ $endif$
 $endif$
 $if(beamer)$
 \begin{frame}[allowframebreaks]{$biblio-title$}
-\bibliographytrue
+  \bibliographytrue
 $endif$
-\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
+  \bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
 $if(beamer)$
 \end{frame}
 $endif$
@@ -710,15 +851,15 @@ $endif$
 $if(biblatex)$
 $if(beamer)$
 \begin{frame}[allowframebreaks]{$biblio-title$}
-\bibliographytrue
-\printbibliography[heading=none]
+  \bibliographytrue
+  \printbibliography[heading=none]
 \end{frame}
 $else$
 \printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
 $endif$
 
 $endif$
-$-- custom: end article author box --$
+$-- custom: author box at the end of the article --$
 $if(closingauthorbox)$
 $if(authorspagebreak)$ % custom: put authors in a second page
 \newpage
@@ -737,7 +878,9 @@ $for(author)$ % custom: author block with email, orcid and bio
 \renewcommand{\abstractname}{$author.name$}
 \begin{abstract} % was \sffamily
 $if(author.affiliation)$-- $endif$\small $for(author.affiliation)$$author.affiliation$$sep$; $endfor$
-$if(author.orcid)$ \\ \aiOrcid~\url{$author.orcid$}$endif$$if(author.corresp)$\\ {\scriptsize\faEnvelope}~$author.email$$if(author.url)$;  {\scriptsize\faExternalLink}~\url{$author.url$}$endif$$else$$if(author.url)$\\ {\scriptsize\faExternalLink}~\url{$author.url$}$endif$$endif$$if(author.bio)$ \\ $author.bio$$endif$
+$if(author.orcid)$ \\ \aiOrcid~\url{$author.orcid$}$if(author.corresp)$ | {\scriptsize\faEnvelope}~$author.email$$endif$$elseif(author.corresp)$ \\ {\scriptsize\faEnvelope}~$author.email$$endif$$if(author.url)$
+ \\ {\scriptsize\faExternalLink}~\url{$author.url$}$endif$$if(author.bio)$
+ \\ $author.bio$$endif$ % test 2023 the former block is available in the first page
 \end{abstract}
 \end{samepage}
 $sep$$if(authorsep)$\vspace{$authorsep$}$endif$$endfor$
