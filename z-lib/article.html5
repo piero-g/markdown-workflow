@@ -45,7 +45,9 @@ $endif$
   <![endif]-->
 $if(draft)$
   <style type="text/css">
-      h1.title::after{content: "[draft]"; color: rgba(255,0,0,0.25); position: fixed; font-size: 4em; pointer-events: none; left: 50%; top: 50%; transform: rotate(-45deg) translate(-50%, -50%);}
+      h1.title::after{content: "[$draft$]"; color: rgba(255,0,0,0.25);
+        position: fixed; font-size: 4em; pointer-events: none; left: 50%;
+        top: 50%; transform: rotate(-45deg) translate(-50%, -50%);}
   </style>
 $endif$
 $for(header-includes)$

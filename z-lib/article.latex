@@ -466,7 +466,7 @@ $endif$
 % custom: draft mark with date
 $if(draft)$
 \usepackage[firstpage]{draftwatermark}
-\SetWatermarkText{\shortstack{draft \\ {\LARGE\today}}}
+\SetWatermarkText{\shortstack{$draft$ \\ {\LARGE\today}}}
 $if(linenumbers)$
 % custom: in draft mode add line numbers (pagewise, count every 5 lines)
 \usepackage[pagewise, modulo]{lineno}
