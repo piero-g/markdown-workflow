@@ -17,26 +17,80 @@ else
 	exit 1
 fi
 
+# trap for exiting while in subshell
+set -E
+trap '[ "$?" -ne 77 ] || exit 77' ERR
+
 # help
 function printHelp() {
 	cat <<EOF
 
 This script is to quickly check if the files in the working directory
-have been updated. It will stamp a list of files for:
+have been updated.
+Run it without arguments, it will stamp a list of files for:
 
 0-original/
 1-layout/
 2-publication/ [only the two most recent PDFs!]
 
-It takes no arguments.
-
+Another option is to check the presence of common problems
+in galley files, via -g or --galleys
 EOF
+}
+
+# galley check
+function galleysCheck() {
+	echo
+	if [[ $(ls -A .) ]]; then
+		echo
+		echo "...check spare hashes:"
+		echo
+		pdfgrep '^#' *.pdf
+		echo
+		echo "#####"
+		echo
+		echo "...check spare asterisks in HTML:"
+		echo
+		grep '\*' *.html
+		echo
+		echo "#####"
+		echo
+		echo "...check curly brackets (possible duplicates!):"
+		echo
+		pdfgrep " ”" *.pdf
+		pdfgrep "”[A-Za-z]" *.pdf
+		pdfgrep "[A-Z]”" *.pdf
+		echo
+		echo "#####"
+		echo
+		echo "...check oversized files:"
+		echo
+		find . -type f -size 9M -exec ls -lh {} \;
+	else
+		echo "2-publication is empty"
+	fi
 }
 
 if [[ $# -eq 0 ]] ; then
 	# no given arguments (correct!)
 	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] status.sh started running, logging events" >> "$eventslog"
 	echo "Checking working directory status..."
+elif [[ "$1" == "-g" || "$1" == "--galleys" ]] ; then
+	echo
+	( # start subshell
+	if cd ./2-publication ; then
+		echo "checking galleys for common problems..."
+	else
+		echo "WARNING: ./2-publication directory not found!"
+		printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./2-publication directory not found! Aborting." >> "$workingDir/$eventslog"
+		exit 77
+	fi
+
+	galleysCheck
+
+	) # end subshell
+
+	exit 0
 else
 	printHelp
 	exit 0
