@@ -365,6 +365,9 @@ $-- Various customizations --$
 \captionsetup[figure]{labelformat=empty}
 \captionsetup[table]{labelformat=empty}
 
+% custom: better placement for figures
+\usepackage[above,section]{placeins}
+
 % custom: icons (and fix for fontawesome)
 \usepackage{fontspec}
 \defaultfontfeatures{Extension = .otf}
