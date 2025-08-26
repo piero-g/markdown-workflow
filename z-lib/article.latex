@@ -710,8 +710,9 @@ $else$
 $-- custom: first page header and footer --$
 \fancypagestyle{plain}{%
   \fancyhf{}%
-  % right header: journal title (extended) and eISSN
-  \rhead{\small\sffamily $journal.title$$if(issuedisplay)$. $issuedisplay$$endif$$if(journal.eissn)$ \\ ISSN~$journal.eissn$$endif$$if(extrarowheader)$ \\ \url{$journal.url$}$else$$if(editor)$ \\ \url{$journal.url$}$endif$$endif$}
+  % right header: journal title (extended) and eISSN (up to 4 rows: 1. journal.title+issuedisplay + 2. [opt] issuetitle + 3. issn + 4. [opt] journal.url)
+  % TODO: align with HTML (add pagination)
+  \rhead{\small\sffamily $journal.title$$if(issuedisplay)$. $issuedisplay$$if(issuetitle)$ \\ $issuetitle$$endif$$endif$$if(journal.eissn)$ \\ ISSN~$journal.eissn$$endif$$if(extrarowheader)$ \\ \url{$journal.url$}$elseif(editor)$ \\ \url{$journal.url$}$endif$}
   % left header: section, peer-reviewed plus DOI or journal url
   $if(article.section)$
   \lhead{\small\sffamily $article.section$$if(article.peer-review)$ -- \emph{$localization.peer-reviewed$}$endif$
