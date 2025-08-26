@@ -645,7 +645,6 @@ $endif$
 $-- Custom Title Page --$
 $if(title)$
 \title{$if(blocktitle)$$blocktitle$$else$$title$$endif$$for(thanks)$\thanks{$thanks$}$sep$~~~$endfor$$if(correction)$$if(correction.notice)$$else$$if(thanks)$~~~$endif$\thanks{$correction.text$}$endif$$endif$$if(subtitle)$\\[0.3em]$endif$}
-$-- custom: after the \thanks and before the closing braket there was: $if(subtitle)$\\[0.3em]\large{}$subtitle$$endif$
 $endif$
 $if(subtitle)$
 $if(beamer)$
@@ -653,7 +652,7 @@ $else$
 \usepackage{etoolbox}
 \makeatletter
 \providecommand{\subtitle}[1]{% add subtitle to \maketitle
-  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+  \apptocmd{\@title}{\par {$if(smallersubtitle)$\large$else$\Large$endif$ #1 \par}}{}{}
 }
 \makeatother
 $endif$
