@@ -485,6 +485,12 @@ $endif$
 % custom: avoid hyphenation in email!
 \usepackage{hyphenat}
 
+% custom: define changemargin for pdfsummary
+$if(pdfsummary)$
+\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
+\let\endchangemargin=\endlist
+$endif$
+
 % custom: larger space with authors (thanks to titling)
 %
 $if(institute)$
@@ -832,6 +838,13 @@ $endif$
 \makeatletter
 \renewcommand{\nosupmark@makefnmark}{\@thefnmark.}
 \makeatother
+% custom: add pdfsummary (legal journal etc)
+$if(pdfsummary)$
+\Begin{changemargin}{1cm}{1cm}
+\textsc{$localization.summary$:} $pdfsummary$
+\End{changemargin}
+\vspace{1cm}
+$endif$
 $body$
 
 $if(has-frontmatter)$
