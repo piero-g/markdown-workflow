@@ -169,7 +169,7 @@ $endif$
 $endif$
 $if(CJKmainfont)$
   \ifXeTeX
-    \usepackage{xeCJK}
+    \usepackage[encapsulated]{xeCJK} % custom: add "encapsulated" (test)
     \setCJKmainfont[$for(CJKoptions)$$CJKoptions$$sep$,$endfor$]{$CJKmainfont$}
     $if(CJKsansfont)$
       \setCJKsansfont[$for(CJKoptions)$$CJKoptions$$sep$,$endfor$]{$CJKsansfont$}
