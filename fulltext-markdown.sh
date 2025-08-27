@@ -123,7 +123,7 @@ printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
 				# archive the processed manuscript
 				cp -a "$manuscript" "$workingDir/0-original/converted/${manuscript}"
-				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT1}}-$(date +"%Y-%m-%dT%H-%M-%S").${EXT1}"
+				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT1}}_$(date +"%Y-%m-%dT%H-%M-%S").${EXT1}"
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript} archived" >> "$workingDir/$eventslog"
 			else
 				# pandoc returned errors, print a warning and don't archive
@@ -137,7 +137,7 @@ printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
 				# archive the processed manuscript
 				cp -a "$manuscript" "$workingDir/0-original/converted/${manuscript}"
-				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT2}}-$(date +"%Y-%m-%dT%H-%M-%S").${EXT2}"
+				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT2}}_$(date +"%Y-%m-%dT%H-%M-%S").${EXT2}"
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript} archived" >> "$workingDir/$eventslog"
 			else
 				# pandoc returned errors, print a warning and don't archive
@@ -151,7 +151,7 @@ printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
 				# archive the processed manuscript
 				cp -a "$manuscript" "$workingDir/0-original/converted/${manuscript}"
-				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT3}}-$(date +"%Y-%m-%dT%H-%M-%S").${EXT3}"
+				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT3}}_$(date +"%Y-%m-%dT%H-%M-%S").${EXT3}"
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript} archived" >> "$workingDir/$eventslog"
 			else
 				# pandoc returned errors, print a warning and don't archive
@@ -188,7 +188,7 @@ shopt -s nullglob # Sets nullglob
 	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Archiving newly converted manuscripts in ./archive/first-conversion..." >> "$workingDir/$eventslog"
 	for oldname in *.md; do
 		# copy to archive
-		cp "$oldname" "$workingDir/archive/first-conversion/${oldname%.md}-$(date +"%Y-%m-%dT%H-%M-%S").md"
+		cp "$oldname" "$workingDir/archive/first-conversion/${oldname%.md}_$(date +"%Y-%m-%dT%H-%M-%S").md"
 		printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname archived" >> "$workingDir/$eventslog"
 	done
 
@@ -294,9 +294,9 @@ shopt -s nullglob # Sets nullglob
 			cp "$editing" "$workingDir/1-layout/"
 		else
 			echo "NOTICE: move ${editing} in ./layout/ with datestamp, another file was already there!"
-			cp "${editing}" "$workingDir/1-layout/${editing%.md}-$(date +"%Y-%m-%dT%H-%M-%S").md"
+			cp "${editing}" "$workingDir/1-layout/${editing%.md}_$(date +"%Y-%m-%dT%H-%M-%S").md"
 		fi
-		mv "$editing" "$workingDir/archive/editing-ready/${editing%.md}-$(date +"%Y-%m-%dT%H-%M-%S").md"
+		mv "$editing" "$workingDir/archive/editing-ready/${editing%.md}_$(date +"%Y-%m-%dT%H-%M-%S").md"
 		printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   $editing is ready" >> "$workingDir/$eventslog"
 	done
 

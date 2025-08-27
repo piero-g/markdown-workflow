@@ -205,7 +205,7 @@ converttoformats() {
 	fi # end check on backup
 
 	# archive the processed manuscript
-	cp "$manuscript" "$workingDir/archive/layout-versions/$today/${manuscript%.md}-$(date +"%Y-%m-%dT%H-%M-%S").md"
+	cp "$manuscript" "$workingDir/archive/layout-versions/$today/${manuscript%.md}_$(date +"%Y-%m-%dT%H-%M-%S").md"
 	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   copy of ${manuscript%.md} archived" >> "$workingDir/$eventslog"
 }
 
