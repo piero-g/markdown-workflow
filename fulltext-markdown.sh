@@ -44,7 +44,9 @@ It looks for files in the directory 0-original/ and it writes new MD files to
 1-layout/.
 
 It requires no argument.
-It will archive original manuscripts (see archive/).
+It will archive original manuscripts (see archive/) and put them also
+in ./converted, for reference when working on MD files.
+
 For suggested naming convention, see the documentation
   (ToDo: write documentation)
 
@@ -63,7 +65,7 @@ fi
 ######
 # 1. create directory structure for working and archiving, if not already there
 ######
-mkdir -p "$workingDir"/{archive/{original-version,first-conversion,editing-ready},1-layout}
+mkdir -p "$workingDir"/{archive/{original-version,first-conversion,editing-ready},1-layout,0-original/converted}
 
 # creating only the directories pertaining to this part of the workflow
 printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure, if not ready" >> "$workingDir/$eventslog"
@@ -120,6 +122,7 @@ printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts
 			if pandoc --wrap=none --markdown-headings=atx --to=markdown-multiline_tables-pipe_tables-simple_tables -o "$tempdir/${manuscript%.${EXT1}}.md" "$manuscript" ; then
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
 				# archive the processed manuscript
+				cp -a "$manuscript" "$workingDir/0-original/converted/${manuscript}"
 				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT1}}-$(date +"%Y-%m-%dT%H-%M-%S").${EXT1}"
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript} archived" >> "$workingDir/$eventslog"
 			else
@@ -133,6 +136,7 @@ printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts
 			if pandoc --wrap=none --markdown-headings=atx --to=markdown-multiline_tables-pipe_tables-simple_tables -o "$tempdir/${manuscript%.${EXT2}}.md" "$manuscript" ; then
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
 				# archive the processed manuscript
+				cp -a "$manuscript" "$workingDir/0-original/converted/${manuscript}"
 				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT2}}-$(date +"%Y-%m-%dT%H-%M-%S").${EXT2}"
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript} archived" >> "$workingDir/$eventslog"
 			else
@@ -146,6 +150,7 @@ printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts
 			if pandoc --wrap=none --markdown-headings=atx --to=markdown-multiline_tables-pipe_tables-simple_tables -o "$tempdir/${manuscript%.${EXT3}}.md" "$manuscript" ; then
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
 				# archive the processed manuscript
+				cp -a "$manuscript" "$workingDir/0-original/converted/${manuscript}"
 				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT3}}-$(date +"%Y-%m-%dT%H-%M-%S").${EXT3}"
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript} archived" >> "$workingDir/$eventslog"
 			else
