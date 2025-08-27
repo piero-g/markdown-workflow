@@ -32,7 +32,7 @@ trap '[ "$?" -ne 77 ] || exit 77' ERR
 # 1. create directory structure for working and archiving, if not already there
 ######
 
-mkdir -p $workingDir/{archive/layout-versions,2-publication}
+mkdir -p "$workingDir"/{archive/layout-versions,2-publication}
 # creating only the directories pertaining this part of the workflow
 printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Preparing the directory structure, if not ready" >> "$workingDir/$eventslog"
 
@@ -142,7 +142,7 @@ mkdir -p "$workingDir/archive/layout-versions/$today"
 # conversion functions
 converttohtml() {
 	# HTML conversion with Pandoc  --embed-resources --standalone
-	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" ${sectionNum} --toc --citeproc --email-obfuscation=references --section-divs --embed-resources --standalone --template="$workingDir/z-lib/article.html5" --write=html5 --default-image-extension=.low.jpg -o "$workingDir/2-publication/${manuscript%.md}.html"
+	pandoc "$workingDir/z-lib/journal.yaml" "$workingDir/z-lib/issue.yaml" "${manuscript}" ${sectionNum} --toc --citeproc --email-obfuscation=references --section-divs --embed-resources --standalone --strip-comments --template="$workingDir/z-lib/article.html5" --write=html5 --mathjax --default-image-extension=.low.jpg -o "$workingDir/2-publication/${manuscript%.md}.html"
 }
 converttopdf() {
 	# PDF conversion with Pandoc # -N --toc
