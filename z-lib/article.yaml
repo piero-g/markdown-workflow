@@ -60,11 +60,11 @@ copyright:
 lang: en-US # mandatory: en-US, en-GB, it-IT...
 
 # draft watermark with date
-draft: true # keep to true until the proofreading is complete
+draft: "draft" # this is the text that will appear on the first page of the article, along with the date
 
 # page numbering
 page:
-  prefix: draft # uncomment and fill if you need a prefix for the page sequence (eg: reviews could use a "p. R 12")
+  #prefix: "R." # uncomment and fill if you need a prefix for the page sequence (eg: reviews could use a "p. R.12")
   #roman: true # uncomment if you need the page numbers in Roman numbers, eg: for Editorial; change to "romanup" for UPPERCASE roman numbers
   start: 1 # edit to determine the starting page for this article
 

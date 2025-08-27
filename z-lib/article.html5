@@ -45,7 +45,9 @@ $endif$
   <![endif]-->
 $if(draft)$
   <style type="text/css">
-      h1.title::after{content: "[draft]"; color: rgba(255,0,0,0.25); position: fixed; font-size: 4em; pointer-events: none; left: 50%; top: 50%; transform: rotate(-45deg) translate(-50%, -50%);}
+      h1.title::after{content: "[$draft$]"; color: rgba(255,0,0,0.25);
+        position: fixed; font-size: 4em; pointer-events: none; left: 50%;
+        top: 50%; transform: rotate(-45deg) translate(-50%, -50%);}
   </style>
 $endif$
 $for(header-includes)$
@@ -65,7 +67,7 @@ $if(title)$
 <div property="isPartOf" typeof="PublicationVolume">
 <meta property="volumeNumber" content="$volume$" />
 <meta property="datePublished" content="$year$" />
-<p property="isPartOf" typeof="Periodical"><span property="name" resource="$journal.url$" content="$journal.title$">$journal.title$</span>$if(issuedisplay)$. $issuedisplay$$if(issuepagination)$$if(page.end)$, $page.start$&ndash;$page.end$$else$$page.start$$endif$$endif$$endif$
+<p property="isPartOf" typeof="Periodical"><span property="name" resource="$journal.url$" content="$journal.title$">$journal.title$</span>$if(issuedisplay)$. $issuedisplay$$if(issuetitle)$: $issuetitle$$endif$$if(issuepagination)$, $if(page.prefix)$$page.prefix$$if(page.end)$$page.start$&nbsp;&ndash;&nbsp;$page.prefix$$page.end$$else$$page.start$$endif$$else$$if(page.end)$$page.start$&ndash;$page.end$$else$$page.start$$endif$$endif$$endif$$endif$
 $if(journal.eissn)$<br />ISSN <span property="issn">$journal.eissn$</span>$endif$
 </p>
 </div>
@@ -92,9 +94,9 @@ $if(issuepagination)$$else$
 Art. <span property="value">#$article.id$</span></p>
 $endif$$endif$
 $if(issuepagination)$
-<meta property="pageStart" content="$if(page.prefix)$$page.prefix$ $endif$$page.start$" />
+<meta property="pageStart" content="$if(page.prefix)$$page.prefix$$endif$$page.start$" />
 $if(page.end)$
-<meta property="pageEnd" content="$if(page.prefix)$$page.prefix$ $endif$$page.end$" />
+<meta property="pageEnd" content="$if(page.prefix)$$page.prefix$$endif$$page.end$" />
 $endif$
 $endif$
 </div>
@@ -114,6 +116,9 @@ $for(author)$
       $if(author.corresp)$ &mdash; <span class="email"><span class="contact-intro">$localization.corresp$:</span>&nbsp;<span class="email-address" property="email">$author.email$</span></span>$endif$
       $if(author.url)$<span class="author-website"> &mdash; <a href="$author.url$" property="url">$author.url$</a></span>$endif$
       $if(author.orcid)$<br> <span class="orcid" property="identifier" typeof="PropertyValue"><span class="orcid-intro" property="propertyID">ORCID</span>&nbsp;<a href="$author.orcid$" property="value">$author.orcid$</a></span>$endif$
+      $if(author.note)$<br />$for(author.note)$
+      <span class="author-note">$author.note$</span>$sep$<br />
+      $endfor$$endif$
     </p>
     $if(author.bio)$
     <div class="author-bio" property="description">

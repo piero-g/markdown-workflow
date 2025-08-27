@@ -111,11 +111,11 @@ printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Archiving ./z-lib/ folder" >> "$wo
 cp -a "$workingDir/z-lib/"* "$workingDir/archive/final-version/z-lib/"
 
 # media directories
-if [ ! -d "$workingDir/1-layout/"*-media ] && [ ! -d "$workingDir/1-layout/"*_media ]; then
+if [ ! -d "$workingDir/1-layout/"media_* ]; then
 	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] No media directories found in layout" >> "$workingDir/$eventslog"
 else
 	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Archiving media folders" >> "$workingDir/$eventslog"
-	mv "$workingDir/1-layout/"*-media "$workingDir/1-layout/"*_media -t "$workingDir/archive/media/"
+	mv "$workingDir/1-layout/"media_* -t "$workingDir/archive/media/"
 fi
 
 printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Archiving scripts" >> "$workingDir/$eventslog"
@@ -159,12 +159,12 @@ while :
 		do
 			echo -n "Please type a meaningful identifier for the archived articles: "
 			read identifier
-			echo "The archive name will be \"${identifier}-$today.zip\", confirm? (Y or N) "
+			echo "The archive name will be \"${identifier}_$today.zip\", confirm? (Y or N) "
 			read confirm
 			if echo "$confirm" | grep -iq "^[yY]$" ; then
 				echo "Now zipping!"
-				if zip -r "${identifier}-$today.zip" ./archive/* ; then
-					echo "Done! Check ${identifier}-$today.zip; you can now clean everything."
+				if zip -r "${identifier}_$today.zip" ./archive/* ; then
+					echo "Done! Check ${identifier}_$today.zip; you can now clean everything."
 				else
 					echo "OH NO! I was unable to zip everything, you should do it by yourself."
 				fi

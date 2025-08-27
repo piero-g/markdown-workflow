@@ -197,6 +197,7 @@ if [ -z ${@+x} ]; then
 		if [ $pageCount ] || [ $pageSequence ] || [ $extractReferences ]; then
 			: # skip edityaml
 		else
+			mkdir -p bak
 			# convert valid files
 			for markdown in ./*.md; do
 
@@ -205,6 +206,7 @@ if [ -z ${@+x} ]; then
 				edityaml
 
 			done
+			mv *.bak bak/
 		fi
 	) # end subshell
 
@@ -306,8 +308,9 @@ parsepages() {
 	sed 1d ${pageSequence} | while IFS=$'\t' read -r -a arry
 	do
 		fileid="${arry[0]}"
-		startPage="${arry[1]}"
-		endPage="${arry[2]}"
+		countPages="${arry[1]}" # we won't use this
+		startPage="${arry[2]}"
+		endPage="${arry[3]}"
 		echo -e "\n"$fileid" is the file ID..."
 		filenamepath=$(find "${workingDir}/1-layout/" -maxdepth 1 -type f -name "$fileid*")
 		filename="${filenamepath##*/}"
@@ -316,7 +319,7 @@ parsepages() {
 		echo "..." $endPage "is its endPage"
 		( # start subshell
 			if cd ./1-layout ; then
-				:
+				mkdir -p bak
 			else
 				echo "WARNING: ./1-layout directory not found!"
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] WARNING: ./1-layout directory not found! Aborting." >> "$eventslog"
@@ -326,6 +329,8 @@ parsepages() {
 				# we have the file, proceed
 				setstartpage
 				setendpage
+				sleep 0.5
+				mv *.bak bak/
 			else
 				echo "Warning:" $filename "not found, skipping!"
 			fi

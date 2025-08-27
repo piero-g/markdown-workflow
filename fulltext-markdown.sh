@@ -117,7 +117,7 @@ printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts
 		if [ "${manuscript}" != "${manuscript%.${EXT1}}" ]; then
 			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript}: trying to convert it in Markdown..." >> "$workingDir/$eventslog"
 			# actual conversion with Pandoc
-			if pandoc --wrap=none --markdown-headings=atx -o "$tempdir/${manuscript%.${EXT1}}.md" "$manuscript" ; then
+			if pandoc --wrap=none --markdown-headings=atx --to=markdown-multiline_tables-pipe_tables-simple_tables -o "$tempdir/${manuscript%.${EXT1}}.md" "$manuscript" ; then
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
 				# archive the processed manuscript
 				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT1}}-$(date +"%Y-%m-%dT%H-%M-%S").${EXT1}"
@@ -130,7 +130,7 @@ printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts
 		elif [ "${manuscript}" != "${manuscript%.${EXT2}}" ]; then
 			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript}: trying to convert it in Markdown..." >> "$workingDir/$eventslog"
 			# actual conversion with Pandoc
-			if pandoc --wrap=none --markdown-headings=atx -o "$tempdir/${manuscript%.${EXT2}}.md" "$manuscript" ; then
+			if pandoc --wrap=none --markdown-headings=atx --to=markdown-multiline_tables-pipe_tables-simple_tables -o "$tempdir/${manuscript%.${EXT2}}.md" "$manuscript" ; then
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
 				# archive the processed manuscript
 				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT2}}-$(date +"%Y-%m-%dT%H-%M-%S").${EXT2}"
@@ -143,7 +143,7 @@ printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Starting conversion of manuscripts
 		elif [ "${manuscript}" != "${manuscript%.${EXT3}}" ]; then
 			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ${manuscript}: trying to convert it in Markdown..." >> "$workingDir/$eventslog"
 			# actual conversion with Pandoc
-			if pandoc --wrap=none --markdown-headings=atx -o "$tempdir/${manuscript%.${EXT3}}.md" "$manuscript" ; then
+			if pandoc --wrap=none --markdown-headings=atx --to=markdown-multiline_tables-pipe_tables-simple_tables -o "$tempdir/${manuscript%.${EXT3}}.md" "$manuscript" ; then
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   ... ${manuscript} was converted!" >> "$workingDir/$eventslog"
 				# archive the processed manuscript
 				mv "$manuscript" "$workingDir/archive/original-version/${manuscript%.${EXT3}}-$(date +"%Y-%m-%dT%H-%M-%S").${EXT3}"
@@ -195,35 +195,39 @@ shopt -s nullglob # Sets nullglob
 	# OJS2:
 	ojs2name="([0-9]+)-[0-9]+-[0-9]+-[A-Z]{2}\.md"
 	# OJS3:
-	ojs3name="([0-9]+)-[A-Za-z 0-9]+-[0-9]+-[0-9]+-[0-9]+-[0-9]{8}\.md"
-	goodname="([0-9]+) *- *([A-Za-z 0-9_-]+)\.md"
+	ojs3name="([0-9]+)-[A-Za-z0-9 ]+-[0-9]+-[0-9]+-[0-9]+-[0-9]{8}\.md"
+	goodname="([0-9]+)\s*[_-]\s*([A-Za-z0-9 '&_-]+)\.md"
 	for oldname in *.md; do
 		if [[ "$oldname" =~ "$ojs2name" ]]; then
 			# rename keeping only relevant part and transforming to lowercase
 			cleanname=$(echo "$oldname" | sed -r "s/$ojs2name/\1.md/" | tr "[:upper:]" "[:lower:]")
 			mv "$oldname" "$cleanname"
+			echo "  $oldname is now $cleanname"
 			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname renamed as $cleanname" >> "$workingDir/$eventslog"
 		elif [[ "$oldname" =~ "$ojs3name" ]]; then
 			# rename keeping only relevant part and transforming to lowercase
 			cleanname=$(echo "$oldname" | sed -r "s/$ojs3name/\1.md/" | tr "[:upper:]" "[:lower:]")
 			mv "$oldname" "$cleanname"
+			echo "  $oldname is now $cleanname"
 			printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname renamed as $cleanname" >> "$workingDir/$eventslog"
 		elif [[ "$oldname" =~ "$goodname" ]]; then
 			# rename keeping only relevant part and transforming to lowercase
 			cleanname=$(echo "$oldname" | sed -r "s/$goodname/\1-\2.md/" | tr "[:upper:]" "[:lower:]" | tr "[:blank:]" "_")
 			if [[ "$oldname" == "$cleanname" ]]; then
-				echo "$oldname does not need to be renamed"
+				echo "  $oldname does not need to be renamed"
 			else
 				mv "$oldname" "$cleanname"
+				echo "  $oldname is now $cleanname"
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   $oldname renamed as $cleanname" >> "$workingDir/$eventslog"
 			fi
 		else
 			# safer filenames to lowercase and replacing spaces with underscore
 			safename=$(echo "$oldname" | tr "[:upper:]" "[:lower:]" | tr "[:blank:]" "_")
 			if [[ "$oldname" =~ "$safename" ]]; then
-				echo "$oldname does not need to be renamed"
+				echo "  the name $oldname is not standard, but it does not need to be renamed"
 			else
 				mv "$oldname" "$safename"
+				echo "  the name $oldname is not standard, renamed as $safename"
 				printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")]   [WARN] $oldname has an unexpected name, converted in a safer one!" >> "$workingDir/$eventslog"
 				echo WARN=true >> "$tempvar"
 			fi
@@ -239,13 +243,13 @@ shopt -s nullglob # Sets nullglob
 	# folders for media files
 	printf '%b\n' "[$(date +"%Y-%m-%d %H:%M:%S")] Creating folders for media files in ./1-layout" >> "$workingDir/$eventslog"
 	for f in *.md; do
-		cleanname="([0-9]+)(-[a-z0-9_-]+)?\.md"
+		cleanname="([0-9]+)(-[a-z0-9'&_-]+)?\.md"
 		if [[ $f =~ $cleanname ]]; then
 			# file name with ID, use only ID for media folder
 			name="${f%.md}"
-			mediaFolder="${name%%-*}_media"
+			mediaFolder="media_${name%%-*}"
 		else
-			mediaFolder=$(echo $f | sed -r "s/\.md//")
+			mediaFolder=media_$(echo $f | sed -r "s/\.md//")
 		fi
 		if [ ! -d "$workingDir/1-layout/$mediaFolder" ]; then
 			mkdir "$workingDir/1-layout/$mediaFolder"
