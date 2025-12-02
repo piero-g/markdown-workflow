@@ -65,7 +65,7 @@ function galleysCheck() {
 		echo
 		echo "...check oversized files:"
 		echo
-		find . -type f -size 9M -exec ls -lh {} \;
+		find . -type f -size +9M -exec ls -lh {} \;
 	else
 		echo "2-publication is empty"
 	fi
